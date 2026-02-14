@@ -267,7 +267,7 @@ function InlineSession({ type }: { type: SessionType }) {
               className="w-full max-w-lg flex flex-col items-center gap-6"
             >
               {/* Dhikr text */}
-              <div className="w-full text-center">
+              <div className="w-full text-center relative">
                 <p
                   className="dhikr-text text-xl sm:text-2xl leading-[2.4] text-balance"
                   style={{
@@ -281,6 +281,7 @@ function InlineSession({ type }: { type: SessionType }) {
                 >
                   {currentDhikr.content}
                 </p>
+                <SpeakButton text={currentDhikr.content} />
               </div>
 
               {/* Breathing circle interaction */}
@@ -395,6 +396,55 @@ function InlineCompletion({
         </motion.button>
       </motion.div>
     </div>
+  );
+}
+
+function SpeakButton({ text }: { text: string }) {
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  const handleSpeak = () => {
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "ar";
+    utterance.rate = 0.85;
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+    setIsSpeaking(true);
+  };
+
+  useEffect(() => {
+    return () => window.speechSynthesis.cancel();
+  }, [text]);
+
+  return (
+    <motion.button
+      onClick={handleSpeak}
+      whileTap={{ scale: 0.9 }}
+      className="mt-3 mx-auto flex items-center gap-1.5 text-muted-foreground/40 hover:text-primary/60 transition-colors duration-300 p-2"
+      aria-label={isSpeaking ? "إيقاف القراءة" : "استماع"}
+    >
+      {isSpeaking ? (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="6" y="4" width="4" height="16" />
+          <rect x="14" y="4" width="4" height="16" />
+        </svg>
+      ) : (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+        </svg>
+      )}
+      <span className="font-naskh text-[11px]">{isSpeaking ? "إيقاف" : "استماع"}</span>
+    </motion.button>
   );
 }
 
