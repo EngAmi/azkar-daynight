@@ -1,8 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import { getMorningAdhkar, getEveningAdhkar, type SessionType, type Dhikr } from "@/data/adhkar";
 import { BreathingCircle } from "@/components/BreathingCircle";
-import { SessionProgress } from "@/components/SessionProgress";
 import { DhikrFadl } from "@/components/DhikrFadl";
 
 const Index = () => {
@@ -57,42 +56,49 @@ const Index = () => {
               </motion.h1>
             </div>
 
-            {/* Tabs */}
+            {/* Swipe indicator dots */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="flex items-center justify-center gap-2 px-6 pb-4"
+              className="flex items-center justify-center gap-3 px-6 pb-2"
             >
-              <TabButton
-                label="أذكار الصباح"
-                icon="☀️"
-                isActive={activeTab === "morning"}
-                onClick={() => setActiveTab("morning")}
-              />
-              <TabButton
-                label="أذكار المساء"
-                icon="🌙"
-                isActive={activeTab === "evening"}
+              <button
                 onClick={() => setActiveTab("evening")}
-              />
+                className="flex items-center gap-1.5 transition-all duration-300"
+              >
+                <span className="text-sm">🌙</span>
+                <span className={`font-naskh text-xs transition-all duration-300 ${activeTab === "evening" ? "text-foreground" : "text-muted-foreground/40"}`}>
+                  المساء
+                </span>
+              </button>
+
+              <div className="flex items-center gap-1.5">
+                <motion.div
+                  animate={{ scale: activeTab === "morning" ? 1 : 0.6, opacity: activeTab === "morning" ? 1 : 0.3 }}
+                  className="w-2 h-2 rounded-full bg-primary"
+                  transition={{ duration: 0.3 }}
+                />
+                <motion.div
+                  animate={{ scale: activeTab === "evening" ? 1 : 0.6, opacity: activeTab === "evening" ? 1 : 0.3 }}
+                  className="w-2 h-2 rounded-full bg-primary"
+                  transition={{ duration: 0.3 }}
+                />
+              </div>
+
+              <button
+                onClick={() => setActiveTab("morning")}
+                className="flex items-center gap-1.5 transition-all duration-300"
+              >
+                <span className={`font-naskh text-xs transition-all duration-300 ${activeTab === "morning" ? "text-foreground" : "text-muted-foreground/40"}`}>
+                  الصباح
+                </span>
+                <span className="text-sm">☀️</span>
+              </button>
             </motion.div>
 
-            {/* Session content */}
-            <div className="flex-1 w-full">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeTab}
-                  initial={{ opacity: 0, x: activeTab === "morning" ? -30 : 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: activeTab === "morning" ? 30 : -30 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                  className="h-full"
-                >
-                  <InlineSession type={activeTab} />
-                </motion.div>
-              </AnimatePresence>
-            </div>
+            {/* Swipeable session content */}
+            <SwipeableContent activeTab={activeTab} onTabChange={setActiveTab} />
 
             {/* Verse at bottom */}
             <motion.p
@@ -110,44 +116,41 @@ const Index = () => {
   );
 };
 
-function TabButton({
-  label,
-  icon,
-  isActive,
-  onClick,
+function SwipeableContent({
+  activeTab,
+  onTabChange,
 }: {
-  label: string;
-  icon: string;
-  isActive: boolean;
-  onClick: () => void;
+  activeTab: SessionType;
+  onTabChange: (tab: SessionType) => void;
 }) {
+  const handleDragEnd = (_: any, info: PanInfo) => {
+    const threshold = 50;
+    if (info.offset.x > threshold) {
+      // Swiped right → in RTL this means go to morning
+      onTabChange("morning");
+    } else if (info.offset.x < -threshold) {
+      // Swiped left → in RTL this means go to evening
+      onTabChange("evening");
+    }
+  };
+
   return (
-    <motion.button
-      onClick={onClick}
-      whileTap={{ scale: 0.97 }}
-      className={`
-        relative py-2.5 px-5 rounded-xl font-naskh text-sm
-        transition-all duration-300 cursor-pointer
-        ${
-          isActive
-            ? "text-primary-foreground"
-            : "text-muted-foreground/60 hover:text-muted-foreground"
-        }
-      `}
-    >
-      {isActive && (
-        <motion.div
-          layoutId="activeTab"
-          className="absolute inset-0 rounded-xl glass-surface border-primary/20"
-          style={{ borderWidth: 1 }}
-          transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
-        />
-      )}
-      <span className="relative z-10 flex items-center gap-2">
-        <span>{icon}</span>
-        <span>{label}</span>
-      </span>
-    </motion.button>
+    <div className="flex-1 w-full overflow-hidden">
+      <motion.div
+        key={activeTab}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.2}
+        onDragEnd={handleDragEnd}
+        initial={{ opacity: 0, x: activeTab === "morning" ? -30 : 30 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
+        className="h-full touch-pan-y"
+      >
+        <InlineSession type={activeTab} />
+      </motion.div>
+    </div>
   );
 }
 
@@ -218,24 +221,30 @@ function InlineSession({ type }: { type: SessionType }) {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Skip button */}
-      <div className="flex justify-start px-6 pb-2">
+      {/* Skip + minimal counter */}
+      <div className="flex items-center justify-between px-6 pb-2">
         <button
           onClick={handleSkip}
           className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-xs font-naskh p-1"
         >
           تخطي ←
         </button>
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground/40 text-[11px] font-naskh">
+            {currentIndex + 1} / {adhkarList.length}
+          </span>
+        </div>
       </div>
 
-      {/* Progress */}
+      {/* Thin progress line */}
       <div className="px-6">
-        <SessionProgress
-          current={currentIndex + 1}
-          total={adhkarList.length}
-          currentRep={currentRep}
-          totalReps={currentDhikr.count}
-        />
+        <div className="w-full h-[2px] bg-border/20 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-primary/40 rounded-full"
+            animate={{ width: `${((currentIndex) / adhkarList.length) * 100 + (currentRep / currentDhikr.count / adhkarList.length) * 100}%` }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          />
+        </div>
       </div>
 
       {/* Main content area */}
