@@ -135,8 +135,6 @@ export function DhikrSession({ type, onExit }: DhikrSessionProps) {
               <div className="flex-shrink-0">
                 <BreathingCircle
                   onComplete={handleRepComplete}
-                  holdDuration={isHighCount ? 1800 : 2800}
-                  autoCycle={isHighCount}
                   size={isHighCount ? 160 : 180}
                 />
               </div>
