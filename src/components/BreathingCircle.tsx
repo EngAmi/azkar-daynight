@@ -37,6 +37,10 @@ export function BreathingCircle({
       setProgress(pct);
 
       if (pct >= 1) {
+        // Haptic feedback
+        if (navigator.vibrate) {
+          navigator.vibrate(autoCycle ? 30 : 50);
+        }
         // Completed one cycle
         onComplete();
         setRipples((prev) => [...prev, rippleIdRef.current++]);
