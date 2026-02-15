@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from "framer-motion";
-import { getMorningAdhkar, getEveningAdhkar, type SessionType, type Dhikr } from "@/data/adhkar";
+import { getMorningAdhkar, getEveningAdhkar, AUDIO_BASE_URL, type SessionType, type Dhikr } from "@/data/adhkar";
 import { BreathingCircle } from "@/components/BreathingCircle";
 import { DhikrFadl } from "@/components/DhikrFadl";
 
@@ -281,7 +281,7 @@ function InlineSession({ type }: { type: SessionType }) {
                 >
                   {currentDhikr.content}
                 </p>
-                <SpeakButton text={currentDhikr.content} />
+                <SpeakButton audioFile={currentDhikr.audio} />
               </div>
 
               {/* Breathing circle interaction */}
@@ -399,39 +399,45 @@ function InlineCompletion({
   );
 }
 
-function SpeakButton({ text }: { text: string }) {
-  const [isSpeaking, setIsSpeaking] = useState(false);
+function SpeakButton({ audioFile }: { audioFile?: string }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const handleSpeak = () => {
-    if (isSpeaking) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, [audioFile]);
+
+  if (!audioFile) return null;
+
+  const handlePlay = () => {
+    if (isPlaying && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsPlaying(false);
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "ar";
-    utterance.rate = 0.85;
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-    setIsSpeaking(true);
+    const audio = new Audio(`${AUDIO_BASE_URL}${audioFile}`);
+    audioRef.current = audio;
+    audio.onended = () => setIsPlaying(false);
+    audio.onerror = () => setIsPlaying(false);
+    audio.play();
+    setIsPlaying(true);
   };
-
-  useEffect(() => {
-    return () => window.speechSynthesis.cancel();
-  }, [text]);
 
   return (
     <motion.button
-      onClick={handleSpeak}
+      onClick={handlePlay}
       whileTap={{ scale: 0.9 }}
       className="mt-3 mx-auto flex items-center gap-1.5 text-muted-foreground/40 hover:text-primary/60 transition-colors duration-300 p-2"
-      aria-label={isSpeaking ? "إيقاف القراءة" : "استماع"}
+      aria-label={isPlaying ? "إيقاف" : "استماع"}
     >
-      {isSpeaking ? (
+      {isPlaying ? (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="6" y="4" width="4" height="16" />
           <rect x="14" y="4" width="4" height="16" />
@@ -443,7 +449,7 @@ function SpeakButton({ text }: { text: string }) {
           <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
         </svg>
       )}
-      <span className="font-naskh text-[11px]">{isSpeaking ? "إيقاف" : "استماع"}</span>
+      <span className="font-naskh text-[11px]">{isPlaying ? "إيقاف" : "استماع"}</span>
     </motion.button>
   );
 }

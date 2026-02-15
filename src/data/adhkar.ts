@@ -1,3 +1,5 @@
+export const AUDIO_BASE_URL = "https://alazkar.today/audio/";
+
 export interface Dhikr {
   id: number;
   content: string;
@@ -6,6 +8,7 @@ export interface Dhikr {
   fadl: string;
   source: string;
   type: 0 | 1 | 2; // 0=both, 1=morning, 2=evening
+  audio?: string; // audio file name from alazkar.today e.g. "1.mp3"
 }
 
 // type: 0 = both morning & evening, 1 = morning only, 2 = evening only
@@ -27,6 +30,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "من قالها حين يصبح أُجير من الجن حتى يمسي، ومن قالها حين يمسي أُجير منهم حتى يصبح",
     source: "الحاكم، 1/562",
     type: 0,
+    audio: "1.mp3",
   },
   {
     id: 3,
@@ -45,6 +49,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "من قالها ثلاث مرات حين يصبح وحين يمسي كفته من كل شيء",
     source: "أبو داود 5082، الترمذي 3575",
     type: 0,
+    audio: "2.mp3",
   },
   {
     id: 5,
@@ -54,6 +59,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "من قالها ثلاث مرات حين يصبح وحين يمسي كفته من كل شيء",
     source: "أبو داود 5082، الترمذي 3575",
     type: 0,
+    audio: "3.mp3",
   },
   {
     id: 6,
@@ -63,6 +69,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "من قالها ثلاث مرات حين يصبح وحين يمسي كفته من كل شيء",
     source: "أبو داود 5082، الترمذي 3575",
     type: 0,
+    audio: "4.mp3",
   },
   {
     id: 7,
@@ -72,6 +79,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "",
     source: "مسلم، برقم 2723",
     type: 1,
+    audio: "5.mp3",
   },
   {
     id: 8,
@@ -90,6 +98,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "",
     source: "الترمذي، برقم 3391",
     type: 1,
+    audio: "11.mp3",
   },
   {
     id: 10,
@@ -108,6 +117,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "مَنْ قَالَهَا مِنَ النَّهَارِ مُوقِنًا بِهَا، فَمَاتَ مِنْ يَوْمِهِ قَبْلَ أَنْ يُمْسِيَ، فَهُوَ مِنْ أَهْلِ الْجَنَّةِ",
     source: "البخاري، برقم 6306",
     type: 0,
+    audio: "6.mp3",
   },
   {
     id: 12,
@@ -117,6 +127,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "من قالها أربع مرات أعتقه اللَّه من النار",
     source: "أبو داود، برقم 5069",
     type: 1,
+    audio: "7.mp3",
   },
   {
     id: 13,
@@ -135,6 +146,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "من قالها حين يصبح فقد أدَّى شكر يومه",
     source: "أبو داود، برقم 5073",
     type: 1,
+    audio: "8.mp3",
   },
   {
     id: 15,
@@ -153,6 +165,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "",
     source: "أبو داود، برقم 5090",
     type: 0,
+    audio: "14.mp3",
   },
   {
     id: 17,
@@ -162,6 +175,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "من قالها سبع مرات كفاه اللَّه ما أهمّه من أمر الدنيا والآخرة",
     source: "ابن السني، برقم 71",
     type: 0,
+    audio: "9.mp3",
   },
   {
     id: 18,
@@ -171,6 +185,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "",
     source: "أبو داود، برقم 5074",
     type: 0,
+    audio: "16.mp3",
   },
   {
     id: 19,
@@ -180,6 +195,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "",
     source: "الترمذي، برقم 3392",
     type: 0,
+    audio: "19.mp3",
   },
   {
     id: 20,
@@ -189,6 +205,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "من قالها ثلاثًا إذا أصبح وثلاثًا إذا أمسى لم يضره شيء",
     source: "أبو داود 5088، الترمذي 3388",
     type: 0,
+    audio: "10.mp3",
   },
   {
     id: 21,
@@ -207,6 +224,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "",
     source: "الحاكم وصححه، 1/545",
     type: 0,
+    audio: "17.mp3",
   },
   {
     id: 23,
@@ -216,6 +234,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "",
     source: "أبو داود، برقم 5084",
     type: 1,
+    audio: "18.mp3",
   },
   {
     id: 24,
@@ -234,6 +253,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "",
     source: "أحمد، برقم 15360",
     type: 1,
+    audio: "12.mp3",
   },
   {
     id: 26,
@@ -252,6 +272,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "",
     source: "ابن ماجه، برقم 925",
     type: 1,
+    audio: "26.mp3",
   },
   {
     id: 28,
@@ -261,6 +282,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "كان كمن أعتق أربعة أنفس من ولد إسماعيل",
     source: "البخاري 6404، مسلم 2693",
     type: 0,
+    audio: "28.mp3",
   },
   {
     id: 29,
@@ -270,6 +292,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "من صلّى عليَّ حين يصبح عشرًا وحين يمسي عشرًا أدركته شفاعتي يوم القيامة",
     source: "الطبراني",
     type: 0,
+    audio: "21.mp3",
   },
   {
     id: 30,
@@ -279,6 +302,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "من قالها حين يمسي ثلاث مرات لم تضرّه حُمَة تلك الليلة",
     source: "أحمد، برقم 7898",
     type: 2,
+    audio: "20.mp3",
   },
   {
     id: 31,
@@ -288,6 +312,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "",
     source: "مسلم، برقم 2726",
     type: 1,
+    audio: "13.mp3",
   },
   {
     id: 32,
@@ -297,6 +322,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "كانت له عدل عشر رقاب، وكُتب له مائة حسنة، ومُحيت عنه مائة سيئة، وكانت له حرزًا من الشيطان",
     source: "البخاري 3293، مسلم 2691",
     type: 1,
+    audio: "28.mp3",
   },
   {
     id: 33,
@@ -306,6 +332,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "",
     source: "البخاري 6307، مسلم 2702",
     type: 1,
+    audio: "30.mp3",
   },
   {
     id: 34,
@@ -315,6 +342,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "لم يأتِ أحد يوم القيامة بأفضل مما جاء به إلا أحد قال مثل ما قال أو زاد عليه",
     source: "مسلم، برقم 2692",
     type: 0,
+    audio: "29.mp3",
   },
 ];
 
