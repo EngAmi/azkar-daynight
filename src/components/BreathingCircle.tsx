@@ -8,12 +8,18 @@ interface BreathingCircleProps {
   autoCycle?: boolean;
   /** Size of the circle */
   size?: number;
+  /** Current repetition (0-indexed) */
+  currentRep?: number;
+  /** Total repetitions needed */
+  totalReps?: number;
 }
 
 export function BreathingCircle({
   onComplete,
   autoCycle = false,
   size = 200,
+  currentRep = 0,
+  totalReps = 1,
 }: BreathingCircleProps) {
   const [ripples, setRipples] = useState<number[]>([]);
   const rippleIdRef = useRef(0);
@@ -59,11 +65,22 @@ export function BreathingCircle({
       <motion.button
         onClick={handleTap}
         whileTap={{ scale: 0.92 }}
-        className="relative z-10 rounded-full flex items-center justify-center cursor-pointer glass-surface border border-primary/20"
+        className="relative z-10 rounded-full flex flex-col items-center justify-center cursor-pointer glass-surface border border-primary/20"
         style={{ width: size, height: size }}
         aria-label="سبّح"
       >
-        <span className="text-primary font-naskh text-base">سبّح</span>
+        {totalReps > 1 && (
+          <motion.span
+            key={currentRep}
+            initial={{ scale: 1.3, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="text-primary font-amiri text-2xl leading-none"
+          >
+            {totalReps - currentRep}
+          </motion.span>
+        )}
+        <span className={`text-primary/60 font-naskh ${totalReps > 1 ? 'text-[11px] mt-1' : 'text-base'}`}>سبّح</span>
       </motion.button>
     </div>
   );

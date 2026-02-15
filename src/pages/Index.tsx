@@ -289,6 +289,8 @@ function InlineSession({ type }: { type: SessionType }) {
                 <BreathingCircle
                   onComplete={handleRepComplete}
                   size={isHighCount ? 140 : 160}
+                  currentRep={currentRep}
+                  totalReps={currentDhikr.count}
                 />
               </div>
             </motion.div>
