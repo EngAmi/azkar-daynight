@@ -1,13 +1,11 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from "framer-motion";
+import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { getMorningAdhkar, getEveningAdhkar, AUDIO_BASE_URL, type SessionType, type Dhikr } from "@/data/adhkar";
 import { BreathingCircle } from "@/components/BreathingCircle";
 import { DhikrFadl } from "@/components/DhikrFadl";
 
 const Index = () => {
   const [isReady, setIsReady] = useState(false);
-
-  // Determine current time period for default tab
   const hour = new Date().getHours();
   const defaultType: SessionType = hour >= 15 ? "evening" : "morning";
   const [activeTab, setActiveTab] = useState<SessionType>(defaultType);
@@ -23,19 +21,18 @@ const Index = () => {
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.08 }}
+          animate={{ opacity: 0.06 }}
           transition={{ duration: 3 }}
-          className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-primary blur-[150px]"
+          className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary blur-[180px]"
         />
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.04 }}
+          animate={{ opacity: 0.03 }}
           transition={{ duration: 4, delay: 1 }}
-          className="absolute bottom-1/4 left-1/3 w-[300px] h-[300px] rounded-full bg-glow-soft blur-[120px]"
+          className="absolute bottom-1/3 left-1/4 w-[400px] h-[400px] rounded-full bg-glow-soft blur-[150px]"
         />
       </div>
 
-      {/* Main content */}
       <AnimatePresence>
         {isReady && (
           <motion.div
@@ -45,70 +42,87 @@ const Index = () => {
             className="relative z-10 flex flex-col items-center w-full flex-1"
           >
             {/* Header */}
-            <div className="text-center pt-8 pb-4 px-6 safe-area-top">
-              <motion.h1
+            <header className="text-center pt-10 pb-2 px-6 safe-area-top">
+              <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.3 }}
-                className="font-amiri text-3xl sm:text-4xl text-foreground tracking-wide"
+                transition={{ duration: 1, delay: 0.2 }}
+                className="flex flex-col items-center gap-1"
               >
-                ذِكر
-              </motion.h1>
-            </div>
+                <h1 className="font-amiri text-3xl sm:text-4xl text-foreground tracking-wide">
+                  الذاكرين
+                </h1>
+                <p className="font-naskh text-[11px] text-muted-foreground/40 tracking-widest">
+                  حصّن يومك بذكر الله
+                </p>
+              </motion.div>
+            </header>
 
-            {/* Swipe indicator dots */}
-            <motion.div
+            {/* Tab switcher */}
+            <motion.nav
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="flex items-center justify-center gap-3 px-6 pb-2"
+              className="flex items-center justify-center gap-1 px-6 py-3"
+              aria-label="اختر نوع الأذكار"
             >
               <button
-                onClick={() => setActiveTab("evening")}
-                className="flex items-center gap-1.5 transition-all duration-300"
+                onClick={() => setActiveTab("morning")}
+                className={`relative flex items-center gap-1.5 px-5 py-2 rounded-full transition-all duration-400 font-naskh text-sm ${
+                  activeTab === "morning"
+                    ? "bg-primary/10 text-primary border border-primary/20"
+                    : "text-muted-foreground/40 hover:text-muted-foreground/60"
+                }`}
+                aria-current={activeTab === "morning" ? "page" : undefined}
               >
-                <span className="text-sm">🌙</span>
-                <span className={`font-naskh text-xs transition-all duration-300 ${activeTab === "evening" ? "text-foreground" : "text-muted-foreground/40"}`}>
-                  المساء
-                </span>
+                <span className="text-sm">☀️</span>
+                <span>الصباح</span>
               </button>
-
-              <div className="flex items-center gap-1.5">
-                <motion.div
-                  animate={{ scale: activeTab === "morning" ? 1 : 0.6, opacity: activeTab === "morning" ? 1 : 0.3 }}
-                  className="w-2 h-2 rounded-full bg-primary"
-                  transition={{ duration: 0.3 }}
-                />
-                <motion.div
-                  animate={{ scale: activeTab === "evening" ? 1 : 0.6, opacity: activeTab === "evening" ? 1 : 0.3 }}
-                  className="w-2 h-2 rounded-full bg-primary"
-                  transition={{ duration: 0.3 }}
-                />
-              </div>
 
               <button
-                onClick={() => setActiveTab("morning")}
-                className="flex items-center gap-1.5 transition-all duration-300"
+                onClick={() => setActiveTab("evening")}
+                className={`relative flex items-center gap-1.5 px-5 py-2 rounded-full transition-all duration-400 font-naskh text-sm ${
+                  activeTab === "evening"
+                    ? "bg-primary/10 text-primary border border-primary/20"
+                    : "text-muted-foreground/40 hover:text-muted-foreground/60"
+                }`}
+                aria-current={activeTab === "evening" ? "page" : undefined}
               >
-                <span className={`font-naskh text-xs transition-all duration-300 ${activeTab === "morning" ? "text-foreground" : "text-muted-foreground/40"}`}>
-                  الصباح
-                </span>
-                <span className="text-sm">☀️</span>
+                <span className="text-sm">🌙</span>
+                <span>المساء</span>
               </button>
-            </motion.div>
+            </motion.nav>
 
             {/* Swipeable session content */}
             <SwipeableContent activeTab={activeTab} onTabChange={setActiveTab} />
 
-            {/* Verse at bottom */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 2 }}
-              className="font-amiri text-primary/30 text-sm text-center px-6 pb-6 safe-area-bottom leading-relaxed"
-            >
-              ﴿فَاذْكُرُونِي أَذْكُرْكُمْ﴾
-            </motion.p>
+            {/* Footer */}
+            <footer className="px-6 pb-6 safe-area-bottom text-center">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 2 }}
+                className="font-amiri text-primary/25 text-sm leading-relaxed"
+              >
+                ﴿فَاذْكُرُونِي أَذْكُرْكُمْ﴾
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 2.5 }}
+                className="font-naskh text-[10px] text-muted-foreground/20 mt-2"
+              >
+                الأصوات من{" "}
+                <a
+                  href="https://alazkar.today/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-muted-foreground/40 transition-colors"
+                >
+                  أذكار اليوم
+                </a>
+              </motion.p>
+            </footer>
           </motion.div>
         )}
       </AnimatePresence>
@@ -126,10 +140,8 @@ function SwipeableContent({
   const handleDragEnd = (_: any, info: PanInfo) => {
     const threshold = 50;
     if (info.offset.x > threshold) {
-      // Swiped right → in RTL this means go to morning
       onTabChange("morning");
     } else if (info.offset.x < -threshold) {
-      // Swiped left → in RTL this means go to evening
       onTabChange("evening");
     }
   };
@@ -218,10 +230,11 @@ function InlineSession({ type }: { type: SessionType }) {
   if (!currentDhikr) return null;
 
   const isHighCount = currentDhikr.count >= 10;
+  const progress = ((currentIndex) / adhkarList.length) * 100 + (currentRep / currentDhikr.count / adhkarList.length) * 100;
 
   return (
     <div className="flex flex-col h-full">
-      {/* Skip + minimal counter */}
+      {/* Top bar */}
       <div className="flex items-center justify-between px-6 pb-2">
         <button
           onClick={handleSkip}
@@ -229,33 +242,27 @@ function InlineSession({ type }: { type: SessionType }) {
         >
           تخطي ←
         </button>
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground/40 text-[11px] font-naskh">
-            {currentIndex + 1} / {adhkarList.length}
-          </span>
-        </div>
+        <span className="text-muted-foreground/30 text-[11px] font-naskh tabular-nums">
+          {currentIndex + 1} / {adhkarList.length}
+        </span>
       </div>
 
-      {/* Thin progress line */}
+      {/* Progress bar */}
       <div className="px-6">
         <div className="w-full h-[2px] bg-border/20 rounded-full overflow-hidden">
           <motion.div
             className="h-full bg-primary/40 rounded-full"
-            animate={{ width: `${((currentIndex) / adhkarList.length) * 100 + (currentRep / currentDhikr.count / adhkarList.length) * 100}%` }}
+            animate={{ width: `${progress}%` }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           />
         </div>
       </div>
 
-      {/* Main content area */}
+      {/* Main content */}
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-4 overflow-hidden">
         <AnimatePresence mode="wait" custom={direction}>
           {showFadl ? (
-            <DhikrFadl
-              key="fadl"
-              fadl={currentDhikr.fadl}
-              onContinue={moveToNext}
-            />
+            <DhikrFadl key="fadl" fadl={currentDhikr.fadl} onContinue={moveToNext} />
           ) : (
             <motion.div
               key={currentDhikr.id + "-" + currentIndex}
@@ -273,10 +280,10 @@ function InlineSession({ type }: { type: SessionType }) {
                   style={{
                     fontSize:
                       currentDhikr.content.length > 200
-                        ? "1.1rem"
+                        ? "1rem"
                         : currentDhikr.content.length > 100
-                          ? "1.25rem"
-                          : "1.5rem",
+                          ? "1.2rem"
+                          : "1.4rem",
                   }}
                 >
                   {currentDhikr.content}
@@ -284,11 +291,22 @@ function InlineSession({ type }: { type: SessionType }) {
                 <SpeakButton audioFile={currentDhikr.audio} />
               </div>
 
-              {/* Breathing circle interaction */}
+              {/* Count description badge */}
+              {currentDhikr.count > 1 && (
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-[11px] font-naskh text-muted-foreground/30 bg-muted/30 px-3 py-1 rounded-full"
+                >
+                  {currentDhikr.countDescription}
+                </motion.span>
+              )}
+
+              {/* Breathing circle */}
               <div className="flex-shrink-0">
                 <BreathingCircle
                   onComplete={handleRepComplete}
-                  size={isHighCount ? 140 : 160}
+                  size={isHighCount ? 130 : 150}
                   currentRep={currentRep}
                   totalReps={currentDhikr.count}
                 />
@@ -298,10 +316,10 @@ function InlineSession({ type }: { type: SessionType }) {
         </AnimatePresence>
       </div>
 
-      {/* Source at bottom */}
+      {/* Source */}
       <div className="px-6 pb-2">
-        <p className="text-center text-[11px] text-muted-foreground/30 font-naskh leading-relaxed truncate">
-          {currentDhikr.source}
+        <p className="text-center text-[10px] text-muted-foreground/25 font-naskh leading-relaxed truncate">
+          📖 {currentDhikr.source}
         </p>
       </div>
     </div>
@@ -325,10 +343,9 @@ function InlineCompletion({
 
   return (
     <div className="flex-1 flex items-center justify-center p-6">
-      {/* Subtle radial glow */}
       <motion.div
         initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 0.15, scale: 1.5 }}
+        animate={{ opacity: 0.12, scale: 1.5 }}
         transition={{ duration: 2, ease: "easeOut" }}
         className="absolute w-64 h-64 rounded-full bg-primary blur-[100px]"
       />
@@ -339,18 +356,14 @@ function InlineCompletion({
         transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
         className="relative text-center flex flex-col items-center gap-8 max-w-sm"
       >
-        {/* Completion icon */}
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.8, delay: 0.5, type: "spring", damping: 12 }}
-          className="w-16 h-16 rounded-full border-2 border-primary/40 flex items-center justify-center"
+          className="w-20 h-20 rounded-full border-2 border-primary/30 flex items-center justify-center bg-primary/5"
         >
           <motion.svg
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
+            width="32" height="32" viewBox="0 0 24 24" fill="none"
             initial={{ pathLength: 0, opacity: 0 }}
             animate={{ pathLength: 1, opacity: 1 }}
             transition={{ duration: 1, delay: 1.2 }}
@@ -358,9 +371,7 @@ function InlineCompletion({
             <motion.path
               d="M5 13l4 4L19 7"
               stroke="hsl(var(--primary))"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
               transition={{ duration: 0.8, delay: 1.2 }}
@@ -368,33 +379,34 @@ function InlineCompletion({
           </motion.svg>
         </motion.div>
 
-        {/* Main message */}
         <div className="space-y-4">
           <h2 className="font-amiri text-2xl text-foreground">
             {isMorning ? "أتممت أذكار الصباح" : "أتممت أذكار المساء"}
           </h2>
+          <p className="font-naskh text-sm text-muted-foreground/50">
+            جعلها الله في ميزان حسناتك
+          </p>
 
           {showContent && (
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1 }}
-              className="font-amiri text-lg text-primary/80 leading-relaxed"
+              className="font-amiri text-lg text-primary/70 leading-relaxed"
             >
               ﴿أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ﴾
             </motion.p>
           )}
         </div>
 
-        {/* Restart button */}
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 3 }}
+          transition={{ duration: 0.5, delay: 2.5 }}
           onClick={onRestart}
-          className="mt-8 text-muted-foreground/60 text-sm font-naskh hover:text-muted-foreground transition-colors duration-300"
+          className="mt-6 px-6 py-2.5 rounded-full border border-primary/20 text-primary/70 hover:bg-primary/10 text-sm font-naskh transition-all duration-300"
         >
-          إعادة
+          إعادة الأذكار
         </motion.button>
       </motion.div>
     </div>
@@ -436,19 +448,22 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
     <motion.button
       onClick={handlePlay}
       whileTap={{ scale: 0.9 }}
-      className="mt-3 mx-auto flex items-center gap-1.5 text-muted-foreground/40 hover:text-primary/60 transition-colors duration-300 p-2"
+      className={`mt-3 mx-auto flex items-center gap-1.5 transition-colors duration-300 p-2 rounded-full ${
+        isPlaying
+          ? "text-primary/80 bg-primary/10"
+          : "text-muted-foreground/35 hover:text-primary/60"
+      }`}
       aria-label={isPlaying ? "إيقاف" : "استماع"}
     >
       {isPlaying ? (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="6" y="4" width="4" height="16" />
           <rect x="14" y="4" width="4" height="16" />
         </svg>
       ) : (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
           <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
         </svg>
       )}
       <span className="font-naskh text-[11px]">{isPlaying ? "إيقاف" : "استماع"}</span>
