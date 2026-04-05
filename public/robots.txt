@@ -12,3 +12,5 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+Sitemap: https://azkar-daynight.lovable.app/sitemap.xml
