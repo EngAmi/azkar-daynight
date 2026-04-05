@@ -16,7 +16,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="relative flex flex-col min-h-screen bg-background overflow-hidden">
+    <div className="relative flex flex-col min-h-[100dvh] bg-background overflow-hidden">
       {/* Background ambient glow */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
@@ -42,12 +42,12 @@ const Index = () => {
             className="relative z-10 flex flex-col items-center w-full flex-1"
           >
             {/* Header */}
-            <header className="text-center pt-10 pb-2 px-6 safe-area-top">
+            <header className="text-center pt-8 pb-1 px-6 safe-area-top">
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 0.2 }}
-                className="flex flex-col items-center gap-1"
+                className="flex flex-col items-center gap-0.5"
               >
                 <h1 className="font-amiri text-3xl sm:text-4xl text-foreground tracking-wide">
                   الذاكرين
@@ -63,41 +63,28 @@ const Index = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="flex items-center justify-center gap-1 px-6 py-3"
+              className="flex items-center justify-center gap-1 px-6 py-2"
               aria-label="اختر نوع الأذكار"
             >
-              <button
+              <TabButton
+                active={activeTab === "morning"}
                 onClick={() => setActiveTab("morning")}
-                className={`relative flex items-center gap-1.5 px-5 py-2 rounded-full transition-all duration-400 font-naskh text-sm ${
-                  activeTab === "morning"
-                    ? "bg-primary/10 text-primary border border-primary/20"
-                    : "text-muted-foreground/40 hover:text-muted-foreground/60"
-                }`}
-                aria-current={activeTab === "morning" ? "page" : undefined}
-              >
-                <span className="text-sm">☀️</span>
-                <span>الصباح</span>
-              </button>
-
-              <button
+                icon="☀️"
+                label="الصباح"
+              />
+              <TabButton
+                active={activeTab === "evening"}
                 onClick={() => setActiveTab("evening")}
-                className={`relative flex items-center gap-1.5 px-5 py-2 rounded-full transition-all duration-400 font-naskh text-sm ${
-                  activeTab === "evening"
-                    ? "bg-primary/10 text-primary border border-primary/20"
-                    : "text-muted-foreground/40 hover:text-muted-foreground/60"
-                }`}
-                aria-current={activeTab === "evening" ? "page" : undefined}
-              >
-                <span className="text-sm">🌙</span>
-                <span>المساء</span>
-              </button>
+                icon="🌙"
+                label="المساء"
+              />
             </motion.nav>
 
             {/* Swipeable session content */}
             <SwipeableContent activeTab={activeTab} onTabChange={setActiveTab} />
 
             {/* Footer */}
-            <footer className="px-6 pb-6 safe-area-bottom text-center">
+            <footer className="px-6 pb-4 safe-area-bottom text-center">
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -110,7 +97,7 @@ const Index = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 2.5 }}
-                className="font-naskh text-[10px] text-muted-foreground/20 mt-2"
+                className="font-naskh text-[10px] text-muted-foreground/20 mt-1.5"
               >
                 الأصوات من{" "}
                 <a
@@ -129,6 +116,23 @@ const Index = () => {
     </div>
   );
 };
+
+function TabButton({ active, onClick, icon, label }: { active: boolean; onClick: () => void; icon: string; label: string }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`relative flex items-center gap-1.5 px-5 py-2 rounded-full transition-all duration-300 font-naskh text-sm ${
+        active
+          ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_12px_hsl(var(--primary)/0.1)]"
+          : "text-muted-foreground/40 hover:text-muted-foreground/60"
+      }`}
+      aria-current={active ? "page" : undefined}
+    >
+      <span className="text-sm">{icon}</span>
+      <span>{label}</span>
+    </button>
+  );
+}
 
 function SwipeableContent({
   activeTab,
@@ -177,8 +181,14 @@ function InlineSession({ type }: { type: SessionType }) {
   const [isCompleted, setIsCompleted] = useState(false);
   const [showFadl, setShowFadl] = useState(false);
   const [direction, setDirection] = useState(1);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const currentDhikr: Dhikr | undefined = adhkarList[currentIndex];
+
+  // Scroll to top when dhikr changes
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentIndex]);
 
   const handleRepComplete = () => {
     if (!currentDhikr) return;
@@ -258,8 +268,8 @@ function InlineSession({ type }: { type: SessionType }) {
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-4 overflow-hidden">
+      {/* Main content - scrollable */}
+      <div ref={scrollRef} className="flex-1 flex flex-col items-center justify-center px-6 py-4 overflow-y-auto scrollbar-hide">
         <AnimatePresence mode="wait" custom={direction}>
           {showFadl ? (
             <DhikrFadl key="fadl" fadl={currentDhikr.fadl} onContinue={moveToNext} />
@@ -271,7 +281,7 @@ function InlineSession({ type }: { type: SessionType }) {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: direction * -40 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
-              className="w-full max-w-lg flex flex-col items-center gap-6"
+              className="w-full max-w-lg flex flex-col items-center gap-5"
             >
               {/* Dhikr text */}
               <div className="w-full text-center relative">
@@ -303,10 +313,10 @@ function InlineSession({ type }: { type: SessionType }) {
               )}
 
               {/* Breathing circle */}
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 pb-2">
                 <BreathingCircle
                   onComplete={handleRepComplete}
-                  size={isHighCount ? 130 : 150}
+                  size={isHighCount ? 120 : 140}
                   currentRep={currentRep}
                   totalReps={currentDhikr.count}
                 />
