@@ -4,7 +4,9 @@ import { getMorningAdhkar, getEveningAdhkar, AUDIO_BASE_URL, type SessionType, t
 import { BreathingCircle } from "@/components/BreathingCircle";
 import { DhikrFadl } from "@/components/DhikrFadl";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { FontSizeControl } from "@/components/FontSizeControl";
 import { useTheme } from "@/hooks/useTheme";
+import { useFontScale } from "@/hooks/useFontScale";
 
 const Index = () => {
   const [isReady, setIsReady] = useState(false);
@@ -106,7 +108,8 @@ const Index = () => {
                   label="المساء"
                 />
               </div>
-              <div className="absolute end-4">
+              <div className="absolute end-4 flex items-center gap-2">
+                <FontSizeControl />
                 <ThemeToggle />
               </div>
             </motion.nav>
@@ -206,6 +209,7 @@ function InlineSession({ type }: { type: SessionType }) {
     () => (type === "morning" ? getMorningAdhkar() : getEveningAdhkar()),
     [type]
   );
+  const { scale: fontScale } = useFontScale();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentRep, setCurrentRep] = useState(0);
@@ -317,14 +321,15 @@ function InlineSession({ type }: { type: SessionType }) {
               {/* Dhikr text */}
               <div className="w-full text-center relative">
                 <p
-                  className="dhikr-text text-xl sm:text-2xl leading-[2.4] text-balance"
+                  className="dhikr-text text-xl sm:text-2xl leading-[2.4] text-balance transition-[font-size] duration-300"
                   style={{
-                    fontSize:
+                    fontSize: `calc(${
                       currentDhikr.content.length > 200
                         ? "1rem"
                         : currentDhikr.content.length > 100
                           ? "1.2rem"
-                          : "1.4rem",
+                          : "1.4rem"
+                    } * ${fontScale})`,
                   }}
                 >
                   {currentDhikr.content}
