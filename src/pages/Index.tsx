@@ -125,7 +125,14 @@ const Index = () => {
             </motion.nav>
 
             {/* Swipeable session content */}
-            <SwipeableContent activeTab={activeTab} onTabChange={setActiveTab} />
+            <SwipeableContent
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              morningState={morningState}
+              eveningState={eveningState}
+              setMorningState={setMorningState}
+              setEveningState={setEveningState}
+            />
 
             {/* Footer */}
             <footer className="px-6 pb-4 safe-area-bottom text-center">
@@ -181,9 +188,17 @@ function TabButton({ active, onClick, icon, label }: { active: boolean; onClick:
 function SwipeableContent({
   activeTab,
   onTabChange,
+  morningState,
+  eveningState,
+  setMorningState,
+  setEveningState,
 }: {
   activeTab: SessionType;
   onTabChange: (tab: SessionType) => void;
+  morningState: SessionState;
+  eveningState: SessionState;
+  setMorningState: React.Dispatch<React.SetStateAction<SessionState>>;
+  setEveningState: React.Dispatch<React.SetStateAction<SessionState>>;
 }) {
   const handleDragEnd = (_: any, info: PanInfo) => {
     const threshold = 50;
@@ -194,21 +209,23 @@ function SwipeableContent({
     }
   };
 
+  const state = activeTab === "morning" ? morningState : eveningState;
+  const setState = activeTab === "morning" ? setMorningState : setEveningState;
+
   return (
     <div className="flex-1 w-full overflow-hidden">
       <motion.div
-        key={activeTab}
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.2}
         onDragEnd={handleDragEnd}
-        initial={{ opacity: 0, x: activeTab === "morning" ? -30 : 30 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.35, ease: "easeOut" }}
         className="h-full touch-pan-y"
       >
-        <InlineSession type={activeTab} />
+        <InlineSession
+          type={activeTab}
+          state={state}
+          setState={setState}
+        />
       </motion.div>
     </div>
   );
