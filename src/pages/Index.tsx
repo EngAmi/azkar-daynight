@@ -8,11 +8,21 @@ import { FontSizeControl } from "@/components/FontSizeControl";
 import { useTheme } from "@/hooks/useTheme";
 import { useFontScale } from "@/hooks/useFontScale";
 
+interface SessionState {
+  index: number;
+  rep: number;
+  completed: boolean;
+}
+
+const initialSession: SessionState = { index: 0, rep: 0, completed: false };
+
 const Index = () => {
   const [isReady, setIsReady] = useState(false);
   const hour = new Date().getHours();
   const defaultType: SessionType = hour >= 15 ? "evening" : "morning";
   const [activeTab, setActiveTab] = useState<SessionType>(defaultType);
+  const [morningState, setMorningState] = useState<SessionState>(initialSession);
+  const [eveningState, setEveningState] = useState<SessionState>(initialSession);
   const { theme } = useTheme();
   const isLight = theme === "light";
 
@@ -115,7 +125,14 @@ const Index = () => {
             </motion.nav>
 
             {/* Swipeable session content */}
-            <SwipeableContent activeTab={activeTab} onTabChange={setActiveTab} />
+            <SwipeableContent
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              morningState={morningState}
+              eveningState={eveningState}
+              setMorningState={setMorningState}
+              setEveningState={setEveningState}
+            />
 
             {/* Footer */}
             <footer className="px-6 pb-4 safe-area-bottom text-center">
@@ -171,9 +188,17 @@ function TabButton({ active, onClick, icon, label }: { active: boolean; onClick:
 function SwipeableContent({
   activeTab,
   onTabChange,
+  morningState,
+  eveningState,
+  setMorningState,
+  setEveningState,
 }: {
   activeTab: SessionType;
   onTabChange: (tab: SessionType) => void;
+  morningState: SessionState;
+  eveningState: SessionState;
+  setMorningState: React.Dispatch<React.SetStateAction<SessionState>>;
+  setEveningState: React.Dispatch<React.SetStateAction<SessionState>>;
 }) {
   const handleDragEnd = (_: any, info: PanInfo) => {
     const threshold = 50;
@@ -184,46 +209,62 @@ function SwipeableContent({
     }
   };
 
+  const state = activeTab === "morning" ? morningState : eveningState;
+  const setState = activeTab === "morning" ? setMorningState : setEveningState;
+
   return (
     <div className="flex-1 w-full overflow-hidden">
       <motion.div
-        key={activeTab}
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.2}
         onDragEnd={handleDragEnd}
-        initial={{ opacity: 0, x: activeTab === "morning" ? -30 : 30 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.35, ease: "easeOut" }}
         className="h-full touch-pan-y"
       >
-        <InlineSession type={activeTab} />
+        <InlineSession
+          type={activeTab}
+          state={state}
+          setState={setState}
+        />
       </motion.div>
     </div>
   );
 }
 
-function InlineSession({ type }: { type: SessionType }) {
+function InlineSession({
+  type,
+  state,
+  setState,
+}: {
+  type: SessionType;
+  state: SessionState;
+  setState: React.Dispatch<React.SetStateAction<SessionState>>;
+}) {
   const adhkarList = useMemo(
     () => (type === "morning" ? getMorningAdhkar() : getEveningAdhkar()),
     [type]
   );
   const { scale: fontScale } = useFontScale();
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [currentRep, setCurrentRep] = useState(0);
-  const [isCompleted, setIsCompleted] = useState(false);
+  const currentIndex = state.index;
+  const currentRep = state.rep;
+  const isCompleted = state.completed;
   const [showFadl, setShowFadl] = useState(false);
   const [direction, setDirection] = useState(1);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Reset transient UI (fadl/direction) when switching tabs
+  useEffect(() => {
+    setShowFadl(false);
+    setDirection(1);
+  }, [type]);
 
   const currentDhikr: Dhikr | undefined = adhkarList[currentIndex];
 
   // Scroll to top when dhikr changes
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-  }, [currentIndex]);
+  }, [currentIndex, type]);
 
   const handleRepComplete = () => {
     if (!currentDhikr) return;
@@ -235,37 +276,33 @@ function InlineSession({ type }: { type: SessionType }) {
         moveToNext();
       }
     } else {
-      setCurrentRep(newRep);
+      setState((s) => ({ ...s, rep: newRep }));
     }
   };
 
   const moveToNext = () => {
     setShowFadl(false);
     if (currentIndex + 1 >= adhkarList.length) {
-      setIsCompleted(true);
+      setState((s) => ({ ...s, completed: true }));
     } else {
       setDirection(1);
-      setCurrentIndex((prev) => prev + 1);
-      setCurrentRep(0);
+      setState((s) => ({ ...s, index: s.index + 1, rep: 0 }));
     }
   };
 
   const handleSkip = () => {
     setShowFadl(false);
     if (currentIndex + 1 >= adhkarList.length) {
-      setIsCompleted(true);
+      setState((s) => ({ ...s, completed: true }));
     } else {
       setDirection(1);
-      setCurrentIndex((prev) => prev + 1);
-      setCurrentRep(0);
+      setState((s) => ({ ...s, index: s.index + 1, rep: 0 }));
     }
   };
 
   const handleRestart = () => {
-    setCurrentIndex(0);
-    setCurrentRep(0);
-    setIsCompleted(false);
     setShowFadl(false);
+    setState({ index: 0, rep: 0, completed: false });
   };
 
   if (isCompleted) {
