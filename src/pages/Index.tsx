@@ -280,13 +280,16 @@ function InlineSession({ type }: { type: SessionType }) {
   return (
     <div className="flex flex-col h-full">
       {/* Top bar */}
-      <div className="flex items-center justify-between px-6 pb-2">
+      <div className="flex items-center justify-between px-6 pb-2 gap-3">
         <button
           onClick={handleSkip}
           className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-xs font-naskh p-1"
         >
           تخطي ←
         </button>
+
+        <FocusFontControl />
+
         <span className="text-muted-foreground/30 text-[11px] font-naskh tabular-nums">
           {currentIndex + 1} / {adhkarList.length}
         </span>
@@ -518,3 +521,41 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
 }
 
 export default Index;
+
+// Inline, minimal font-size control for Focus Mode
+function FocusFontControl() {
+  const { scale, increase, decrease, reset, canIncrease, canDecrease } = useFontScale();
+  const percent = Math.round(scale * 100);
+
+  return (
+    <div
+      className="flex items-center gap-0.5 rounded-full border border-border/30 bg-background/40 backdrop-blur-sm px-0.5"
+      role="group"
+      aria-label="ضبط حجم الخط"
+    >
+      <button
+        onClick={decrease}
+        disabled={!canDecrease}
+        aria-label="تصغير الخط"
+        className="w-6 h-6 rounded-full flex items-center justify-center text-muted-foreground/40 hover:text-primary disabled:opacity-25 disabled:cursor-not-allowed transition-colors text-xs font-naskh"
+      >
+        ﺍ
+      </button>
+      <button
+        onClick={reset}
+        aria-label={`الحجم الحالي ${percent}٪ — اضغط للإرجاع`}
+        className="font-naskh text-[10px] tabular-nums text-muted-foreground/40 hover:text-primary transition-colors min-w-[26px] text-center px-0.5"
+      >
+        {percent}٪
+      </button>
+      <button
+        onClick={increase}
+        disabled={!canIncrease}
+        aria-label="تكبير الخط"
+        className="w-6 h-6 rounded-full flex items-center justify-center text-muted-foreground/40 hover:text-primary disabled:opacity-25 disabled:cursor-not-allowed transition-colors text-base font-naskh"
+      >
+        ﺍ
+      </button>
+    </div>
+  );
+}
