@@ -3,8 +3,9 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    /* Spiritual midnight palette */
+  :root,
+  .dark {
+    /* Spiritual midnight palette (default) */
     --background: 220 25% 7%;
     --foreground: 38 25% 88%;
 
@@ -49,11 +50,59 @@
     --sidebar-border: 220 15% 18%;
     --sidebar-ring: 38 55% 55%;
   }
+
+  /* Spiritual dawn palette — light/day mode */
+  .light {
+    --background: 38 45% 96%;
+    --foreground: 220 30% 14%;
+
+    --card: 38 50% 98%;
+    --card-foreground: 220 30% 14%;
+
+    --popover: 38 50% 98%;
+    --popover-foreground: 220 30% 14%;
+
+    --primary: 35 60% 38%;
+    --primary-foreground: 38 50% 98%;
+
+    --secondary: 38 35% 90%;
+    --secondary-foreground: 220 25% 20%;
+
+    --muted: 38 30% 92%;
+    --muted-foreground: 220 12% 38%;
+
+    --accent: 38 50% 86%;
+    --accent-foreground: 35 60% 28%;
+
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 38 50% 98%;
+
+    --border: 38 25% 84%;
+    --input: 38 25% 84%;
+    --ring: 35 60% 45%;
+
+    --glow-gold: 38 75% 55%;
+    --glow-soft: 38 40% 80%;
+    --surface-glass: 38 50% 95%;
+
+    --sidebar-background: 38 45% 96%;
+    --sidebar-foreground: 220 30% 14%;
+    --sidebar-primary: 35 60% 38%;
+    --sidebar-primary-foreground: 38 50% 98%;
+    --sidebar-accent: 38 35% 90%;
+    --sidebar-accent-foreground: 220 25% 20%;
+    --sidebar-border: 38 25% 84%;
+    --sidebar-ring: 35 60% 45%;
+  }
 }
 
 @layer base {
   * {
     @apply border-border;
+  }
+
+  html {
+    transition: background-color 0.4s ease, color 0.4s ease;
   }
 
   body {
