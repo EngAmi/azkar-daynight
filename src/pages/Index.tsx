@@ -280,13 +280,16 @@ function InlineSession({ type }: { type: SessionType }) {
   return (
     <div className="flex flex-col h-full">
       {/* Top bar */}
-      <div className="flex items-center justify-between px-6 pb-2">
+      <div className="flex items-center justify-between px-6 pb-2 gap-3">
         <button
           onClick={handleSkip}
           className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-xs font-naskh p-1"
         >
           تخطي ←
         </button>
+
+        <FocusFontControl />
+
         <span className="text-muted-foreground/30 text-[11px] font-naskh tabular-nums">
           {currentIndex + 1} / {adhkarList.length}
         </span>
