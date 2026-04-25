@@ -108,7 +108,8 @@ const Index = () => {
                   label="المساء"
                 />
               </div>
-              <div className="absolute end-4">
+              <div className="absolute end-4 flex items-center gap-2">
+                <FontSizeControl />
                 <ThemeToggle />
               </div>
             </motion.nav>
