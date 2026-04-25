@@ -4,12 +4,15 @@ import { getMorningAdhkar, getEveningAdhkar, AUDIO_BASE_URL, type SessionType, t
 import { BreathingCircle } from "@/components/BreathingCircle";
 import { DhikrFadl } from "@/components/DhikrFadl";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useTheme } from "@/hooks/useTheme";
 
 const Index = () => {
   const [isReady, setIsReady] = useState(false);
   const hour = new Date().getHours();
   const defaultType: SessionType = hour >= 15 ? "evening" : "morning";
   const [activeTab, setActiveTab] = useState<SessionType>(defaultType);
+  const { theme } = useTheme();
+  const isLight = theme === "light";
 
   useEffect(() => {
     const timer = setTimeout(() => setIsReady(true), 300);
@@ -17,20 +20,42 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="relative flex flex-col min-h-[100dvh] bg-background overflow-hidden">
-      {/* Background ambient glow */}
-      <div className="absolute inset-0 pointer-events-none">
+    <div className="relative flex flex-col min-h-[100dvh] bg-background overflow-hidden transition-colors duration-700">
+      {/* Ambient golden glow — adapts gently to day / night */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Primary halo (top) */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.06 }}
-          transition={{ duration: 3 }}
-          className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary blur-[180px]"
+          aria-hidden
+          animate={{ opacity: isLight ? 0.18 : 0.09 }}
+          transition={{ duration: 2.5, ease: "easeInOut" }}
+          className="absolute -top-32 left-1/2 -translate-x-1/2 w-[720px] h-[720px] rounded-full blur-[180px]"
+          style={{
+            background: isLight
+              ? "radial-gradient(circle, hsl(var(--glow-gold) / 0.9) 0%, transparent 65%)"
+              : "radial-gradient(circle, hsl(var(--primary) / 0.8) 0%, transparent 70%)",
+          }}
         />
+        {/* Soft warm wash (bottom) */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.03 }}
-          transition={{ duration: 4, delay: 1 }}
-          className="absolute bottom-1/3 left-1/4 w-[400px] h-[400px] rounded-full bg-glow-soft blur-[150px]"
+          aria-hidden
+          animate={{ opacity: isLight ? 0.12 : 0.05 }}
+          transition={{ duration: 2.5, ease: "easeInOut", delay: 0.2 }}
+          className="absolute -bottom-40 left-1/4 w-[520px] h-[520px] rounded-full blur-[160px]"
+          style={{
+            background: isLight
+              ? "radial-gradient(circle, hsl(38 80% 70% / 0.8) 0%, transparent 70%)"
+              : "radial-gradient(circle, hsl(var(--glow-soft) / 0.9) 0%, transparent 70%)",
+          }}
+        />
+        {/* Subtle accent (side) */}
+        <motion.div
+          aria-hidden
+          animate={{ opacity: isLight ? 0.08 : 0.04 }}
+          transition={{ duration: 3, ease: "easeInOut", delay: 0.4 }}
+          className="absolute top-1/2 right-0 -translate-y-1/2 w-[380px] h-[380px] rounded-full blur-[140px]"
+          style={{
+            background: "radial-gradient(circle, hsl(var(--glow-gold) / 0.6) 0%, transparent 70%)",
+          }}
         />
       </div>
 
