@@ -8,11 +8,21 @@ import { FontSizeControl } from "@/components/FontSizeControl";
 import { useTheme } from "@/hooks/useTheme";
 import { useFontScale } from "@/hooks/useFontScale";
 
+interface SessionState {
+  index: number;
+  rep: number;
+  completed: boolean;
+}
+
+const initialSession: SessionState = { index: 0, rep: 0, completed: false };
+
 const Index = () => {
   const [isReady, setIsReady] = useState(false);
   const hour = new Date().getHours();
   const defaultType: SessionType = hour >= 15 ? "evening" : "morning";
   const [activeTab, setActiveTab] = useState<SessionType>(defaultType);
+  const [morningState, setMorningState] = useState<SessionState>(initialSession);
+  const [eveningState, setEveningState] = useState<SessionState>(initialSession);
   const { theme } = useTheme();
   const isLight = theme === "light";
 
