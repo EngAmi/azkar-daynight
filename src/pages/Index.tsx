@@ -4,6 +4,7 @@ import { getMorningAdhkar, getEveningAdhkar, AUDIO_BASE_URL, type SessionType, t
 import { BreathingCircle } from "@/components/BreathingCircle";
 import { DhikrFadl } from "@/components/DhikrFadl";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useTheme } from "@/hooks/useTheme";
 
 const Index = () => {
   const [isReady, setIsReady] = useState(false);
