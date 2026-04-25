@@ -3,6 +3,7 @@ import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { getMorningAdhkar, getEveningAdhkar, AUDIO_BASE_URL, type SessionType, type Dhikr } from "@/data/adhkar";
 import { BreathingCircle } from "@/components/BreathingCircle";
 import { DhikrFadl } from "@/components/DhikrFadl";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Index = () => {
   const [isReady, setIsReady] = useState(false);
@@ -58,26 +59,31 @@ const Index = () => {
               </motion.div>
             </header>
 
-            {/* Tab switcher */}
+            {/* Tab switcher with theme toggle */}
             <motion.nav
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="flex items-center justify-center gap-1 px-6 py-2"
+              className="flex items-center justify-center gap-2 px-6 py-2 w-full"
               aria-label="اختر نوع الأذكار"
             >
-              <TabButton
-                active={activeTab === "morning"}
-                onClick={() => setActiveTab("morning")}
-                icon="☀️"
-                label="الصباح"
-              />
-              <TabButton
-                active={activeTab === "evening"}
-                onClick={() => setActiveTab("evening")}
-                icon="🌙"
-                label="المساء"
-              />
+              <div className="flex items-center gap-1">
+                <TabButton
+                  active={activeTab === "morning"}
+                  onClick={() => setActiveTab("morning")}
+                  icon="☀️"
+                  label="الصباح"
+                />
+                <TabButton
+                  active={activeTab === "evening"}
+                  onClick={() => setActiveTab("evening")}
+                  icon="🌙"
+                  label="المساء"
+                />
+              </div>
+              <div className="absolute end-4">
+                <ThemeToggle />
+              </div>
             </motion.nav>
 
             {/* Swipeable session content */}
