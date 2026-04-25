@@ -209,6 +209,7 @@ function InlineSession({ type }: { type: SessionType }) {
     () => (type === "morning" ? getMorningAdhkar() : getEveningAdhkar()),
     [type]
   );
+  const { scale: fontScale } = useFontScale();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentRep, setCurrentRep] = useState(0);
@@ -320,14 +321,15 @@ function InlineSession({ type }: { type: SessionType }) {
               {/* Dhikr text */}
               <div className="w-full text-center relative">
                 <p
-                  className="dhikr-text text-xl sm:text-2xl leading-[2.4] text-balance"
+                  className="dhikr-text text-xl sm:text-2xl leading-[2.4] text-balance transition-[font-size] duration-300"
                   style={{
-                    fontSize:
+                    fontSize: `calc(${
                       currentDhikr.content.length > 200
                         ? "1rem"
                         : currentDhikr.content.length > 100
                           ? "1.2rem"
-                          : "1.4rem",
+                          : "1.4rem"
+                    } * ${fontScale})`,
                   }}
                 >
                   {currentDhikr.content}
