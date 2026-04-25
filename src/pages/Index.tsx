@@ -231,26 +231,40 @@ function SwipeableContent({
   );
 }
 
-function InlineSession({ type }: { type: SessionType }) {
+function InlineSession({
+  type,
+  state,
+  setState,
+}: {
+  type: SessionType;
+  state: SessionState;
+  setState: React.Dispatch<React.SetStateAction<SessionState>>;
+}) {
   const adhkarList = useMemo(
     () => (type === "morning" ? getMorningAdhkar() : getEveningAdhkar()),
     [type]
   );
   const { scale: fontScale } = useFontScale();
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [currentRep, setCurrentRep] = useState(0);
-  const [isCompleted, setIsCompleted] = useState(false);
+  const currentIndex = state.index;
+  const currentRep = state.rep;
+  const isCompleted = state.completed;
   const [showFadl, setShowFadl] = useState(false);
   const [direction, setDirection] = useState(1);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Reset transient UI (fadl/direction) when switching tabs
+  useEffect(() => {
+    setShowFadl(false);
+    setDirection(1);
+  }, [type]);
 
   const currentDhikr: Dhikr | undefined = adhkarList[currentIndex];
 
   // Scroll to top when dhikr changes
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-  }, [currentIndex]);
+  }, [currentIndex, type]);
 
   const handleRepComplete = () => {
     if (!currentDhikr) return;
@@ -262,37 +276,33 @@ function InlineSession({ type }: { type: SessionType }) {
         moveToNext();
       }
     } else {
-      setCurrentRep(newRep);
+      setState((s) => ({ ...s, rep: newRep }));
     }
   };
 
   const moveToNext = () => {
     setShowFadl(false);
     if (currentIndex + 1 >= adhkarList.length) {
-      setIsCompleted(true);
+      setState((s) => ({ ...s, completed: true }));
     } else {
       setDirection(1);
-      setCurrentIndex((prev) => prev + 1);
-      setCurrentRep(0);
+      setState((s) => ({ ...s, index: s.index + 1, rep: 0 }));
     }
   };
 
   const handleSkip = () => {
     setShowFadl(false);
     if (currentIndex + 1 >= adhkarList.length) {
-      setIsCompleted(true);
+      setState((s) => ({ ...s, completed: true }));
     } else {
       setDirection(1);
-      setCurrentIndex((prev) => prev + 1);
-      setCurrentRep(0);
+      setState((s) => ({ ...s, index: s.index + 1, rep: 0 }));
     }
   };
 
   const handleRestart = () => {
-    setCurrentIndex(0);
-    setCurrentRep(0);
-    setIsCompleted(false);
     setShowFadl(false);
+    setState({ index: 0, rep: 0, completed: false });
   };
 
   if (isCompleted) {
