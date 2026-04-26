@@ -16,14 +16,38 @@ interface SessionState {
 
 const initialSession: SessionState = { index: 0, rep: 0, completed: false };
 
+const STORAGE_KEY = "adhkar:lastSession:v1";
+
+interface PersistedState {
+  activeTab: SessionType;
+  focusMode: boolean;
+  morningState: SessionState;
+  eveningState: SessionState;
+}
+
+function loadPersisted(): Partial<PersistedState> {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
 const Index = () => {
   const [isReady, setIsReady] = useState(false);
   const hour = new Date().getHours();
   const defaultType: SessionType = hour >= 15 ? "evening" : "morning";
-  const [activeTab, setActiveTab] = useState<SessionType>(defaultType);
-  const [focusMode, setFocusMode] = useState(false);
-  const [morningState, setMorningState] = useState<SessionState>(initialSession);
-  const [eveningState, setEveningState] = useState<SessionState>(initialSession);
+
+  const persisted = useMemo(() => loadPersisted(), []);
+
+  const [activeTab, setActiveTab] = useState<SessionType>(persisted.activeTab ?? defaultType);
+  const [focusMode, setFocusMode] = useState<boolean>(persisted.focusMode ?? false);
+  const [morningState, setMorningState] = useState<SessionState>(persisted.morningState ?? initialSession);
+  const [eveningState, setEveningState] = useState<SessionState>(persisted.eveningState ?? initialSession);
   const { theme } = useTheme();
   const isLight = theme === "light";
 
@@ -36,6 +60,16 @@ const Index = () => {
     const timer = setTimeout(() => setIsReady(true), 300);
     return () => clearTimeout(timer);
   }, []);
+
+  // Persist session state on changes
+  useEffect(() => {
+    try {
+      const data: PersistedState = { activeTab, focusMode, morningState, eveningState };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch {
+      // ignore quota / private mode errors
+    }
+  }, [activeTab, focusMode, morningState, eveningState]);
 
   return (
     <div className="relative flex flex-col min-h-[100dvh] bg-background overflow-hidden transition-colors duration-700">
