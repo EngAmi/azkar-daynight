@@ -172,6 +172,7 @@ function TabButton({ active, onClick, icon, label }: { active: boolean; onClick:
   return (
     <button
       onClick={onClick}
+      aria-pressed={active}
       className={`relative flex items-center gap-1.5 px-5 py-2 rounded-full transition-all duration-300 font-naskh text-sm ${
         active
           ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_12px_hsl(var(--primary)/0.1)]"
@@ -313,6 +314,7 @@ function InlineSession({
 
   const isHighCount = currentDhikr.count >= 10;
   const progress = ((currentIndex) / adhkarList.length) * 100 + (currentRep / currentDhikr.count / adhkarList.length) * 100;
+  const sessionLabel = type === "morning" ? "أذكار الصباح" : "أذكار المساء";
 
   return (
     <div className="flex flex-col h-full">
@@ -341,6 +343,15 @@ function InlineSession({
             transition={{ duration: 0.5, ease: "easeOut" }}
           />
         </div>
+        <motion.p
+          key={type}
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+          className="pt-2 text-center text-[11px] font-naskh text-muted-foreground/35"
+        >
+          {sessionLabel}
+        </motion.p>
       </div>
 
       {/* Main content - scrollable */}
@@ -350,7 +361,7 @@ function InlineSession({
             <DhikrFadl key="fadl" fadl={currentDhikr.fadl} onContinue={moveToNext} />
           ) : (
             <motion.div
-              key={currentDhikr.id + "-" + currentIndex}
+              key={type + "-" + currentDhikr.id + "-" + currentIndex}
               custom={direction}
               initial={{ opacity: 0, x: direction * 40 }}
               animate={{ opacity: 1, x: 0 }}
