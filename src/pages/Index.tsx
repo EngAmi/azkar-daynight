@@ -56,6 +56,17 @@ const Index = () => {
     setFocusMode(true);
   };
 
+  const resetProgress = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // ignore
+    }
+    setMorningState(initialSession);
+    setEveningState(initialSession);
+    setFocusMode(false);
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => setIsReady(true), 300);
     return () => clearTimeout(timer);
