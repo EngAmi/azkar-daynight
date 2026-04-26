@@ -102,43 +102,51 @@ const Index = () => {
               </motion.div>
             </header>
 
-            {/* Top controls: font size + theme */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="flex items-center justify-end gap-2 px-4 pt-1 w-full"
-            >
-              <FontSizeControl />
-              <ThemeToggle />
-            </motion.div>
+            {/* Header chrome — hidden in Focus Mode */}
+            <AnimatePresence initial={false}>
+              {!focusMode && (
+                <motion.div
+                  key="chrome"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                  className="w-full overflow-hidden"
+                >
+                  {/* Top controls: font size + theme */}
+                  <div className="flex items-center justify-end gap-2 px-4 pt-1 w-full">
+                    <FontSizeControl />
+                    <ThemeToggle />
+                  </div>
 
-            {/* Tab switcher */}
-            <motion.nav
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="flex items-center justify-center gap-1 px-4 py-2 w-full"
-              aria-label="اختر نوع الأذكار"
-            >
-              <TabButton
-                active={activeTab === "morning"}
-                onClick={() => setActiveTab("morning")}
-                icon="☀️"
-                label="الصباح"
-              />
-              <TabButton
-                active={activeTab === "evening"}
-                onClick={() => setActiveTab("evening")}
-                icon="🌙"
-                label="المساء"
-              />
-            </motion.nav>
+                  {/* Tab switcher */}
+                  <nav
+                    className="flex items-center justify-center gap-1 px-4 py-2 w-full"
+                    aria-label="اختر نوع الأذكار"
+                  >
+                    <TabButton
+                      active={activeTab === "morning"}
+                      onClick={() => enterFocus("morning")}
+                      icon="☀️"
+                      label="الصباح"
+                    />
+                    <TabButton
+                      active={activeTab === "evening"}
+                      onClick={() => enterFocus("evening")}
+                      icon="🌙"
+                      label="المساء"
+                    />
+                  </nav>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Swipeable session content */}
             <SwipeableContent
               activeTab={activeTab}
               onTabChange={setActiveTab}
+              focusMode={focusMode}
+              onExitFocus={() => setFocusMode(false)}
               morningState={morningState}
               eveningState={eveningState}
               setMorningState={setMorningState}
