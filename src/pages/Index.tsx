@@ -422,6 +422,16 @@ function InlineSession({
 
         <div className="flex items-center gap-2">
           <FocusFontControl />
+          {focusMode && onResetProgress && (
+            <button
+              onClick={onResetProgress}
+              aria-label="نسخ التقدم"
+              title="نَسخ التقدم"
+              className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-[11px] font-naskh px-2 py-1 rounded-full border border-border/30"
+            >
+              نَسخ
+            </button>
+          )}
           {focusMode && onExitFocus && (
             <button
               onClick={onExitFocus}
