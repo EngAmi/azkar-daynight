@@ -56,6 +56,17 @@ const Index = () => {
     setFocusMode(true);
   };
 
+  const resetProgress = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // ignore
+    }
+    setMorningState(initialSession);
+    setEveningState(initialSession);
+    setFocusMode(false);
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => setIsReady(true), 300);
     return () => clearTimeout(timer);
@@ -171,6 +182,19 @@ const Index = () => {
                       label="المساء"
                     />
                   </nav>
+
+                  {/* Quiet reset link */}
+                  {(morningState.index > 0 || morningState.rep > 0 || morningState.completed ||
+                    eveningState.index > 0 || eveningState.rep > 0 || eveningState.completed) && (
+                    <div className="flex justify-center pb-1">
+                      <button
+                        onClick={resetProgress}
+                        className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-[11px] font-naskh px-2 py-1"
+                      >
+                        نَسخ التقدم
+                      </button>
+                    </div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -181,6 +205,7 @@ const Index = () => {
               onTabChange={setActiveTab}
               focusMode={focusMode}
               onExitFocus={() => setFocusMode(false)}
+              onResetProgress={resetProgress}
               morningState={morningState}
               eveningState={eveningState}
               setMorningState={setMorningState}
@@ -244,6 +269,7 @@ function SwipeableContent({
   onTabChange,
   focusMode,
   onExitFocus,
+  onResetProgress,
   morningState,
   eveningState,
   setMorningState,
@@ -253,6 +279,7 @@ function SwipeableContent({
   onTabChange: (tab: SessionType) => void;
   focusMode: boolean;
   onExitFocus: () => void;
+  onResetProgress: () => void;
   morningState: SessionState;
   eveningState: SessionState;
   setMorningState: React.Dispatch<React.SetStateAction<SessionState>>;
@@ -285,6 +312,7 @@ function SwipeableContent({
           setState={setState}
           focusMode={focusMode}
           onExitFocus={onExitFocus}
+          onResetProgress={onResetProgress}
         />
       </motion.div>
     </div>
@@ -297,12 +325,14 @@ function InlineSession({
   setState,
   focusMode,
   onExitFocus,
+  onResetProgress,
 }: {
   type: SessionType;
   state: SessionState;
   setState: React.Dispatch<React.SetStateAction<SessionState>>;
   focusMode?: boolean;
   onExitFocus?: () => void;
+  onResetProgress?: () => void;
 }) {
   const adhkarList = useMemo(
     () => (type === "morning" ? getMorningAdhkar() : getEveningAdhkar()),
@@ -392,6 +422,16 @@ function InlineSession({
 
         <div className="flex items-center gap-2">
           <FocusFontControl />
+          {focusMode && onResetProgress && (
+            <button
+              onClick={onResetProgress}
+              aria-label="نسخ التقدم"
+              title="نَسخ التقدم"
+              className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-[11px] font-naskh px-2 py-1 rounded-full border border-border/30"
+            >
+              نَسخ
+            </button>
+          )}
           {focusMode && onExitFocus && (
             <button
               onClick={onExitFocus}
