@@ -261,10 +261,14 @@ function InlineSession({
   type,
   state,
   setState,
+  focusMode,
+  onExitFocus,
 }: {
   type: SessionType;
   state: SessionState;
   setState: React.Dispatch<React.SetStateAction<SessionState>>;
+  focusMode?: boolean;
+  onExitFocus?: () => void;
 }) {
   const adhkarList = useMemo(
     () => (type === "morning" ? getMorningAdhkar() : getEveningAdhkar()),
