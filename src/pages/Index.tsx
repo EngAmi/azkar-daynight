@@ -356,7 +356,18 @@ function InlineSession({
           تخطي ←
         </button>
 
-        <FocusFontControl />
+        <div className="flex items-center gap-2">
+          <FocusFontControl />
+          {focusMode && onExitFocus && (
+            <button
+              onClick={onExitFocus}
+              aria-label="خروج من وضع التركيز"
+              className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-[11px] font-naskh px-2 py-1 rounded-full border border-border/30"
+            >
+              ⌃
+            </button>
+          )}
+        </div>
 
         <span className="text-muted-foreground/30 text-[11px] font-naskh tabular-nums">
           {currentIndex + 1} / {adhkarList.length}
