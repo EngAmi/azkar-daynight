@@ -178,14 +178,14 @@ function TabButton({ active, onClick, icon, label }: { active: boolean; onClick:
     <button
       onClick={onClick}
       aria-pressed={active}
-      className={`relative flex items-center gap-1.5 px-5 py-2 rounded-full transition-all duration-300 font-naskh text-sm ${
+      className={`relative flex items-center gap-1 px-3 py-1.5 sm:gap-1.5 sm:px-5 sm:py-2 rounded-full transition-all duration-300 font-naskh text-xs sm:text-sm whitespace-nowrap ${
         active
           ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_12px_hsl(var(--primary)/0.1)]"
           : "text-muted-foreground/40 hover:text-muted-foreground/60"
       }`}
       aria-current={active ? "page" : undefined}
     >
-      <span className="text-sm">{icon}</span>
+      <span className="text-[11px] sm:text-sm">{icon}</span>
       <span>{label}</span>
     </button>
   );
