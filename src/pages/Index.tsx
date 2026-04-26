@@ -208,6 +208,8 @@ function TabButton({ active, onClick, icon, label }: { active: boolean; onClick:
 function SwipeableContent({
   activeTab,
   onTabChange,
+  focusMode,
+  onExitFocus,
   morningState,
   eveningState,
   setMorningState,
@@ -215,6 +217,8 @@ function SwipeableContent({
 }: {
   activeTab: SessionType;
   onTabChange: (tab: SessionType) => void;
+  focusMode: boolean;
+  onExitFocus: () => void;
   morningState: SessionState;
   eveningState: SessionState;
   setMorningState: React.Dispatch<React.SetStateAction<SessionState>>;
@@ -245,6 +249,8 @@ function SwipeableContent({
           type={activeTab}
           state={state}
           setState={setState}
+          focusMode={focusMode}
+          onExitFocus={onExitFocus}
         />
       </motion.div>
     </div>
