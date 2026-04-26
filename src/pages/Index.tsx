@@ -21,10 +21,16 @@ const Index = () => {
   const hour = new Date().getHours();
   const defaultType: SessionType = hour >= 15 ? "evening" : "morning";
   const [activeTab, setActiveTab] = useState<SessionType>(defaultType);
+  const [focusMode, setFocusMode] = useState(false);
   const [morningState, setMorningState] = useState<SessionState>(initialSession);
   const [eveningState, setEveningState] = useState<SessionState>(initialSession);
   const { theme } = useTheme();
   const isLight = theme === "light";
+
+  const enterFocus = (tab: SessionType) => {
+    setActiveTab(tab);
+    setFocusMode(true);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => setIsReady(true), 300);
@@ -96,43 +102,51 @@ const Index = () => {
               </motion.div>
             </header>
 
-            {/* Top controls: font size + theme */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="flex items-center justify-end gap-2 px-4 pt-1 w-full"
-            >
-              <FontSizeControl />
-              <ThemeToggle />
-            </motion.div>
+            {/* Header chrome — hidden in Focus Mode */}
+            <AnimatePresence initial={false}>
+              {!focusMode && (
+                <motion.div
+                  key="chrome"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                  className="w-full overflow-hidden"
+                >
+                  {/* Top controls: font size + theme */}
+                  <div className="flex items-center justify-end gap-2 px-4 pt-1 w-full">
+                    <FontSizeControl />
+                    <ThemeToggle />
+                  </div>
 
-            {/* Tab switcher */}
-            <motion.nav
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="flex items-center justify-center gap-1 px-4 py-2 w-full"
-              aria-label="اختر نوع الأذكار"
-            >
-              <TabButton
-                active={activeTab === "morning"}
-                onClick={() => setActiveTab("morning")}
-                icon="☀️"
-                label="الصباح"
-              />
-              <TabButton
-                active={activeTab === "evening"}
-                onClick={() => setActiveTab("evening")}
-                icon="🌙"
-                label="المساء"
-              />
-            </motion.nav>
+                  {/* Tab switcher */}
+                  <nav
+                    className="flex items-center justify-center gap-1 px-4 py-2 w-full"
+                    aria-label="اختر نوع الأذكار"
+                  >
+                    <TabButton
+                      active={activeTab === "morning"}
+                      onClick={() => enterFocus("morning")}
+                      icon="☀️"
+                      label="الصباح"
+                    />
+                    <TabButton
+                      active={activeTab === "evening"}
+                      onClick={() => enterFocus("evening")}
+                      icon="🌙"
+                      label="المساء"
+                    />
+                  </nav>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Swipeable session content */}
             <SwipeableContent
               activeTab={activeTab}
               onTabChange={setActiveTab}
+              focusMode={focusMode}
+              onExitFocus={() => setFocusMode(false)}
               morningState={morningState}
               eveningState={eveningState}
               setMorningState={setMorningState}
@@ -194,6 +208,8 @@ function TabButton({ active, onClick, icon, label }: { active: boolean; onClick:
 function SwipeableContent({
   activeTab,
   onTabChange,
+  focusMode,
+  onExitFocus,
   morningState,
   eveningState,
   setMorningState,
@@ -201,6 +217,8 @@ function SwipeableContent({
 }: {
   activeTab: SessionType;
   onTabChange: (tab: SessionType) => void;
+  focusMode: boolean;
+  onExitFocus: () => void;
   morningState: SessionState;
   eveningState: SessionState;
   setMorningState: React.Dispatch<React.SetStateAction<SessionState>>;
@@ -231,6 +249,8 @@ function SwipeableContent({
           type={activeTab}
           state={state}
           setState={setState}
+          focusMode={focusMode}
+          onExitFocus={onExitFocus}
         />
       </motion.div>
     </div>
@@ -241,10 +261,14 @@ function InlineSession({
   type,
   state,
   setState,
+  focusMode,
+  onExitFocus,
 }: {
   type: SessionType;
   state: SessionState;
   setState: React.Dispatch<React.SetStateAction<SessionState>>;
+  focusMode?: boolean;
+  onExitFocus?: () => void;
 }) {
   const adhkarList = useMemo(
     () => (type === "morning" ? getMorningAdhkar() : getEveningAdhkar()),
@@ -332,7 +356,18 @@ function InlineSession({
           تخطي ←
         </button>
 
-        <FocusFontControl />
+        <div className="flex items-center gap-2">
+          <FocusFontControl />
+          {focusMode && onExitFocus && (
+            <button
+              onClick={onExitFocus}
+              aria-label="خروج من وضع التركيز"
+              className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-[11px] font-naskh px-2 py-1 rounded-full border border-border/30"
+            >
+              ⌃
+            </button>
+          )}
+        </div>
 
         <span className="text-muted-foreground/30 text-[11px] font-naskh tabular-nums">
           {currentIndex + 1} / {adhkarList.length}
