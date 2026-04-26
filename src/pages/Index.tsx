@@ -182,6 +182,19 @@ const Index = () => {
                       label="المساء"
                     />
                   </nav>
+
+                  {/* Quiet reset link */}
+                  {(morningState.index > 0 || morningState.rep > 0 || morningState.completed ||
+                    eveningState.index > 0 || eveningState.rep > 0 || eveningState.completed) && (
+                    <div className="flex justify-center pb-1">
+                      <button
+                        onClick={resetProgress}
+                        className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-[11px] font-naskh px-2 py-1"
+                      >
+                        نَسخ التقدم
+                      </button>
+                    </div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -192,6 +205,7 @@ const Index = () => {
               onTabChange={setActiveTab}
               focusMode={focusMode}
               onExitFocus={() => setFocusMode(false)}
+              onResetProgress={resetProgress}
               morningState={morningState}
               eveningState={eveningState}
               setMorningState={setMorningState}
