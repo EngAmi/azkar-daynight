@@ -96,32 +96,37 @@ const Index = () => {
               </motion.div>
             </header>
 
-            {/* Tab switcher with theme toggle */}
+            {/* Top controls: font size + theme */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="flex items-center justify-end gap-2 px-4 pt-1 w-full"
+            >
+              <FontSizeControl />
+              <ThemeToggle />
+            </motion.div>
+
+            {/* Tab switcher */}
             <motion.nav
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="flex items-center justify-center gap-2 px-6 py-2 w-full"
+              className="flex items-center justify-center gap-1 px-4 py-2 w-full"
               aria-label="اختر نوع الأذكار"
             >
-              <div className="flex items-center gap-1">
-                <TabButton
-                  active={activeTab === "morning"}
-                  onClick={() => setActiveTab("morning")}
-                  icon="☀️"
-                  label="الصباح"
-                />
-                <TabButton
-                  active={activeTab === "evening"}
-                  onClick={() => setActiveTab("evening")}
-                  icon="🌙"
-                  label="المساء"
-                />
-              </div>
-              <div className="absolute end-4 flex items-center gap-2">
-                <FontSizeControl />
-                <ThemeToggle />
-              </div>
+              <TabButton
+                active={activeTab === "morning"}
+                onClick={() => setActiveTab("morning")}
+                icon="☀️"
+                label="الصباح"
+              />
+              <TabButton
+                active={activeTab === "evening"}
+                onClick={() => setActiveTab("evening")}
+                icon="🌙"
+                label="المساء"
+              />
             </motion.nav>
 
             {/* Swipeable session content */}
