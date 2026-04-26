@@ -21,10 +21,16 @@ const Index = () => {
   const hour = new Date().getHours();
   const defaultType: SessionType = hour >= 15 ? "evening" : "morning";
   const [activeTab, setActiveTab] = useState<SessionType>(defaultType);
+  const [focusMode, setFocusMode] = useState(false);
   const [morningState, setMorningState] = useState<SessionState>(initialSession);
   const [eveningState, setEveningState] = useState<SessionState>(initialSession);
   const { theme } = useTheme();
   const isLight = theme === "light";
+
+  const enterFocus = (tab: SessionType) => {
+    setActiveTab(tab);
+    setFocusMode(true);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => setIsReady(true), 300);
