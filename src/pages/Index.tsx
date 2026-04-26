@@ -269,6 +269,7 @@ function SwipeableContent({
   onTabChange,
   focusMode,
   onExitFocus,
+  onResetProgress,
   morningState,
   eveningState,
   setMorningState,
@@ -278,6 +279,7 @@ function SwipeableContent({
   onTabChange: (tab: SessionType) => void;
   focusMode: boolean;
   onExitFocus: () => void;
+  onResetProgress: () => void;
   morningState: SessionState;
   eveningState: SessionState;
   setMorningState: React.Dispatch<React.SetStateAction<SessionState>>;
@@ -310,6 +312,7 @@ function SwipeableContent({
           setState={setState}
           focusMode={focusMode}
           onExitFocus={onExitFocus}
+          onResetProgress={onResetProgress}
         />
       </motion.div>
     </div>
@@ -322,12 +325,14 @@ function InlineSession({
   setState,
   focusMode,
   onExitFocus,
+  onResetProgress,
 }: {
   type: SessionType;
   state: SessionState;
   setState: React.Dispatch<React.SetStateAction<SessionState>>;
   focusMode?: boolean;
   onExitFocus?: () => void;
+  onResetProgress?: () => void;
 }) {
   const adhkarList = useMemo(
     () => (type === "morning" ? getMorningAdhkar() : getEveningAdhkar()),
