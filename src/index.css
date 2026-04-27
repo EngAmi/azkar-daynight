@@ -155,9 +155,24 @@
     font-family: 'Noto Naskh Arabic', serif;
     @apply text-accent-foreground/70 leading-relaxed;
   }
-}
 
-@layer utilities {
+  /* Accessibility mode — enlarges Arabic typography & opens up line spacing */
+  .a11y-mode .dhikr-text {
+    font-size: 1.65rem !important;
+    line-height: 3.1 !important;
+    letter-spacing: 0.02em;
+  }
+  .a11y-mode .fadl-text {
+    font-size: 1.2rem;
+    line-height: 2.4;
+  }
+  .a11y-mode .font-amiri {
+    line-height: 1.9;
+  }
+  .a11y-mode .font-naskh {
+    line-height: 1.9;
+  }
+}
   .text-balance {
     text-wrap: balance;
   }
