@@ -444,7 +444,11 @@ function InlineSession({
         </div>
 
         <span className="text-muted-foreground/30 text-[11px] font-naskh tabular-nums">
-          {currentIndex + 1} / {adhkarList.length}
+          {focusMode ? (
+            <span className="tabular-nums">حاليًا</span>
+          ) : (
+            <>{currentIndex + 1} / {adhkarList.length}</>
+          )}
         </span>
       </div>
 
