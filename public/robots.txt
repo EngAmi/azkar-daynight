@@ -1,16 +1,63 @@
+# robots.txt — الذاكرين (أذكار الصباح والمساء)
+# https://azkar-daynight.lovable.app/
+
+# السماح لجميع محركات البحث بفهرسة كامل الموقع
+User-agent: *
+Allow: /
+Disallow:
+
+# Googlebot
 User-agent: Googlebot
 Allow: /
 
+# Googlebot للصور (لظهور صورة OG في نتائج الصور)
+User-agent: Googlebot-Image
+Allow: /
+
+# Bing
 User-agent: Bingbot
 Allow: /
 
+# DuckDuckGo
+User-agent: DuckDuckBot
+Allow: /
+
+# Yandex
+User-agent: Yandex
+Allow: /
+
+# Apple
+User-agent: Applebot
+Allow: /
+
+# Twitter / X — لمعاينة الروابط
 User-agent: Twitterbot
 Allow: /
 
+# Facebook — لمعاينة الروابط
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
+# WhatsApp — لمعاينة الروابط
+User-agent: WhatsApp
 Allow: /
 
+# LinkedIn
+User-agent: LinkedInBot
+Allow: /
+
+# منع زواحف الذكاء الاصطناعي التي ترهق الخادم دون فائدة فهرسة
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+# خريطة الموقع
 Sitemap: https://azkar-daynight.lovable.app/sitemap.xml
+
+# المضيف المفضّل
+Host: https://azkar-daynight.lovable.app
