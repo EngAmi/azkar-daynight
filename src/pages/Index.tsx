@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { FontSizeControl } from "@/components/FontSizeControl";
 import { useTheme } from "@/hooks/useTheme";
 import { useFontScale } from "@/hooks/useFontScale";
+import { useAccessibility } from "@/hooks/useAccessibility";
 
 interface SessionState {
   index: number;
@@ -158,9 +159,10 @@ const Index = () => {
                   transition={{ duration: 0.5, ease: "easeInOut" }}
                   className="w-full overflow-hidden"
                 >
-                  {/* Top controls: font size + theme */}
+                  {/* Top controls: font size + accessibility + theme */}
                   <div className="flex items-center justify-end gap-2 px-4 pt-1 w-full">
                     <FontSizeControl />
+                    <AccessibilityToggle />
                     <ThemeToggle />
                   </div>
 
@@ -422,6 +424,7 @@ function InlineSession({
 
         <div className="flex items-center gap-2">
           <FocusFontControl />
+          <AccessibilityToggle compact />
           {focusMode && onResetProgress && (
             <button
               onClick={onResetProgress}
@@ -687,6 +690,28 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
 }
 
 export default Index;
+
+// Accessibility toggle — enlarges Arabic typography & opens line spacing
+function AccessibilityToggle({ compact = false }: { compact?: boolean }) {
+  const { a11yMode, toggle } = useAccessibility();
+  const size = compact ? "w-7 h-7 text-[13px]" : "w-9 h-9 text-base";
+
+  return (
+    <button
+      onClick={toggle}
+      aria-pressed={a11yMode}
+      aria-label={a11yMode ? "إيقاف وضع إمكانية الوصول" : "تشغيل وضع إمكانية الوصول"}
+      title={a11yMode ? "وضع إمكانية الوصول مُفعّل" : "وضع إمكانية الوصول"}
+      className={`${size} rounded-full border flex items-center justify-center font-naskh transition-all duration-300 ${
+        a11yMode
+          ? "border-primary/40 bg-primary/10 text-primary shadow-[0_0_10px_hsl(var(--primary)/0.15)]"
+          : "border-border/40 text-muted-foreground/50 hover:text-primary hover:border-primary/30"
+      }`}
+    >
+      <span aria-hidden className="leading-none">ﺍ+</span>
+    </button>
+  );
+}
 
 // Inline, minimal font-size control for Focus Mode
 function FocusFontControl() {
