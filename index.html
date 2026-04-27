@@ -3,63 +3,163 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#0d1117" />
-    <title>الذاكرين — أذكار الصباح والمساء بصوت القارئ | adhkar morning evening</title>
-    <meta name="description" content="تطبيق الذاكرين لأذكار الصباح والمساء الصحيحة مع عداد التسبيح والاستماع بصوت القارئ. أذكار يومية من القرآن والسنة النبوية الشريفة. حصّن يومك بذكر الله." />
-    <meta name="keywords" content="أذكار الصباح, أذكار المساء, أذكار, تسبيح, أدعية, اذكار الصباح والمساء, adhkar, morning adhkar, evening adhkar, الذاكرين, أذكار المسلم, حصن المسلم, azkar" />
-    <link rel="canonical" href="https://azkar-daynight.lovable.app/" />
+    <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f5ecd9" media="(prefers-color-scheme: light)" />
 
-    <meta property="og:title" content="الذاكرين — أذكار الصباح والمساء بصوت القارئ" />
-    <meta property="og:description" content="أذكار الصباح والمساء الصحيحة مع عداد التسبيح والاستماع بصوت القارئ. حصّن يومك بالأذكار من القرآن والسنة." />
+    <!-- Primary SEO -->
+    <title>أذكار الصباح والمساء — الذاكرين | تطبيق الأذكار اليومية بصوت القارئ</title>
+    <meta name="description" content="أذكار الصباح والمساء من القرآن والسنة الصحيحة، مع عدّاد التسبيح والاستماع بصوت القارئ. تطبيق الذاكرين: حصّن يومك بالذكر، بدون تشتيت، بتصميم هادئ يدعم الوضع الليلي والنهاري." />
+    <meta name="keywords" content="أذكار الصباح والمساء, اذكار الصباح, اذكار المساء, حصن المسلم, أذكار المسلم, الأذكار اليومية, تسبيح, دعاء, اذكار بالصوت, تطبيق أذكار, الذاكرين, adhkar, azkar, morning adhkar, evening adhkar, hisn al muslim" />
+    <meta name="author" content="الذاكرين" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="rating" content="general" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <link rel="canonical" href="https://azkar-daynight.lovable.app/" />
+    <link rel="alternate" hreflang="ar" href="https://azkar-daynight.lovable.app/" />
+    <link rel="alternate" hreflang="x-default" href="https://azkar-daynight.lovable.app/" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="أذكار الصباح والمساء — الذاكرين" />
+    <meta property="og:description" content="أذكار الصباح والمساء الصحيحة من القرآن والسنة، مع عدّاد التسبيح والاستماع بصوت القارئ. حصّن يومك بالذكر بتصميم هادئ." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://azkar-daynight.lovable.app/" />
     <meta property="og:locale" content="ar_SA" />
+    <meta property="og:locale:alternate" content="ar_EG" />
     <meta property="og:site_name" content="الذاكرين" />
+    <meta property="og:image" content="https://azkar-daynight.lovable.app/og-image.jpg" />
+    <meta property="og:image:secure_url" content="https://azkar-daynight.lovable.app/og-image.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="الذاكرين — أذكار الصباح والمساء" />
 
+    <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="الذاكرين — أذكار الصباح والمساء بصوت القارئ" />
-    <meta name="twitter:description" content="أذكار الصباح والمساء الصحيحة مع عداد التسبيح والاستماع بصوت القارئ. حصّن يومك بالأذكار." />
+    <meta name="twitter:title" content="أذكار الصباح والمساء — الذاكرين" />
+    <meta name="twitter:description" content="أذكار الصباح والمساء الصحيحة بصوت القارئ مع عدّاد التسبيح. حصّن يومك بالذكر." />
+    <meta name="twitter:image" content="https://azkar-daynight.lovable.app/og-image.jpg" />
+    <meta name="twitter:image:alt" content="الذاكرين — أذكار الصباح والمساء" />
 
+    <!-- iOS / PWA -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="الذاكرين" />
     <meta name="application-name" content="الذاكرين" />
+    <meta name="format-detection" content="telephone=no" />
 
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+    <!-- Structured Data: WebApplication -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "الذاكرين",
-      "alternateName": "Al-Thakirin",
-      "description": "تطبيق أذكار الصباح والمساء الصحيحة مع عداد التسبيح والاستماع بصوت القارئ. أذكار يومية من القرآن والسنة النبوية.",
+      "alternateName": ["Al-Thakirin", "Adhkar", "أذكار الصباح والمساء"],
+      "description": "تطبيق أذكار الصباح والمساء الصحيحة من القرآن والسنة، مع عدّاد التسبيح والاستماع بصوت القارئ.",
       "url": "https://azkar-daynight.lovable.app/",
+      "image": "https://azkar-daynight.lovable.app/og-image.jpg",
       "applicationCategory": "LifestyleApplication",
-      "operatingSystem": "Web",
+      "operatingSystem": "Web, iOS, Android",
+      "browserRequirements": "Requires JavaScript",
       "inLanguage": "ar",
+      "isAccessibleForFree": true,
       "offers": {
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "USD"
       },
-      "about": {
-        "@type": "Thing",
-        "name": "أذكار الصباح والمساء",
-        "description": "الأذكار اليومية من القرآن الكريم والسنة النبوية الشريفة"
-      },
+      "featureList": [
+        "أذكار الصباح كاملة",
+        "أذكار المساء كاملة",
+        "عدّاد تسبيح تفاعلي",
+        "استماع بصوت القارئ",
+        "وضع التركيز الهادئ",
+        "وضع ليلي ونهاري",
+        "حفظ التقدم تلقائيًا",
+        "وضع إمكانية الوصول لتكبير الخط"
+      ],
       "audience": {
         "@type": "Audience",
         "audienceType": "Muslims"
       }
     }
     </script>
+
+    <!-- Structured Data: WebSite + SearchAction -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "الذاكرين",
+      "url": "https://azkar-daynight.lovable.app/",
+      "inLanguage": "ar",
+      "publisher": {
+        "@type": "Organization",
+        "name": "الذاكرين",
+        "url": "https://azkar-daynight.lovable.app/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://azkar-daynight.lovable.app/og-image.jpg"
+        }
+      }
+    }
+    </script>
+
+    <!-- Structured Data: FAQ (يساعد على ظهور رقاقات في نتائج جوجل) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "ما هو وقت أذكار الصباح والمساء؟",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "وقت أذكار الصباح من بعد صلاة الفجر إلى طلوع الشمس، ويمتد إلى الزوال. ووقت أذكار المساء من بعد صلاة العصر إلى غروب الشمس، ويمتد إلى ثلث الليل."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "هل تطبيق الذاكرين مجاني؟",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "نعم، تطبيق الذاكرين مجاني بالكامل، بدون إعلانات، ويعمل من المتصفح مباشرة دون الحاجة إلى تثبيت."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "هل الأذكار صحيحة من القرآن والسنة؟",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "نعم، جميع الأذكار في التطبيق مأخوذة من القرآن الكريم والسنة النبوية الصحيحة، مع ذكر المصدر لكل ذكر."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "هل يحفظ التطبيق تقدّمي في القراءة؟",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "نعم، يحفظ التطبيق تقدّمك تلقائيًا، ويستأنف من حيث توقفت عند فتحه مرة أخرى."
+          }
+        }
+      ]
+    }
+    </script>
   </head>
 
   <body>
     <div id="root"></div>
+    <!-- محتوى احتياطي للزواحف قبل تحميل تطبيق React (لا يظهر للمستخدم) -->
+    <noscript>
+      <h1>أذكار الصباح والمساء — الذاكرين</h1>
+      <p>تطبيق الذاكرين لأذكار الصباح والمساء الصحيحة من القرآن والسنة النبوية، مع عدّاد التسبيح والاستماع بصوت القارئ. يتطلب التطبيق تفعيل JavaScript.</p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

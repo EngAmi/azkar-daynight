@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://azkar-daynight.lovable.app/</loc>
+    <lastmod>2026-04-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://azkar-daynight.lovable.app/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://azkar-daynight.lovable.app/" />
+    <image:image>
+      <image:loc>https://azkar-daynight.lovable.app/og-image.jpg</image:loc>
+      <image:title>الذاكرين — أذكار الصباح والمساء</image:title>
+      <image:caption>تطبيق أذكار الصباح والمساء الصحيحة بصوت القارئ</image:caption>
+    </image:image>
   </url>
 </urlset>
