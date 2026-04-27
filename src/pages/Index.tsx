@@ -133,15 +133,20 @@ const Index = () => {
           >
             {/* Header */}
             <header className="text-center pt-8 pb-1 px-6 safe-area-top">
+              {/* H1 صديق لمحركات البحث — مخفي بصريًا، مقروء للزواحف وقارئات الشاشة */}
+              <h1 className="sr-only">
+                أذكار الصباح والمساء — تطبيق الذاكرين بصوت القارئ
+              </h1>
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 0.2 }}
                 className="flex flex-col items-center gap-0.5"
+                aria-hidden="true"
               >
-                <h1 className="font-amiri text-3xl sm:text-4xl text-foreground tracking-wide">
+                <p className="font-amiri text-3xl sm:text-4xl text-foreground tracking-wide">
                   الذاكرين
-                </h1>
+                </p>
                 <p className="font-naskh text-[11px] text-muted-foreground/40 tracking-widest">
                   حصّن يومك بذكر الله
                 </p>
