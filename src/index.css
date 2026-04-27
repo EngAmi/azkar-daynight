@@ -173,6 +173,8 @@
     line-height: 1.9;
   }
 }
+
+@layer utilities {
   .text-balance {
     text-wrap: balance;
   }
