@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { FontSizeControl } from "@/components/FontSizeControl";
 import { useTheme } from "@/hooks/useTheme";
 import { useFontScale } from "@/hooks/useFontScale";
+import { useAccessibility } from "@/hooks/useAccessibility";
 
 interface SessionState {
   index: number;
@@ -158,9 +159,10 @@ const Index = () => {
                   transition={{ duration: 0.5, ease: "easeInOut" }}
                   className="w-full overflow-hidden"
                 >
-                  {/* Top controls: font size + theme */}
+                  {/* Top controls: font size + accessibility + theme */}
                   <div className="flex items-center justify-end gap-2 px-4 pt-1 w-full">
                     <FontSizeControl />
+                    <AccessibilityToggle />
                     <ThemeToggle />
                   </div>
 
