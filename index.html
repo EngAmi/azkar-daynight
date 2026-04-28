@@ -27,18 +27,23 @@
     <meta property="og:locale" content="ar_SA" />
     <meta property="og:locale:alternate" content="ar_EG" />
     <meta property="og:site_name" content="الذاكرين" />
-    <meta property="og:image" content="https://azkar-daynight.lovable.app/og-image.jpg" />
-    <meta property="og:image:secure_url" content="https://azkar-daynight.lovable.app/og-image.jpg" />
-    <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image" content="https://azkar-daynight.lovable.app/og-image.webp" />
+    <meta property="og:image:secure_url" content="https://azkar-daynight.lovable.app/og-image.webp" />
+    <meta property="og:image:type" content="image/webp" />
+    <meta property="og:image:width" content="1376" />
+    <meta property="og:image:height" content="768" />
     <meta property="og:image:alt" content="الذاكرين — أذكار الصباح والمساء" />
+    <!-- Fallback JPG for platforms that don't support WebP previews -->
+    <meta property="og:image" content="https://azkar-daynight.lovable.app/og-image.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1376" />
+    <meta property="og:image:height" content="768" />
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="أذكار الصباح والمساء — الذاكرين" />
     <meta name="twitter:description" content="أذكار الصباح والمساء الصحيحة بصوت القارئ مع عدّاد التسبيح. حصّن يومك بالذكر." />
-    <meta name="twitter:image" content="https://azkar-daynight.lovable.app/og-image.jpg" />
+    <meta name="twitter:image" content="https://azkar-daynight.lovable.app/og-image.webp" />
     <meta name="twitter:image:alt" content="الذاكرين — أذكار الصباح والمساء" />
 
     <!-- iOS / PWA -->
@@ -48,9 +53,10 @@
     <meta name="application-name" content="الذاكرين" />
     <meta name="format-detection" content="telephone=no" />
 
-    <!-- Fonts -->
+    <!-- Fonts: preconnect + preload critical Amiri 400 to avoid FOUT -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap">
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Structured Data: WebApplication -->
