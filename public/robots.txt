@@ -58,6 +58,3 @@ Disallow: /
 
 # خريطة الموقع
 Sitemap: https://azkar-daynight.lovable.app/sitemap.xml
-
-# المضيف المفضّل
-Host: https://azkar-daynight.lovable.app

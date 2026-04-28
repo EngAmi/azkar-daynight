@@ -25,7 +25,6 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://azkar-daynight.lovable.app/" />
     <meta property="og:locale" content="ar_SA" />
-    <meta property="og:locale:alternate" content="ar_EG" />
     <meta property="og:site_name" content="الذاكرين" />
     <meta property="og:image" content="https://azkar-daynight.lovable.app/og-image.webp" />
     <meta property="og:image:secure_url" content="https://azkar-daynight.lovable.app/og-image.webp" />
@@ -52,6 +51,13 @@
     <meta name="apple-mobile-web-app-title" content="الذاكرين" />
     <meta name="application-name" content="الذاكرين" />
     <meta name="format-detection" content="telephone=no" />
+
+    <!-- Web App Manifest (قابلية التثبيت بدون Service Worker) -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- DNS prefetch لمصدر الأصوات -->
+    <link rel="dns-prefetch" href="https://alazkar.today" />
+    <link rel="preconnect" href="https://alazkar.today" crossorigin />
 
     <!-- Fonts: preconnect + preload critical Amiri 400 to avoid FOUT -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
