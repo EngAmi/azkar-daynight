@@ -69,7 +69,8 @@ const Index = () => {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsReady(true), 300);
+    // شاشة تهدئة قصيرة قبل ظهور الأذكار — تمنح المستخدم لحظة سكون
+    const timer = setTimeout(() => setIsReady(true), 850);
     return () => clearTimeout(timer);
   }, []);
 
