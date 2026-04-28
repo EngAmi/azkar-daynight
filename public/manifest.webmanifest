@@ -1,0 +1,22 @@
+{
+  "name": "الذاكرين — أذكار الصباح والمساء",
+  "short_name": "الذاكرين",
+  "description": "أذكار الصباح والمساء الصحيحة من القرآن والسنة، مع عدّاد التسبيح والاستماع بصوت القارئ.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "ar",
+  "dir": "rtl",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117",
+  "categories": ["lifestyle", "books", "education"],
+  "icons": [
+    {
+      "src": "/og-image.webp",
+      "sizes": "1376x768",
+      "type": "image/webp",
+      "purpose": "any"
+    }
+  ]
+}
