@@ -69,7 +69,8 @@ const Index = () => {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsReady(true), 300);
+    // شاشة تهدئة قصيرة قبل ظهور الأذكار — تمنح المستخدم لحظة سكون
+    const timer = setTimeout(() => setIsReady(true), 850);
     return () => clearTimeout(timer);
   }, []);
 
@@ -122,6 +123,51 @@ const Index = () => {
           }}
         />
       </div>
+
+      {/* شاشة تهدئة قصيرة قبل ظهور الأذكار */}
+      <AnimatePresence>
+        {!isReady && (
+          <motion.div
+            key="calming-intro"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-8 bg-background"
+            aria-hidden="true"
+          >
+            {/* دائرة تتنفس بهدوء */}
+            <motion.div
+              className="relative w-28 h-28 rounded-full"
+              style={{
+                background:
+                  "radial-gradient(circle, hsl(var(--primary) / 0.18) 0%, transparent 70%)",
+              }}
+              animate={{ scale: [1, 1.08, 1], opacity: [0.6, 0.95, 0.6] }}
+              transition={{ duration: 2.4, ease: "easeInOut", repeat: Infinity }}
+            >
+              <div className="absolute inset-3 rounded-full border border-primary/25" />
+              <div className="absolute inset-7 rounded-full bg-primary/10" />
+            </motion.div>
+
+            {/* عناصر skeleton هادئة */}
+            <div className="flex flex-col items-center gap-3 w-64">
+              <div className="h-3 w-32 rounded-full bg-muted/40 animate-pulse" />
+              <div className="h-2 w-48 rounded-full bg-muted/30 animate-pulse" />
+              <div className="h-2 w-40 rounded-full bg-muted/20 animate-pulse" />
+            </div>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="font-amiri text-primary/40 text-sm tracking-wide"
+            >
+              لحظة سكون…
+            </motion.p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {isReady && (
