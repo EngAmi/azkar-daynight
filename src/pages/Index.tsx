@@ -5,6 +5,7 @@ import { BreathingCircle } from "@/components/BreathingCircle";
 import { DhikrFadl } from "@/components/DhikrFadl";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { FontSizeControl } from "@/components/FontSizeControl";
+import { SeoHead } from "@/components/SeoHead";
 import { useTheme } from "@/hooks/useTheme";
 import { useFontScale } from "@/hooks/useFontScale";
 import { useAccessibility } from "@/hooks/useAccessibility";
@@ -95,6 +96,14 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
 
   return (
     <div className="relative flex flex-col min-h-[100dvh] bg-background overflow-hidden transition-colors duration-700">
+      {/* canonical الجذر — يُعاد تطبيقه دائمًا عند العودة لهذه الصفحة لمنع تسرّب canonical من المسارات المخصّصة */}
+      {!pageHeading && (
+        <SeoHead
+          title="أذكار الصباح والمساء — الذاكرين | تطبيق الأذكار اليومية بصوت القارئ"
+          description="أذكار الصباح والمساء من القرآن والسنة الصحيحة، مع عدّاد التسبيح والاستماع بصوت القارئ. تطبيق الذاكرين: حصّن يومك بالذكر، بدون تشتيت."
+          canonical="https://azkar-daynight.lovable.app/"
+        />
+      )}
       {/* Ambient golden glow — adapts gently to day / night */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Primary halo (top) */}
