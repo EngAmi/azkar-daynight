@@ -64,12 +64,23 @@ export function SeoHead({ title, description, canonical, jsonLd }: SeoHeadProps)
     }
     link.setAttribute("href", normalizedCanonical);
 
-    // hreflang ar
+    // hreflang ar + x-default — يضمنان الإشارة إلى نفس canonical للصفحة الحالية
+    // ونحذف أي مكرّرات محتملة لتفادي تعارض alternates لنفس اللغة.
     const upsertAlternate = (hreflang: string) => {
-      let l = document.head.querySelector<HTMLLinkElement>(
+      const all = document.head.querySelectorAll<HTMLLinkElement>(
         `link[rel="alternate"][hreflang="${hreflang}"]`
       );
-      const prev = l?.getAttribute("href") ?? null;
+      let l: HTMLLinkElement | null = null;
+      let prev: string | null = null;
+      all.forEach((node, i) => {
+        if (i === 0) {
+          l = node;
+          prev = node.getAttribute("href");
+        } else {
+          // إزالة المكرّرات لمنع تعارض hreflang لنفس القيمة
+          node.remove();
+        }
+      });
       if (!l) {
         l = document.createElement("link");
         l.setAttribute("rel", "alternate");
