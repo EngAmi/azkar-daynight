@@ -41,9 +41,13 @@ function loadPersisted(): Partial<PersistedState> {
 interface IndexProps {
   /** Force a specific tab on mount — used by /azkar-sabah and /azkar-massa routes */
   initialTab?: SessionType;
+  /** Visible H1 override for dedicated SEO routes */
+  pageHeading?: string;
+  /** Visible subtitle under H1 for dedicated SEO routes */
+  pageSubheading?: string;
 }
 
-const Index = ({ initialTab }: IndexProps = {}) => {
+const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => {
   const [isReady, setIsReady] = useState(false);
   const hour = new Date().getHours();
   const defaultType: SessionType = hour >= 15 ? "evening" : "morning";
@@ -184,24 +188,47 @@ const Index = ({ initialTab }: IndexProps = {}) => {
           >
             {/* Header */}
             <header className="text-center pt-8 pb-1 px-6 safe-area-top">
-              {/* H1 صديق لمحركات البحث — مخفي بصريًا، مقروء للزواحف وقارئات الشاشة */}
-              <h1 className="sr-only">
-                أذكار الصباح والمساء — تطبيق الذاكرين بصوت القارئ
-              </h1>
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.2 }}
-                className="flex flex-col items-center gap-0.5"
-                aria-hidden="true"
-              >
-                <p className="font-amiri text-3xl sm:text-4xl text-foreground tracking-wide">
-                  الذاكرين
-                </p>
-                <p className="font-naskh text-[11px] text-muted-foreground/40 tracking-widest">
-                  حصّن يومك بذكر الله
-                </p>
-              </motion.div>
+              {/* H1 — مرئي على الصفحات المخصّصة (الصباح/المساء)، ومخفي بصريًا على الجذر */}
+              {pageHeading ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1, delay: 0.15 }}
+                  className="flex flex-col items-center gap-1"
+                >
+                  <h1 className="font-amiri text-3xl sm:text-4xl text-foreground tracking-wide">
+                    {pageHeading}
+                  </h1>
+                  {pageSubheading && (
+                    <p className="font-naskh text-xs sm:text-sm text-muted-foreground/60 tracking-wide">
+                      {pageSubheading}
+                    </p>
+                  )}
+                  <p className="font-naskh text-[10px] text-muted-foreground/30 tracking-widest mt-1">
+                    تطبيق الذاكرين
+                  </p>
+                </motion.div>
+              ) : (
+                <>
+                  <h1 className="sr-only">
+                    أذكار الصباح والمساء — تطبيق الذاكرين بصوت القارئ
+                  </h1>
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1, delay: 0.2 }}
+                    className="flex flex-col items-center gap-0.5"
+                    aria-hidden="true"
+                  >
+                    <p className="font-amiri text-3xl sm:text-4xl text-foreground tracking-wide">
+                      الذاكرين
+                    </p>
+                    <p className="font-naskh text-[11px] text-muted-foreground/40 tracking-widest">
+                      حصّن يومك بذكر الله
+                    </p>
+                  </motion.div>
+                </>
+              )}
             </header>
 
             {/* Header chrome — hidden in Focus Mode */}
