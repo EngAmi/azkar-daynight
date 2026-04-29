@@ -38,14 +38,19 @@ function loadPersisted(): Partial<PersistedState> {
   }
 }
 
-const Index = () => {
+interface IndexProps {
+  /** Force a specific tab on mount — used by /azkar-sabah and /azkar-massa routes */
+  initialTab?: SessionType;
+}
+
+const Index = ({ initialTab }: IndexProps = {}) => {
   const [isReady, setIsReady] = useState(false);
   const hour = new Date().getHours();
   const defaultType: SessionType = hour >= 15 ? "evening" : "morning";
 
   const persisted = useMemo(() => loadPersisted(), []);
 
-  const [activeTab, setActiveTab] = useState<SessionType>(persisted.activeTab ?? defaultType);
+  const [activeTab, setActiveTab] = useState<SessionType>(initialTab ?? persisted.activeTab ?? defaultType);
   const [focusMode, setFocusMode] = useState<boolean>(persisted.focusMode ?? false);
   const [morningState, setMorningState] = useState<SessionState>(persisted.morningState ?? initialSession);
   const [eveningState, setEveningState] = useState<SessionState>(persisted.eveningState ?? initialSession);

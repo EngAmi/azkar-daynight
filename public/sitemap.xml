@@ -4,7 +4,7 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://azkar-daynight.lovable.app/</loc>
-    <lastmod>2026-04-27</lastmod>
+    <lastmod>2026-04-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="ar" href="https://azkar-daynight.lovable.app/" />
@@ -14,5 +14,19 @@
       <image:title>الذاكرين — أذكار الصباح والمساء</image:title>
       <image:caption>تطبيق أذكار الصباح والمساء الصحيحة بصوت القارئ</image:caption>
     </image:image>
+  </url>
+  <url>
+    <loc>https://azkar-daynight.lovable.app/azkar-sabah</loc>
+    <lastmod>2026-04-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://azkar-daynight.lovable.app/azkar-sabah" />
+  </url>
+  <url>
+    <loc>https://azkar-daynight.lovable.app/azkar-massa</loc>
+    <lastmod>2026-04-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://azkar-daynight.lovable.app/azkar-massa" />
   </url>
 </urlset>
