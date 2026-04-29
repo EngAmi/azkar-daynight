@@ -7,6 +7,8 @@ import { ThemeProvider } from "@/hooks/useTheme";
 import { FontScaleProvider } from "@/hooks/useFontScale";
 import { AccessibilityProvider } from "@/hooks/useAccessibility";
 import Index from "./pages/Index";
+import AzkarSabah from "./pages/AzkarSabah";
+import AzkarMassa from "./pages/AzkarMassa";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +24,8 @@ const App = () => (
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/azkar-sabah" element={<AzkarSabah />} />
+                <Route path="/azkar-massa" element={<AzkarMassa />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
