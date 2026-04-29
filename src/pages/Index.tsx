@@ -41,9 +41,13 @@ function loadPersisted(): Partial<PersistedState> {
 interface IndexProps {
   /** Force a specific tab on mount — used by /azkar-sabah and /azkar-massa routes */
   initialTab?: SessionType;
+  /** Visible H1 override for dedicated SEO routes */
+  pageHeading?: string;
+  /** Visible subtitle under H1 for dedicated SEO routes */
+  pageSubheading?: string;
 }
 
-const Index = ({ initialTab }: IndexProps = {}) => {
+const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => {
   const [isReady, setIsReady] = useState(false);
   const hour = new Date().getHours();
   const defaultType: SessionType = hour >= 15 ? "evening" : "morning";
