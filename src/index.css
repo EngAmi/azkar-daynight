@@ -5,50 +5,52 @@
 @layer base {
   :root,
   .dark {
-    /* Spiritual midnight palette (default) */
-    --background: 220 25% 7%;
-    --foreground: 38 25% 88%;
+    /* Luxury midnight palette — deep desaturated indigo with warm champagne gold.
+       Tuned for low eye-strain: softer whites, warmer accents, less blue light. */
+    --background: 224 22% 6%;
+    --foreground: 38 22% 86%;
 
-    --card: 220 20% 10%;
-    --card-foreground: 38 25% 88%;
+    --card: 224 20% 9%;
+    --card-foreground: 38 22% 86%;
 
-    --popover: 220 20% 10%;
-    --popover-foreground: 38 25% 88%;
+    --popover: 224 22% 8%;
+    --popover-foreground: 38 22% 86%;
 
-    --primary: 38 55% 55%;
-    --primary-foreground: 220 25% 7%;
+    /* Champagne gold — softer, warmer, less saturated for nighttime comfort */
+    --primary: 38 48% 62%;
+    --primary-foreground: 224 25% 8%;
 
-    --secondary: 220 18% 14%;
-    --secondary-foreground: 38 20% 80%;
+    --secondary: 224 16% 13%;
+    --secondary-foreground: 38 18% 78%;
 
-    --muted: 220 15% 16%;
-    --muted-foreground: 220 10% 50%;
+    --muted: 224 14% 15%;
+    --muted-foreground: 224 8% 58%;
 
-    --accent: 38 35% 22%;
-    --accent-foreground: 38 40% 80%;
+    --accent: 38 28% 20%;
+    --accent-foreground: 38 38% 78%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 50% 38%;
+    --destructive-foreground: 38 30% 92%;
 
-    --border: 220 15% 18%;
-    --input: 220 15% 18%;
-    --ring: 38 55% 55%;
+    --border: 224 14% 17%;
+    --input: 224 14% 17%;
+    --ring: 38 48% 62%;
 
     --radius: 1rem;
 
-    /* Custom spiritual tokens */
-    --glow-gold: 38 70% 50%;
-    --glow-soft: 220 30% 25%;
-    --surface-glass: 220 20% 12%;
+    /* Custom luxury tokens */
+    --glow-gold: 38 65% 58%;
+    --glow-soft: 224 25% 22%;
+    --surface-glass: 224 20% 10%;
 
-    --sidebar-background: 220 25% 7%;
-    --sidebar-foreground: 38 25% 88%;
-    --sidebar-primary: 38 55% 55%;
-    --sidebar-primary-foreground: 220 25% 7%;
-    --sidebar-accent: 220 18% 14%;
-    --sidebar-accent-foreground: 38 20% 80%;
-    --sidebar-border: 220 15% 18%;
-    --sidebar-ring: 38 55% 55%;
+    --sidebar-background: 224 22% 6%;
+    --sidebar-foreground: 38 22% 86%;
+    --sidebar-primary: 38 48% 62%;
+    --sidebar-primary-foreground: 224 25% 8%;
+    --sidebar-accent: 224 16% 13%;
+    --sidebar-accent-foreground: 38 18% 78%;
+    --sidebar-border: 224 14% 17%;
+    --sidebar-ring: 38 48% 62%;
   }
 
   /* Spiritual dawn palette — light/day mode */
