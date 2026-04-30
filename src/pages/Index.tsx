@@ -109,35 +109,35 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
         {/* Primary halo (top) */}
         <motion.div
           aria-hidden
-          animate={{ opacity: isLight ? 0.18 : 0.09 }}
+          animate={{ opacity: isLight ? 0.16 : 0.06 }}
           transition={{ duration: 2.5, ease: "easeInOut" }}
-          className="absolute -top-32 left-1/2 -translate-x-1/2 w-[720px] h-[720px] rounded-full blur-[180px]"
+          className="absolute -top-32 left-1/2 -translate-x-1/2 w-[720px] h-[720px] rounded-full blur-[200px]"
           style={{
             background: isLight
-              ? "radial-gradient(circle, hsl(var(--glow-gold) / 0.9) 0%, transparent 65%)"
-              : "radial-gradient(circle, hsl(var(--primary) / 0.8) 0%, transparent 70%)",
+              ? "radial-gradient(circle, hsl(var(--glow-gold) / 0.7) 0%, transparent 65%)"
+              : "radial-gradient(circle, hsl(var(--primary) / 0.55) 0%, transparent 70%)",
           }}
         />
         {/* Soft warm wash (bottom) */}
         <motion.div
           aria-hidden
-          animate={{ opacity: isLight ? 0.12 : 0.05 }}
+          animate={{ opacity: isLight ? 0.10 : 0.035 }}
           transition={{ duration: 2.5, ease: "easeInOut", delay: 0.2 }}
-          className="absolute -bottom-40 left-1/4 w-[520px] h-[520px] rounded-full blur-[160px]"
+          className="absolute -bottom-40 left-1/4 w-[520px] h-[520px] rounded-full blur-[180px]"
           style={{
             background: isLight
-              ? "radial-gradient(circle, hsl(38 80% 70% / 0.8) 0%, transparent 70%)"
-              : "radial-gradient(circle, hsl(var(--glow-soft) / 0.9) 0%, transparent 70%)",
+              ? "radial-gradient(circle, hsl(36 60% 72% / 0.6) 0%, transparent 70%)"
+              : "radial-gradient(circle, hsl(var(--glow-soft) / 0.7) 0%, transparent 70%)",
           }}
         />
         {/* Subtle accent (side) */}
         <motion.div
           aria-hidden
-          animate={{ opacity: isLight ? 0.08 : 0.04 }}
+          animate={{ opacity: isLight ? 0.07 : 0.025 }}
           transition={{ duration: 3, ease: "easeInOut", delay: 0.4 }}
-          className="absolute top-1/2 right-0 -translate-y-1/2 w-[380px] h-[380px] rounded-full blur-[140px]"
+          className="absolute top-1/2 right-0 -translate-y-1/2 w-[380px] h-[380px] rounded-full blur-[160px]"
           style={{
-            background: "radial-gradient(circle, hsl(var(--glow-gold) / 0.6) 0%, transparent 70%)",
+            background: "radial-gradient(circle, hsl(var(--glow-gold) / 0.4) 0%, transparent 70%)",
           }}
         />
       </div>
