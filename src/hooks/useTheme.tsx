@@ -29,7 +29,7 @@ function applyThemeClass(mode: ThemeMode) {
   }
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) {
-    meta.setAttribute("content", mode === "light" ? "#f7f2e8" : "#0e1320");
+    meta.setAttribute("content", mode === "light" ? "#f7f2e8" : "#0c1018");
   }
 }
 
