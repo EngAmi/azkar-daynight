@@ -488,10 +488,49 @@ function InlineSession({
     }
   };
 
+  const handlePrev = () => {
+    if (currentIndex === 0) return;
+    setShowFadl(false);
+    setDirection(-1);
+    setState((s) => ({ ...s, index: s.index - 1, rep: 0 }));
+  };
+
+  const canGoPrev = currentIndex > 0;
+
   const handleRestart = () => {
     setShowFadl(false);
     setState({ index: 0, rep: 0, completed: false });
   };
+
+  // Keyboard shortcuts: Arrow keys for navigation between adhkar.
+  // RTL-aware: ArrowRight goes to previous (visual right = earlier in RTL),
+  //            ArrowLeft goes to next (visual left = later in RTL).
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      // Ignore when typing in inputs/textareas/contenteditable
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+      if (e.altKey || e.ctrlKey || e.metaKey) return;
+
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        if (canGoPrev) handlePrev();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        handleSkip();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex, adhkarList.length]);
 
   if (isCompleted) {
     return <InlineCompletion sessionType={type} onRestart={handleRestart} />;
@@ -505,14 +544,34 @@ function InlineSession({
 
   return (
     <div className="flex flex-col h-full">
+      {/* Screen-reader live announcement of current dhikr position */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {`الذكر ${currentIndex + 1} من ${adhkarList.length} — ${sessionLabel}`}
+      </div>
+
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 pb-2 gap-3">
-        <button
-          onClick={handleSkip}
-          className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-xs font-naskh p-1"
-        >
-          تخطي ←
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={handlePrev}
+            disabled={!canGoPrev}
+            aria-label="الذكر السابق (سهم يمين)"
+            title="السابق — سهم يمين"
+            aria-keyshortcuts="ArrowRight"
+            className="text-muted-foreground/30 hover:text-muted-foreground/60 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-xs font-naskh p-1"
+          >
+            → السابق
+          </button>
+          <button
+            onClick={handleSkip}
+            aria-label="الذكر التالي (سهم يسار)"
+            title="التالي — سهم يسار"
+            aria-keyshortcuts="ArrowLeft"
+            className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-xs font-naskh p-1"
+          >
+            تخطي ←
+          </button>
+        </div>
 
         <div className="flex items-center gap-2">
           <FocusFontControl />
@@ -538,7 +597,10 @@ function InlineSession({
           )}
         </div>
 
-        <span className="text-muted-foreground/30 text-[11px] font-naskh tabular-nums">
+        <span
+          className="text-muted-foreground/30 text-[11px] font-naskh tabular-nums"
+          aria-hidden="true"
+        >
           {focusMode ? (
             <span className="tabular-nums">حاليًا</span>
           ) : (
