@@ -379,36 +379,20 @@ function SwipeableContent({
   setMorningState: React.Dispatch<React.SetStateAction<SessionState>>;
   setEveningState: React.Dispatch<React.SetStateAction<SessionState>>;
 }) {
-  const handleDragEnd = (_: any, info: PanInfo) => {
-    const threshold = 50;
-    if (info.offset.x > threshold) {
-      onTabChange("morning");
-    } else if (info.offset.x < -threshold) {
-      onTabChange("evening");
-    }
-  };
-
   const state = activeTab === "morning" ? morningState : eveningState;
   const setState = activeTab === "morning" ? setMorningState : setEveningState;
 
   return (
     <div className="flex-1 w-full overflow-hidden">
-      <motion.div
-        drag="x"
-        dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.2}
-        onDragEnd={handleDragEnd}
-        className="h-full touch-pan-y"
-      >
-        <InlineSession
-          type={activeTab}
-          state={state}
-          setState={setState}
-          focusMode={focusMode}
-          onExitFocus={onExitFocus}
-          onResetProgress={onResetProgress}
-        />
-      </motion.div>
+      <InlineSession
+        type={activeTab}
+        state={state}
+        setState={setState}
+        focusMode={focusMode}
+        onExitFocus={onExitFocus}
+        onResetProgress={onResetProgress}
+        onTabChange={onTabChange}
+      />
     </div>
   );
 }
