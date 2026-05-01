@@ -74,6 +74,36 @@ export function DhikrSession({ type, onExit }: DhikrSessionProps) {
 
   const canGoPrevious = currentIndex > 0;
 
+  // Keyboard shortcuts (RTL-aware): ArrowRight = previous, ArrowLeft = next.
+  // Escape exits the session.
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+      if (e.altKey || e.ctrlKey || e.metaKey) return;
+
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        if (canGoPrevious) handlePrevious();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        handleSkip();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        onExit();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [canGoPrevious, handlePrevious, handleSkip, onExit]);
+
   if (isCompleted) {
     return <CompletionScreen sessionType={type} totalAdhkar={adhkarList.length} />;
   }
