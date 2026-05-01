@@ -528,13 +528,54 @@ function InlineSession({
   const progress = ((currentIndex) / adhkarList.length) * 100 + (currentRep / currentDhikr.count / adhkarList.length) * 100;
   const sessionLabel = type === "morning" ? "أذكار الصباح" : "أذكار المساء";
 
+  // Two-tier swipe gesture (RTL-aware):
+  //  • Short/medium horizontal swipe → navigate adhkar (prev/next)
+  //  • Long swipe (>= TAB_THRESHOLD) OR fast flick → switch morning/evening tab
+  // RTL: swiping right (positive offset.x) means "go back" / show previous,
+  //      swiping left (negative offset.x) means "go forward" / show next.
+  const handleSwipe = (_: unknown, info: PanInfo) => {
+    const ADHKAR_THRESHOLD = 60;
+    const TAB_THRESHOLD = 160;
+    const TAB_VELOCITY = 800;
+    const dx = info.offset.x;
+    const vx = info.velocity.x;
+    const absDx = Math.abs(dx);
+    const absVx = Math.abs(vx);
+
+    // Ignore mostly-vertical gestures
+    if (absDx < Math.abs(info.offset.y)) return;
+
+    const wantsTabSwitch = absDx >= TAB_THRESHOLD || absVx >= TAB_VELOCITY;
+    if (wantsTabSwitch && onTabChange) {
+      // Swipe right (positive x) in RTL → previous tab (morning)
+      // Swipe left  (negative x) in RTL → next tab (evening)
+      onTabChange(dx > 0 ? "morning" : "evening");
+      return;
+    }
+
+    if (absDx >= ADHKAR_THRESHOLD) {
+      if (dx > 0) {
+        // Swipe right → previous dhikr (RTL)
+        if (canGoPrev) handlePrev();
+      } else {
+        // Swipe left → next dhikr (RTL)
+        handleSkip();
+      }
+    }
+  };
+
   return (
-    <div className="flex flex-col h-full">
+    <motion.div
+      className="flex flex-col h-full touch-pan-y"
+      drag="x"
+      dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.15}
+      onDragEnd={handleSwipe}
+    >
       {/* Screen-reader live announcement of current dhikr position */}
       <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {`الذكر ${currentIndex + 1} من ${adhkarList.length} — ${sessionLabel}`}
       </div>
-
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 pb-2 gap-3">
         <div className="flex items-center gap-1">
