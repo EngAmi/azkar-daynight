@@ -114,10 +114,17 @@ export function DhikrSession({ type, onExit }: DhikrSessionProps) {
 
   return (
     <div className="fixed inset-0 bg-background flex flex-col z-50">
+      {/* Screen-reader live announcement of current dhikr position */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {`الذكر ${currentIndex + 1} من ${adhkarList.length}`}
+      </div>
+
       {/* Minimal top bar */}
       <div className="flex items-center justify-between px-4 pt-4 pb-2 safe-area-top">
         <button
           onClick={onExit}
+          aria-label="إنهاء الجلسة (Escape)"
+          aria-keyshortcuts="Escape"
           className="text-muted-foreground/40 hover:text-muted-foreground transition-colors text-sm font-naskh p-2"
         >
           إنهاء
@@ -126,16 +133,21 @@ export function DhikrSession({ type, onExit }: DhikrSessionProps) {
           <button
             onClick={handlePrevious}
             disabled={!canGoPrevious}
-            aria-label="الذكر السابق"
+            aria-label="الذكر السابق (سهم يمين)"
+            title="السابق — سهم يمين"
+            aria-keyshortcuts="ArrowRight"
             className="text-muted-foreground/40 hover:text-muted-foreground transition-colors text-sm font-naskh p-2 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-muted-foreground/40"
           >
-            السابق
+            → السابق
           </button>
           <button
             onClick={handleSkip}
+            aria-label="الذكر التالي (سهم يسار)"
+            title="التالي — سهم يسار"
+            aria-keyshortcuts="ArrowLeft"
             className="text-muted-foreground/40 hover:text-muted-foreground transition-colors text-sm font-naskh p-2"
           >
-            تخطي
+            تخطي ←
           </button>
         </div>
       </div>
