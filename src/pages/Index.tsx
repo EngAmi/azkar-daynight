@@ -488,10 +488,49 @@ function InlineSession({
     }
   };
 
+  const handlePrev = () => {
+    if (currentIndex === 0) return;
+    setShowFadl(false);
+    setDirection(-1);
+    setState((s) => ({ ...s, index: s.index - 1, rep: 0 }));
+  };
+
+  const canGoPrev = currentIndex > 0;
+
   const handleRestart = () => {
     setShowFadl(false);
     setState({ index: 0, rep: 0, completed: false });
   };
+
+  // Keyboard shortcuts: Arrow keys for navigation between adhkar.
+  // RTL-aware: ArrowRight goes to previous (visual right = earlier in RTL),
+  //            ArrowLeft goes to next (visual left = later in RTL).
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      // Ignore when typing in inputs/textareas/contenteditable
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+      if (e.altKey || e.ctrlKey || e.metaKey) return;
+
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        if (canGoPrev) handlePrev();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        handleSkip();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex, adhkarList.length]);
 
   if (isCompleted) {
     return <InlineCompletion sessionType={type} onRestart={handleRestart} />;
