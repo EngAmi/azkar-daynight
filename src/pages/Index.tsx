@@ -404,6 +404,7 @@ function InlineSession({
   focusMode,
   onExitFocus,
   onResetProgress,
+  onTabChange,
 }: {
   type: SessionType;
   state: SessionState;
@@ -411,6 +412,7 @@ function InlineSession({
   focusMode?: boolean;
   onExitFocus?: () => void;
   onResetProgress?: () => void;
+  onTabChange?: (tab: SessionType) => void;
 }) {
   const adhkarList = useMemo(
     () => (type === "morning" ? getMorningAdhkar() : getEveningAdhkar()),
