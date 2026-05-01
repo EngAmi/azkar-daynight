@@ -125,6 +125,7 @@
     font-family: 'Amiri', serif;
     @apply text-foreground leading-[2.2] tracking-wide;
     font-feature-settings: "liga" 1;
+    font-size: calc(1em * var(--font-scale, 1));
   }
 
   /* Subtle shimmer on gold elements */
@@ -156,6 +157,7 @@
   .fadl-text {
     font-family: 'Noto Naskh Arabic', serif;
     @apply text-accent-foreground/70 leading-relaxed;
+    font-size: calc(1em * var(--font-scale, 1));
   }
 
   /* Accessibility mode — enlarges Arabic typography & opens up line spacing */

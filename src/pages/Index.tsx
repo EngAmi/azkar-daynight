@@ -587,13 +587,12 @@ function InlineSession({
                 <p
                   className="dhikr-text text-xl sm:text-2xl leading-[2.4] text-balance transition-[font-size] duration-300"
                   style={{
-                    fontSize: `calc(${
+                    fontSize:
                       currentDhikr.content.length > 200
                         ? "1rem"
                         : currentDhikr.content.length > 100
                           ? "1.2rem"
-                          : "1.4rem"
-                    } * ${fontScale})`,
+                          : "1.4rem",
                   }}
                 >
                   {currentDhikr.content}
