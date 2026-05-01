@@ -64,6 +64,16 @@ export function DhikrSession({ type, onExit }: DhikrSessionProps) {
     }
   }, [currentIndex, adhkarList.length]);
 
+  const handlePrevious = useCallback(() => {
+    if (currentIndex === 0) return;
+    setShowFadl(false);
+    setDirection(-1);
+    setCurrentIndex((prev) => prev - 1);
+    setCurrentRep(0);
+  }, [currentIndex]);
+
+  const canGoPrevious = currentIndex > 0;
+
   if (isCompleted) {
     return <CompletionScreen sessionType={type} totalAdhkar={adhkarList.length} />;
   }
@@ -82,12 +92,22 @@ export function DhikrSession({ type, onExit }: DhikrSessionProps) {
         >
           إنهاء
         </button>
-        <button
-          onClick={handleSkip}
-          className="text-muted-foreground/40 hover:text-muted-foreground transition-colors text-sm font-naskh p-2"
-        >
-          تخطي
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={handlePrevious}
+            disabled={!canGoPrevious}
+            aria-label="الذكر السابق"
+            className="text-muted-foreground/40 hover:text-muted-foreground transition-colors text-sm font-naskh p-2 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-muted-foreground/40"
+          >
+            السابق
+          </button>
+          <button
+            onClick={handleSkip}
+            className="text-muted-foreground/40 hover:text-muted-foreground transition-colors text-sm font-naskh p-2"
+          >
+            تخطي
+          </button>
+        </div>
       </div>
 
       {/* Progress */}
