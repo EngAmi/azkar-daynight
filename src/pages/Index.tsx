@@ -544,14 +544,34 @@ function InlineSession({
 
   return (
     <div className="flex flex-col h-full">
+      {/* Screen-reader live announcement of current dhikr position */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {`الذكر ${currentIndex + 1} من ${adhkarList.length} — ${sessionLabel}`}
+      </div>
+
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 pb-2 gap-3">
-        <button
-          onClick={handleSkip}
-          className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-xs font-naskh p-1"
-        >
-          تخطي ←
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={handlePrev}
+            disabled={!canGoPrev}
+            aria-label="الذكر السابق (سهم يمين)"
+            title="السابق — سهم يمين"
+            aria-keyshortcuts="ArrowRight"
+            className="text-muted-foreground/30 hover:text-muted-foreground/60 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-xs font-naskh p-1"
+          >
+            → السابق
+          </button>
+          <button
+            onClick={handleSkip}
+            aria-label="الذكر التالي (سهم يسار)"
+            title="التالي — سهم يسار"
+            aria-keyshortcuts="ArrowLeft"
+            className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-xs font-naskh p-1"
+          >
+            تخطي ←
+          </button>
+        </div>
 
         <div className="flex items-center gap-2">
           <FocusFontControl />
@@ -577,7 +597,10 @@ function InlineSession({
           )}
         </div>
 
-        <span className="text-muted-foreground/30 text-[11px] font-naskh tabular-nums">
+        <span
+          className="text-muted-foreground/30 text-[11px] font-naskh tabular-nums"
+          aria-hidden="true"
+        >
           {focusMode ? (
             <span className="tabular-nums">حاليًا</span>
           ) : (
