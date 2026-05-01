@@ -25,6 +25,9 @@ export function FontScaleProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, String(scale));
+    if (typeof document !== "undefined") {
+      document.documentElement.style.setProperty("--font-scale", String(scale));
+    }
   }, [scale]);
 
   const idx = SCALES.indexOf(scale);
