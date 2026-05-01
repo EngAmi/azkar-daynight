@@ -720,7 +720,7 @@ function InlineSession({
           📖 {currentDhikr.source}
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
