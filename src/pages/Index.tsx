@@ -918,30 +918,34 @@ function FocusFontControl() {
 
   return (
     <div
-      className="flex items-center gap-0.5 rounded-full border border-border/30 bg-background/40 backdrop-blur-sm px-0.5"
+      className="flex items-center gap-0.5 rounded-full border border-border/30 bg-background/40 backdrop-blur-sm px-0.5 touch-manipulation"
       role="group"
       aria-label="ضبط حجم الخط"
+      onPointerDownCapture={(e) => e.stopPropagation()}
     >
       <button
+        type="button"
         onClick={decrease}
         disabled={!canDecrease}
         aria-label="تصغير الخط"
-        className="w-6 h-6 rounded-full flex items-center justify-center text-muted-foreground/40 hover:text-primary disabled:opacity-25 disabled:cursor-not-allowed transition-colors text-xs font-naskh"
+        className="w-9 h-9 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-muted-foreground/40 hover:text-primary active:bg-primary/10 disabled:opacity-25 disabled:cursor-not-allowed transition-colors text-sm sm:text-xs font-naskh touch-manipulation"
       >
         ﺍ
       </button>
       <button
+        type="button"
         onClick={reset}
         aria-label={`الحجم الحالي ${percent}٪ — اضغط للإرجاع`}
-        className="font-naskh text-[10px] tabular-nums text-muted-foreground/40 hover:text-primary transition-colors min-w-[26px] text-center px-0.5"
+        className="font-naskh text-[11px] sm:text-[10px] tabular-nums text-muted-foreground/40 hover:text-primary transition-colors min-w-[32px] sm:min-w-[26px] text-center px-1 py-2 sm:py-0 touch-manipulation"
       >
         {percent}٪
       </button>
       <button
+        type="button"
         onClick={increase}
         disabled={!canIncrease}
         aria-label="تكبير الخط"
-        className="w-6 h-6 rounded-full flex items-center justify-center text-muted-foreground/40 hover:text-primary disabled:opacity-25 disabled:cursor-not-allowed transition-colors text-base font-naskh"
+        className="w-9 h-9 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-muted-foreground/40 hover:text-primary active:bg-primary/10 disabled:opacity-25 disabled:cursor-not-allowed transition-colors text-lg sm:text-base font-naskh touch-manipulation"
       >
         ﺍ
       </button>
