@@ -111,43 +111,22 @@ export function BreathingCircle({
       <motion.button
         onClick={handleTap}
         whileTap={{ scale: 0.92 }}
-        className={`relative z-10 rounded-full flex flex-col items-center justify-center cursor-pointer glass-surface border transition-colors duration-300 ${
-          isLast ? "border-primary/40" : "border-primary/20"
-        }`}
+        className="relative z-10 rounded-full flex flex-col items-center justify-center cursor-pointer glass-surface border border-primary/20"
         style={{ width: size, height: size }}
-        aria-label={
-          isMulti
-            ? `سبّح — متبقّي ${remaining} من ${totalReps}`
-            : "سبّح"
-        }
-        aria-live="polite"
+        aria-label="سبّح"
       >
-        {isMulti ? (
-          <>
-            <AnimatePresence mode="popLayout">
-              <motion.span
-                key={remaining}
-                initial={{ scale: 1.4, opacity: 0, y: -4 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.7, opacity: 0, y: 6 }}
-                transition={{ duration: 0.28, ease: "easeOut" }}
-                className={`font-amiri leading-none tabular-nums ${
-                  isLast ? "text-primary text-3xl" : "text-primary text-2xl"
-                }`}
-              >
-                {remaining}
-              </motion.span>
-            </AnimatePresence>
-            <span className="text-primary/45 font-naskh text-[10px] mt-1 tabular-nums">
-              {currentRep} / {totalReps}
-            </span>
-            <span className="text-primary/35 font-naskh text-[9px] mt-0.5">
-              {isLast ? "آخر تسبيحة" : "متبقّي"}
-            </span>
-          </>
-        ) : (
-          <span className="text-primary/60 font-naskh text-base">سبّح</span>
+        {isMulti && (
+          <motion.span
+            key={currentRep}
+            initial={{ scale: 1.3, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="text-primary font-amiri text-2xl leading-none"
+          >
+            {remaining}
+          </motion.span>
         )}
+        <span className={`text-primary/60 font-naskh ${isMulti ? 'text-[11px] mt-1' : 'text-base'}`}>سبّح</span>
       </motion.button>
     </div>
   );
