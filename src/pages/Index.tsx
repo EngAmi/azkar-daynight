@@ -529,37 +529,54 @@ function InlineSession({
   const progress = ((currentIndex) / adhkarList.length) * 100 + (currentRep / currentDhikr.count / adhkarList.length) * 100;
   const sessionLabel = type === "morning" ? "أذكار الصباح" : "أذكار المساء";
 
-  // Two-tier swipe gesture (RTL-aware):
+  // Two-tier swipe gesture (RTL-aware) with smarter classification:
   //  • Short/medium horizontal swipe → navigate adhkar (prev/next)
-  //  • Long swipe (>= TAB_THRESHOLD) OR fast flick → switch morning/evening tab
-  // RTL: swiping right (positive offset.x) means "go back" / show previous,
-  //      swiping left (negative offset.x) means "go forward" / show next.
+  //  • Long swipe (>= TAB_THRESHOLD) AND clear horizontal intent → switch morning/evening tab
+  // Filtering rules to avoid accidental tab switches:
+  //   - Must be predominantly horizontal (|dx| > |dy| * AXIS_RATIO)
+  //   - Must exceed BOTH a distance AND velocity floor for tab switch
+  //   - Tab switches are debounced (TAB_COOLDOWN_MS) to prevent rapid double-fires
+  //   - Very slow drags (low velocity) never trigger tab switch even if long
   const handleSwipe = (_: unknown, info: PanInfo) => {
     const ADHKAR_THRESHOLD = 60;
-    const TAB_THRESHOLD = 160;
-    const TAB_VELOCITY = 800;
+    const ADHKAR_VELOCITY_MIN = 120; // ignore micro/accidental drags
+    const TAB_THRESHOLD = 220;        // raised: avoid accidental tab switch
+    const TAB_VELOCITY_MIN = 500;     // must be a deliberate flick
+    const AXIS_RATIO = 1.6;           // horizontal must dominate vertical clearly
+    const TAB_COOLDOWN_MS = 700;
+
     const dx = info.offset.x;
+    const dy = info.offset.y;
     const vx = info.velocity.x;
     const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
     const absVx = Math.abs(vx);
 
-    // Ignore mostly-vertical gestures
-    if (absDx < Math.abs(info.offset.y)) return;
+    // Reject mostly-vertical or diagonal-ish gestures (likely scroll intent)
+    if (absDx < absDy * AXIS_RATIO) return;
 
-    const wantsTabSwitch = absDx >= TAB_THRESHOLD || absVx >= TAB_VELOCITY;
-    if (wantsTabSwitch && onTabChange) {
-      // Swipe right (positive x) in RTL → previous tab (morning)
-      // Swipe left  (negative x) in RTL → next tab (evening)
+    // Reject tiny/slow accidental drags entirely
+    if (absDx < ADHKAR_THRESHOLD && absVx < ADHKAR_VELOCITY_MIN) return;
+
+    // Tab switch requires BOTH long distance AND meaningful velocity
+    const wantsTabSwitch =
+      onTabChange &&
+      absDx >= TAB_THRESHOLD &&
+      absVx >= TAB_VELOCITY_MIN;
+
+    if (wantsTabSwitch) {
+      const now = Date.now();
+      if (now - lastTabSwitchAt.current < TAB_COOLDOWN_MS) return; // debounce
+      lastTabSwitchAt.current = now;
+      // RTL: swipe right (positive) → previous tab (morning); left → evening
       onTabChange(dx > 0 ? "morning" : "evening");
       return;
     }
 
     if (absDx >= ADHKAR_THRESHOLD) {
       if (dx > 0) {
-        // Swipe right → previous dhikr (RTL)
         if (canGoPrev) handlePrev();
       } else {
-        // Swipe left → next dhikr (RTL)
         handleSkip();
       }
     }
