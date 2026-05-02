@@ -24,23 +24,14 @@ export function BreathingCircle({
   const [ripples, setRipples] = useState<number[]>([]);
   const rippleIdRef = useRef(0);
 
-  // Smart counter logic
-  const remaining = Math.max(totalReps - currentRep, 0);
-  const isMulti = totalReps > 1;
-  const isLast = isMulti && remaining === 1;
-  const progress = isMulti ? Math.min(currentRep / totalReps, 1) : 0;
-
   const handleTap = useCallback(() => {
-    // Smarter haptic: stronger pulse on the final rep, softer on the way
     if (navigator.vibrate) {
-      if (isLast) navigator.vibrate([20, 40, 60]);
-      else navigator.vibrate(autoCycle ? 25 : 40);
+      navigator.vibrate(autoCycle ? 30 : 50);
     }
     setRipples((prev) => [...prev, rippleIdRef.current++]);
     onComplete();
-  }, [onComplete, autoCycle, isLast]);
+  }, [onComplete, autoCycle]);
 
-  // Clean up old ripples
   useEffect(() => {
     if (ripples.length > 3) {
       const timer = setTimeout(() => {
@@ -49,12 +40,6 @@ export function BreathingCircle({
       return () => clearTimeout(timer);
     }
   }, [ripples]);
-
-  // SVG progress ring geometry
-  const stroke = 2;
-  const radius = (size - stroke) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const dashOffset = circumference * (1 - progress);
 
   return (
     <div className="relative flex items-center justify-center select-none">
@@ -73,40 +58,6 @@ export function BreathingCircle({
         ))}
       </AnimatePresence>
 
-      {/* Smart progress ring (only when multiple reps) */}
-      {isMulti && (
-        <svg
-          className="absolute -rotate-90"
-          width={size}
-          height={size}
-          aria-hidden="true"
-        >
-          {/* Track */}
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            fill="none"
-            stroke="hsl(var(--primary) / 0.08)"
-            strokeWidth={stroke}
-          />
-          {/* Progress */}
-          <motion.circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            fill="none"
-            stroke="hsl(var(--primary) / 0.55)"
-            strokeWidth={stroke}
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            initial={false}
-            animate={{ strokeDashoffset: dashOffset }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-          />
-        </svg>
-      )}
-
       {/* Touch target */}
       <motion.button
         onClick={handleTap}
@@ -115,7 +66,7 @@ export function BreathingCircle({
         style={{ width: size, height: size }}
         aria-label="سبّح"
       >
-        {isMulti && (
+        {totalReps > 1 && (
           <motion.span
             key={currentRep}
             initial={{ scale: 1.3, opacity: 0 }}
@@ -123,10 +74,10 @@ export function BreathingCircle({
             transition={{ duration: 0.3 }}
             className="text-primary font-amiri text-2xl leading-none"
           >
-            {remaining}
+            {totalReps - currentRep}
           </motion.span>
         )}
-        <span className={`text-primary/60 font-naskh ${isMulti ? 'text-[11px] mt-1' : 'text-base'}`}>سبّح</span>
+        <span className={`text-primary/60 font-naskh ${totalReps > 1 ? 'text-[11px] mt-1' : 'text-base'}`}>سبّح</span>
       </motion.button>
     </div>
   );
