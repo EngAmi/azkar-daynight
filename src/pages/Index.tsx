@@ -629,7 +629,7 @@ function InlineSession({
           </button>
           {canGoPrev && (
             <button
-              onClick={handleRestart}
+              onClick={() => setConfirmRestart(true)}
               aria-label="العودة لبداية الأذكار"
               title="من البداية"
               className="text-accent-foreground bg-accent hover:bg-accent/80 active:scale-95 transition-all text-[11px] font-naskh px-3 py-1.5 rounded-full border border-primary/30"
