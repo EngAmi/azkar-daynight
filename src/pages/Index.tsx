@@ -9,6 +9,16 @@ import { SeoHead } from "@/components/SeoHead";
 import { useTheme } from "@/hooks/useTheme";
 import { useFontScale } from "@/hooks/useFontScale";
 import { useAccessibility } from "@/hooks/useAccessibility";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface SessionState {
   index: number;
@@ -427,6 +437,7 @@ function InlineSession({
   const [direction, setDirection] = useState(1);
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastTabSwitchAt = useRef<number>(0);
+  const [confirmRestart, setConfirmRestart] = useState(false);
 
   // Reset transient UI (fadl/direction) when switching tabs
   useEffect(() => {
@@ -618,7 +629,7 @@ function InlineSession({
           </button>
           {canGoPrev && (
             <button
-              onClick={handleRestart}
+              onClick={() => setConfirmRestart(true)}
               aria-label="العودة لبداية الأذكار"
               title="من البداية"
               className="text-accent-foreground bg-accent hover:bg-accent/80 active:scale-95 transition-all text-[11px] font-naskh px-3 py-1.5 rounded-full border border-primary/30"
@@ -748,6 +759,29 @@ function InlineSession({
           📖 {currentDhikr.source}
         </p>
       </div>
+      <AlertDialog open={confirmRestart} onOpenChange={setConfirmRestart}>
+        <AlertDialogContent className="glass-surface border-primary/20 max-w-sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-amiri text-xl text-center text-primary">
+              العودة لبداية الأذكار؟
+            </AlertDialogTitle>
+            <AlertDialogDescription className="font-naskh text-center text-muted-foreground/80 leading-relaxed">
+              سيتم إعادة التقدّم الحالي إلى أوّل ذكر. هل تودّ المتابعة؟
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="sm:justify-center gap-2">
+            <AlertDialogCancel className="font-naskh rounded-full border-border/40">
+              تراجع
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleRestart}
+              className="font-naskh rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              نعم، ابدأ من جديد
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </motion.div>
   );
 }
