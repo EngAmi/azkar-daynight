@@ -760,7 +760,15 @@ function InlineSession({
         </p>
       </div>
       <AlertDialog open={confirmRestart} onOpenChange={setConfirmRestart}>
-        <AlertDialogContent className="glass-surface border-primary/20 max-w-sm">
+        <AlertDialogContent
+          className="glass-surface border-primary/20 max-w-sm rounded-2xl
+            duration-500 ease-out
+            data-[state=open]:animate-in data-[state=closed]:animate-out
+            data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0
+            data-[state=open]:zoom-in-[0.98] data-[state=closed]:zoom-out-[0.98]
+            data-[state=open]:slide-in-from-top-[2%] data-[state=closed]:slide-out-to-top-[2%]
+            [&~div[data-state]]:!duration-500"
+        >
           <AlertDialogHeader>
             <AlertDialogTitle className="font-amiri text-xl text-center text-primary">
               العودة لبداية الأذكار؟
