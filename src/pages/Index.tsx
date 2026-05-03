@@ -759,6 +759,29 @@ function InlineSession({
           📖 {currentDhikr.source}
         </p>
       </div>
+      <AlertDialog open={confirmRestart} onOpenChange={setConfirmRestart}>
+        <AlertDialogContent className="glass-surface border-primary/20 max-w-sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-amiri text-xl text-center text-primary">
+              العودة لبداية الأذكار؟
+            </AlertDialogTitle>
+            <AlertDialogDescription className="font-naskh text-center text-muted-foreground/80 leading-relaxed">
+              سيتم إعادة التقدّم الحالي إلى أوّل ذكر. هل تودّ المتابعة؟
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="sm:justify-center gap-2">
+            <AlertDialogCancel className="font-naskh rounded-full border-border/40">
+              تراجع
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleRestart}
+              className="font-naskh rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              نعم، ابدأ من جديد
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </motion.div>
   );
 }
