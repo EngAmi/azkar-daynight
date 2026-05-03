@@ -616,6 +616,16 @@ function InlineSession({
           >
             تخطي ←
           </button>
+          {canGoPrev && (
+            <button
+              onClick={handleRestart}
+              aria-label="العودة لبداية الأذكار"
+              title="من البداية"
+              className="text-muted-foreground/30 hover:text-primary/70 active:scale-95 transition-all text-[11px] font-naskh px-2 py-1 rounded-full border border-border/30"
+            >
+              ↺ من البداية
+            </button>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
