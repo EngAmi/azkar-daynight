@@ -916,6 +916,13 @@ function FocusFontControl() {
   const { scale, increase, decrease, reset, canIncrease, canDecrease } = useFontScale();
   const percent = Math.round(scale * 100);
 
+  const withFeedback = (fn: () => void) => () => {
+    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+      try { navigator.vibrate(10); } catch {}
+    }
+    fn();
+  };
+
   return (
     <div
       className="flex items-center gap-0.5 rounded-full border border-border/30 bg-background/40 backdrop-blur-sm px-0.5 touch-manipulation"
@@ -925,27 +932,27 @@ function FocusFontControl() {
     >
       <button
         type="button"
-        onClick={decrease}
+        onClick={withFeedback(decrease)}
         disabled={!canDecrease}
         aria-label="تصغير الخط"
-        className="w-9 h-9 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-muted-foreground/40 hover:text-primary active:bg-primary/10 disabled:opacity-25 disabled:cursor-not-allowed transition-colors text-sm sm:text-xs font-naskh touch-manipulation"
+        className="w-9 h-9 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-muted-foreground/40 hover:text-primary active:bg-primary/20 active:scale-90 active:text-primary disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-150 text-sm sm:text-xs font-naskh touch-manipulation"
       >
         ﺍ
       </button>
       <button
         type="button"
-        onClick={reset}
+        onClick={withFeedback(reset)}
         aria-label={`الحجم الحالي ${percent}٪ — اضغط للإرجاع`}
-        className="font-naskh text-[11px] sm:text-[10px] tabular-nums text-muted-foreground/40 hover:text-primary transition-colors min-w-[32px] sm:min-w-[26px] text-center px-1 py-2 sm:py-0 touch-manipulation"
+        className="font-naskh text-[11px] sm:text-[10px] tabular-nums text-muted-foreground/40 hover:text-primary active:scale-90 active:text-primary transition-all duration-150 min-w-[32px] sm:min-w-[26px] text-center px-1 py-2 sm:py-0 touch-manipulation"
       >
         {percent}٪
       </button>
       <button
         type="button"
-        onClick={increase}
+        onClick={withFeedback(increase)}
         disabled={!canIncrease}
         aria-label="تكبير الخط"
-        className="w-9 h-9 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-muted-foreground/40 hover:text-primary active:bg-primary/10 disabled:opacity-25 disabled:cursor-not-allowed transition-colors text-lg sm:text-base font-naskh touch-manipulation"
+        className="w-9 h-9 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-muted-foreground/40 hover:text-primary active:bg-primary/20 active:scale-90 active:text-primary disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-150 text-lg sm:text-base font-naskh touch-manipulation"
       >
         ﺍ
       </button>
