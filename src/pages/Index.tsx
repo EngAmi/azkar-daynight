@@ -437,6 +437,7 @@ function InlineSession({
   const [direction, setDirection] = useState(1);
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastTabSwitchAt = useRef<number>(0);
+  const [confirmRestart, setConfirmRestart] = useState(false);
 
   // Reset transient UI (fadl/direction) when switching tabs
   useEffect(() => {
