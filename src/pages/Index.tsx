@@ -596,14 +596,14 @@ function InlineSession({
       </div>
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 pb-2 gap-3">
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           <button
             onClick={handlePrev}
             disabled={!canGoPrev}
             aria-label="الذكر السابق (سهم يمين)"
             title="السابق — سهم يمين"
             aria-keyshortcuts="ArrowRight"
-            className="text-muted-foreground/30 hover:text-muted-foreground/60 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-xs font-naskh p-1"
+            className="text-primary hover:text-primary-foreground hover:bg-primary active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs font-naskh px-3 py-1.5 rounded-full border border-primary/40 bg-primary/10"
           >
             → السابق
           </button>
@@ -612,7 +612,7 @@ function InlineSession({
             aria-label="الذكر التالي (سهم يسار)"
             title="التالي — سهم يسار"
             aria-keyshortcuts="ArrowLeft"
-            className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-xs font-naskh p-1"
+            className="text-primary-foreground bg-primary hover:bg-primary/90 active:scale-95 transition-all text-xs font-naskh px-3 py-1.5 rounded-full border border-primary shadow-sm shadow-primary/30"
           >
             تخطي ←
           </button>
@@ -621,7 +621,7 @@ function InlineSession({
               onClick={handleRestart}
               aria-label="العودة لبداية الأذكار"
               title="من البداية"
-              className="text-muted-foreground/30 hover:text-primary/70 active:scale-95 transition-all text-[11px] font-naskh px-2 py-1 rounded-full border border-border/30"
+              className="text-accent-foreground bg-accent hover:bg-accent/80 active:scale-95 transition-all text-[11px] font-naskh px-3 py-1.5 rounded-full border border-primary/30"
             >
               ↺ من البداية
             </button>
