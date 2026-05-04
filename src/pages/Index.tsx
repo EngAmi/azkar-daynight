@@ -714,11 +714,11 @@ function InlineSession({
                 </motion.span>
               )}
 
-              {/* Breathing circle */}
-              <div className="flex-shrink-0 pb-2">
+              {/* Breathing circle — slightly larger on mobile for easy thumb tapping */}
+              <div className="flex-shrink-0 pb-1">
                 <BreathingCircle
                   onComplete={handleRepComplete}
-                  size={isHighCount ? 120 : 140}
+                  size={isHighCount ? 150 : 170}
                   currentRep={currentRep}
                   totalReps={currentDhikr.count}
                 />
@@ -729,10 +729,45 @@ function InlineSession({
       </div>
 
       {/* Source */}
-      <div className="px-6 pb-2">
+      <div className="px-6 pb-1.5">
         <p className="text-center text-[10px] text-muted-foreground/25 font-naskh leading-relaxed truncate">
           📖 {currentDhikr.source}
         </p>
+      </div>
+
+      {/* Sticky bottom action bar — primary navigation, thumb-reachable on mobile */}
+      <div className="px-4 sm:px-6 pb-3 pt-1 safe-area-bottom">
+        <div className="mx-auto max-w-lg flex items-center justify-between gap-2">
+          <button
+            onClick={handlePrev}
+            disabled={!canGoPrev}
+            aria-label="الذكر السابق (سهم يمين)"
+            title="السابق — سهم يمين"
+            aria-keyshortcuts="ArrowRight"
+            className="min-h-[44px] flex-1 sm:flex-initial text-primary hover:text-primary-foreground hover:bg-primary active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-sm font-naskh px-4 py-2.5 rounded-full border border-primary/40 bg-primary/10 touch-manipulation"
+          >
+            → السابق
+          </button>
+          {canGoPrev && (
+            <button
+              onClick={() => setConfirmRestart(true)}
+              aria-label="العودة لبداية الأذكار"
+              title="من البداية"
+              className="min-h-[44px] min-w-[44px] text-accent-foreground bg-accent/70 hover:bg-accent active:scale-95 transition-all text-base font-naskh px-3 py-2.5 rounded-full border border-primary/20 flex items-center justify-center touch-manipulation"
+            >
+              ↺
+            </button>
+          )}
+          <button
+            onClick={handleSkip}
+            aria-label="الذكر التالي (سهم يسار)"
+            title="التالي — سهم يسار"
+            aria-keyshortcuts="ArrowLeft"
+            className="min-h-[44px] flex-1 sm:flex-initial text-primary-foreground bg-primary hover:bg-primary/90 active:scale-95 transition-all text-sm font-naskh px-4 py-2.5 rounded-full border border-primary shadow-md shadow-primary/30 touch-manipulation"
+          >
+            تخطي ←
+          </button>
+        </div>
       </div>
       <AlertDialog open={confirmRestart} onOpenChange={setConfirmRestart}>
         <AlertDialogContent
