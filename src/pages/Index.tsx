@@ -319,7 +319,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
             />
 
             {/* Footer */}
-            <footer className="px-6 pb-4 safe-area-bottom text-center">
+            <footer className={`px-6 pb-4 safe-area-bottom text-center ${focusMode ? "hidden sm:block" : ""}`}>
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
