@@ -206,7 +206,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
             className="relative z-10 flex flex-col items-center w-full flex-1"
           >
             {/* Header */}
-            <header className="text-center pt-8 pb-1 px-6 safe-area-top">
+            <header className={`text-center px-6 safe-area-top ${focusMode ? "pt-3 pb-0.5" : "pt-6 sm:pt-8 pb-1"}`}>
               {/* H1 — مرئي على الصفحات المخصّصة (الصباح/المساء)، ومخفي بصريًا على الجذر */}
               {pageHeading ? (
                 <motion.div
@@ -239,12 +239,14 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                     className="flex flex-col items-center gap-0.5"
                     aria-hidden="true"
                   >
-                    <p className="font-amiri text-3xl sm:text-4xl text-foreground tracking-wide">
+                    <p className={`font-amiri text-foreground tracking-wide transition-all ${focusMode ? "text-xl sm:text-2xl" : "text-3xl sm:text-4xl"}`}>
                       الذاكرين
                     </p>
-                    <p className="font-naskh text-[11px] text-muted-foreground/40 tracking-widest">
-                      حصّن يومك بذكر الله
-                    </p>
+                    {!focusMode && (
+                      <p className="font-naskh text-[11px] text-muted-foreground/40 tracking-widest">
+                        حصّن يومك بذكر الله
+                      </p>
+                    )}
                   </motion.div>
                 </>
               )}
@@ -317,7 +319,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
             />
 
             {/* Footer */}
-            <footer className="px-6 pb-4 safe-area-bottom text-center">
+            <footer className={`px-6 pb-4 safe-area-bottom text-center ${focusMode ? "hidden sm:block" : ""}`}>
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -605,49 +607,20 @@ function InlineSession({
       <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {`الذكر ${currentIndex + 1} من ${adhkarList.length} — ${sessionLabel}`}
       </div>
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-6 pb-2 gap-3">
-        <div className="flex items-center gap-1.5">
-          <button
-            onClick={handlePrev}
-            disabled={!canGoPrev}
-            aria-label="الذكر السابق (سهم يمين)"
-            title="السابق — سهم يمين"
-            aria-keyshortcuts="ArrowRight"
-            className="text-primary hover:text-primary-foreground hover:bg-primary active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs font-naskh px-3 py-1.5 rounded-full border border-primary/40 bg-primary/10"
-          >
-            → السابق
-          </button>
-          <button
-            onClick={handleSkip}
-            aria-label="الذكر التالي (سهم يسار)"
-            title="التالي — سهم يسار"
-            aria-keyshortcuts="ArrowLeft"
-            className="text-primary-foreground bg-primary hover:bg-primary/90 active:scale-95 transition-all text-xs font-naskh px-3 py-1.5 rounded-full border border-primary shadow-sm shadow-primary/30"
-          >
-            تخطي ←
-          </button>
-          {canGoPrev && (
-            <button
-              onClick={() => setConfirmRestart(true)}
-              aria-label="العودة لبداية الأذكار"
-              title="من البداية"
-              className="text-accent-foreground bg-accent hover:bg-accent/80 active:scale-95 transition-all text-[11px] font-naskh px-3 py-1.5 rounded-full border border-primary/30"
-            >
-              ↺ من البداية
-            </button>
-          )}
-        </div>
-
-        <div className="flex items-center gap-2">
+      {/* Top bar — utilities row (font + a11y + focus controls + counter) */}
+      <div className="flex items-center justify-between px-4 sm:px-6 pb-1.5 gap-2">
+        <div className="flex items-center gap-1.5 min-w-0">
           <FocusFontControl />
           <AccessibilityToggle compact />
+        </div>
+
+        <div className="flex items-center gap-1.5">
           {focusMode && onResetProgress && (
             <button
               onClick={onResetProgress}
               aria-label="نسخ التقدم"
               title="نَسخ التقدم"
-              className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-[11px] font-naskh px-2 py-1 rounded-full border border-border/30"
+              className="min-h-[36px] text-muted-foreground/40 hover:text-muted-foreground/70 transition-colors text-[11px] font-naskh px-2.5 py-1.5 rounded-full border border-border/30 touch-manipulation"
             >
               نَسخ
             </button>
@@ -656,23 +629,22 @@ function InlineSession({
             <button
               onClick={onExitFocus}
               aria-label="خروج من وضع التركيز"
-              className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-[11px] font-naskh px-2 py-1 rounded-full border border-border/30"
+              className="min-h-[36px] min-w-[36px] text-muted-foreground/40 hover:text-muted-foreground/70 transition-colors text-base font-naskh px-2 py-1 rounded-full border border-border/30 flex items-center justify-center touch-manipulation"
             >
               ⌃
             </button>
           )}
+          <span
+            className="text-muted-foreground/40 text-[11px] font-naskh tabular-nums whitespace-nowrap pl-1"
+            aria-hidden="true"
+          >
+            {focusMode ? (
+              <span className="tabular-nums">حاليًا</span>
+            ) : (
+              <>{currentIndex + 1} / {adhkarList.length}</>
+            )}
+          </span>
         </div>
-
-        <span
-          className="text-muted-foreground/30 text-[11px] font-naskh tabular-nums"
-          aria-hidden="true"
-        >
-          {focusMode ? (
-            <span className="tabular-nums">حاليًا</span>
-          ) : (
-            <>{currentIndex + 1} / {adhkarList.length}</>
-          )}
-        </span>
       </div>
 
       {/* Progress bar */}
@@ -696,7 +668,7 @@ function InlineSession({
       </div>
 
       {/* Main content - scrollable */}
-      <div ref={scrollRef} className="flex-1 flex flex-col items-center justify-center px-6 py-4 overflow-y-auto scrollbar-hide">
+      <div ref={scrollRef} className="flex-1 flex flex-col items-center justify-center px-5 sm:px-6 py-3 overflow-y-auto scrollbar-hide">
         <AnimatePresence mode="wait" custom={direction}>
           {showFadl ? (
             <DhikrFadl key="fadl" fadl={currentDhikr.fadl} onContinue={moveToNext} />
@@ -708,7 +680,7 @@ function InlineSession({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: direction * -40 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
-              className="w-full max-w-lg flex flex-col items-center gap-5"
+              className="w-full max-w-lg flex flex-col items-center gap-4 sm:gap-5"
             >
               {/* Dhikr text — fluid, responsive sizing that adapts to screen + content length */}
               <div className="w-full text-center relative">
@@ -744,11 +716,11 @@ function InlineSession({
                 </motion.span>
               )}
 
-              {/* Breathing circle */}
-              <div className="flex-shrink-0 pb-2">
+              {/* Breathing circle — slightly larger on mobile for easy thumb tapping */}
+              <div className="flex-shrink-0 pb-1">
                 <BreathingCircle
                   onComplete={handleRepComplete}
-                  size={isHighCount ? 120 : 140}
+                  size={isHighCount ? 150 : 170}
                   currentRep={currentRep}
                   totalReps={currentDhikr.count}
                 />
@@ -759,10 +731,45 @@ function InlineSession({
       </div>
 
       {/* Source */}
-      <div className="px-6 pb-2">
+      <div className="px-6 pb-1.5">
         <p className="text-center text-[10px] text-muted-foreground/25 font-naskh leading-relaxed truncate">
           📖 {currentDhikr.source}
         </p>
+      </div>
+
+      {/* Sticky bottom action bar — primary navigation, thumb-reachable on mobile */}
+      <div className="px-4 sm:px-6 pb-3 pt-1 safe-area-bottom">
+        <div className="mx-auto max-w-lg flex items-center justify-between gap-2">
+          <button
+            onClick={handlePrev}
+            disabled={!canGoPrev}
+            aria-label="الذكر السابق (سهم يمين)"
+            title="السابق — سهم يمين"
+            aria-keyshortcuts="ArrowRight"
+            className="min-h-[44px] flex-1 sm:flex-initial text-primary hover:text-primary-foreground hover:bg-primary active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-sm font-naskh px-4 py-2.5 rounded-full border border-primary/40 bg-primary/10 touch-manipulation"
+          >
+            → السابق
+          </button>
+          {canGoPrev && (
+            <button
+              onClick={() => setConfirmRestart(true)}
+              aria-label="العودة لبداية الأذكار"
+              title="من البداية"
+              className="min-h-[44px] min-w-[44px] text-accent-foreground bg-accent/70 hover:bg-accent active:scale-95 transition-all text-base font-naskh px-3 py-2.5 rounded-full border border-primary/20 flex items-center justify-center touch-manipulation"
+            >
+              ↺
+            </button>
+          )}
+          <button
+            onClick={handleSkip}
+            aria-label="الذكر التالي (سهم يسار)"
+            title="التالي — سهم يسار"
+            aria-keyshortcuts="ArrowLeft"
+            className="min-h-[44px] flex-1 sm:flex-initial text-primary-foreground bg-primary hover:bg-primary/90 active:scale-95 transition-all text-sm font-naskh px-4 py-2.5 rounded-full border border-primary shadow-md shadow-primary/30 touch-manipulation"
+          >
+            تخطي ←
+          </button>
+        </div>
       </div>
       <AlertDialog open={confirmRestart} onOpenChange={setConfirmRestart}>
         <AlertDialogContent
