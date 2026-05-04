@@ -239,12 +239,14 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                     className="flex flex-col items-center gap-0.5"
                     aria-hidden="true"
                   >
-                    <p className="font-amiri text-3xl sm:text-4xl text-foreground tracking-wide">
+                    <p className={`font-amiri text-foreground tracking-wide transition-all ${focusMode ? "text-xl sm:text-2xl" : "text-3xl sm:text-4xl"}`}>
                       الذاكرين
                     </p>
-                    <p className="font-naskh text-[11px] text-muted-foreground/40 tracking-widest">
-                      حصّن يومك بذكر الله
-                    </p>
+                    {!focusMode && (
+                      <p className="font-naskh text-[11px] text-muted-foreground/40 tracking-widest">
+                        حصّن يومك بذكر الله
+                      </p>
+                    )}
                   </motion.div>
                 </>
               )}
