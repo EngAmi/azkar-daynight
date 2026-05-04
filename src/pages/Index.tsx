@@ -710,17 +710,22 @@ function InlineSession({
               transition={{ duration: 0.5, ease: "easeOut" }}
               className="w-full max-w-lg flex flex-col items-center gap-5"
             >
-              {/* Dhikr text */}
+              {/* Dhikr text — fluid, responsive sizing that adapts to screen + content length */}
               <div className="w-full text-center relative">
                 <p
-                  className="dhikr-text text-xl sm:text-2xl leading-[2.4] text-balance transition-[font-size] duration-300"
+                  className="dhikr-text text-balance transition-[font-size] duration-300 mx-auto"
                   style={{
+                    // clamp(min, preferred-by-viewport, max) — adapts smoothly across screens
                     fontSize:
-                      currentDhikr.content.length > 200
-                        ? "1rem"
-                        : currentDhikr.content.length > 100
-                          ? "1.2rem"
-                          : "1.4rem",
+                      currentDhikr.content.length > 280
+                        ? "clamp(0.85rem, 2.6vw + 0.4rem, 1.15rem)"
+                        : currentDhikr.content.length > 180
+                          ? "clamp(0.95rem, 3vw + 0.45rem, 1.3rem)"
+                          : currentDhikr.content.length > 90
+                            ? "clamp(1.05rem, 3.4vw + 0.5rem, 1.5rem)"
+                            : "clamp(1.2rem, 4vw + 0.55rem, 1.75rem)",
+                    lineHeight: currentDhikr.content.length > 180 ? 2.1 : 2.3,
+                    maxWidth: "min(100%, 60ch)",
                   }}
                 >
                   {currentDhikr.content}

@@ -89,6 +89,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "",
     source: "مسلم، برقم 2723",
     type: 2,
+    audio: "32.mp3",
   },
   {
     id: 9,
@@ -108,6 +109,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "",
     source: "الترمذي، برقم 3391",
     type: 2,
+    audio: "35.mp3",
   },
   {
     id: 11,
@@ -137,6 +139,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "من قالها أربع مرات أعتقه اللَّه من النار",
     source: "أبو داود، برقم 5069",
     type: 2,
+    audio: "33.mp3",
   },
   {
     id: 14,
@@ -156,6 +159,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "من قالها حين يمسي فقد أدَّى شكر ليلته",
     source: "أبو داود، برقم 5073",
     type: 2,
+    audio: "34.mp3",
   },
   {
     id: 16,
@@ -263,6 +267,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "",
     source: "أحمد، برقم 15360",
     type: 2,
+    audio: "36.mp3",
   },
   {
     id: 27,
