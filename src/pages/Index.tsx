@@ -206,7 +206,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
             className="relative z-10 flex flex-col items-center w-full flex-1"
           >
             {/* Header */}
-            <header className="text-center pt-8 pb-1 px-6 safe-area-top">
+            <header className={`text-center px-6 safe-area-top ${focusMode ? "pt-3 pb-0.5" : "pt-6 sm:pt-8 pb-1"}`}>
               {/* H1 — مرئي على الصفحات المخصّصة (الصباح/المساء)، ومخفي بصريًا على الجذر */}
               {pageHeading ? (
                 <motion.div
