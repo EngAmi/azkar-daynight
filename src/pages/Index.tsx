@@ -666,7 +666,7 @@ function InlineSession({
       </div>
 
       {/* Main content - scrollable */}
-      <div ref={scrollRef} className="flex-1 flex flex-col items-center justify-center px-6 py-4 overflow-y-auto scrollbar-hide">
+      <div ref={scrollRef} className="flex-1 flex flex-col items-center justify-center px-5 sm:px-6 py-3 overflow-y-auto scrollbar-hide">
         <AnimatePresence mode="wait" custom={direction}>
           {showFadl ? (
             <DhikrFadl key="fadl" fadl={currentDhikr.fadl} onContinue={moveToNext} />
@@ -678,7 +678,7 @@ function InlineSession({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: direction * -40 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
-              className="w-full max-w-lg flex flex-col items-center gap-5"
+              className="w-full max-w-lg flex flex-col items-center gap-4 sm:gap-5"
             >
               {/* Dhikr text — fluid, responsive sizing that adapts to screen + content length */}
               <div className="w-full text-center relative">
