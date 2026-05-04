@@ -605,49 +605,20 @@ function InlineSession({
       <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {`الذكر ${currentIndex + 1} من ${adhkarList.length} — ${sessionLabel}`}
       </div>
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-6 pb-2 gap-3">
-        <div className="flex items-center gap-1.5">
-          <button
-            onClick={handlePrev}
-            disabled={!canGoPrev}
-            aria-label="الذكر السابق (سهم يمين)"
-            title="السابق — سهم يمين"
-            aria-keyshortcuts="ArrowRight"
-            className="text-primary hover:text-primary-foreground hover:bg-primary active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs font-naskh px-3 py-1.5 rounded-full border border-primary/40 bg-primary/10"
-          >
-            → السابق
-          </button>
-          <button
-            onClick={handleSkip}
-            aria-label="الذكر التالي (سهم يسار)"
-            title="التالي — سهم يسار"
-            aria-keyshortcuts="ArrowLeft"
-            className="text-primary-foreground bg-primary hover:bg-primary/90 active:scale-95 transition-all text-xs font-naskh px-3 py-1.5 rounded-full border border-primary shadow-sm shadow-primary/30"
-          >
-            تخطي ←
-          </button>
-          {canGoPrev && (
-            <button
-              onClick={() => setConfirmRestart(true)}
-              aria-label="العودة لبداية الأذكار"
-              title="من البداية"
-              className="text-accent-foreground bg-accent hover:bg-accent/80 active:scale-95 transition-all text-[11px] font-naskh px-3 py-1.5 rounded-full border border-primary/30"
-            >
-              ↺ من البداية
-            </button>
-          )}
-        </div>
-
-        <div className="flex items-center gap-2">
+      {/* Top bar — utilities row (font + a11y + focus controls + counter) */}
+      <div className="flex items-center justify-between px-4 sm:px-6 pb-1.5 gap-2">
+        <div className="flex items-center gap-1.5 min-w-0">
           <FocusFontControl />
           <AccessibilityToggle compact />
+        </div>
+
+        <div className="flex items-center gap-1.5">
           {focusMode && onResetProgress && (
             <button
               onClick={onResetProgress}
               aria-label="نسخ التقدم"
               title="نَسخ التقدم"
-              className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-[11px] font-naskh px-2 py-1 rounded-full border border-border/30"
+              className="min-h-[36px] text-muted-foreground/40 hover:text-muted-foreground/70 transition-colors text-[11px] font-naskh px-2.5 py-1.5 rounded-full border border-border/30 touch-manipulation"
             >
               نَسخ
             </button>
@@ -656,23 +627,22 @@ function InlineSession({
             <button
               onClick={onExitFocus}
               aria-label="خروج من وضع التركيز"
-              className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-[11px] font-naskh px-2 py-1 rounded-full border border-border/30"
+              className="min-h-[36px] min-w-[36px] text-muted-foreground/40 hover:text-muted-foreground/70 transition-colors text-base font-naskh px-2 py-1 rounded-full border border-border/30 flex items-center justify-center touch-manipulation"
             >
               ⌃
             </button>
           )}
+          <span
+            className="text-muted-foreground/40 text-[11px] font-naskh tabular-nums whitespace-nowrap pl-1"
+            aria-hidden="true"
+          >
+            {focusMode ? (
+              <span className="tabular-nums">حاليًا</span>
+            ) : (
+              <>{currentIndex + 1} / {adhkarList.length}</>
+            )}
+          </span>
         </div>
-
-        <span
-          className="text-muted-foreground/30 text-[11px] font-naskh tabular-nums"
-          aria-hidden="true"
-        >
-          {focusMode ? (
-            <span className="tabular-nums">حاليًا</span>
-          ) : (
-            <>{currentIndex + 1} / {adhkarList.length}</>
-          )}
-        </span>
       </div>
 
       {/* Progress bar */}
