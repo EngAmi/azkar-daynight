@@ -614,12 +614,12 @@ function InlineSession({
       </div>
       {/* Top bar — utilities row (font + a11y + focus controls + counter) */}
       <div className="flex items-center justify-between px-4 sm:px-6 pb-1.5 gap-2">
-        <div className="flex items-center gap-1.5 min-w-0">
+        <div className={`flex items-center gap-1.5 min-w-0 ${mobileFocus ? "hidden" : ""}`}>
           <FocusFontControl />
           <AccessibilityToggle compact />
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className={`flex items-center gap-1.5 ${mobileFocus ? "ms-auto" : ""}`}>
           {focusMode && onResetProgress && (
             <button
               onClick={onResetProgress}
@@ -639,16 +639,18 @@ function InlineSession({
               ⌃
             </button>
           )}
-          <span
-            className="text-muted-foreground/40 text-[11px] font-naskh tabular-nums whitespace-nowrap pl-1"
-            aria-hidden="true"
-          >
-            {focusMode ? (
-              <span className="tabular-nums">حاليًا</span>
-            ) : (
-              <>{currentIndex + 1} / {adhkarList.length}</>
-            )}
-          </span>
+          {!mobileFocus && (
+            <span
+              className="text-muted-foreground/40 text-[11px] font-naskh tabular-nums whitespace-nowrap pl-1"
+              aria-hidden="true"
+            >
+              {focusMode ? (
+                <span className="tabular-nums">حاليًا</span>
+              ) : (
+                <>{currentIndex + 1} / {adhkarList.length}</>
+              )}
+            </span>
+          )}
         </div>
       </div>
 
