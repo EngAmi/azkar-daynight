@@ -9,6 +9,7 @@ import { SeoHead } from "@/components/SeoHead";
 import { useTheme } from "@/hooks/useTheme";
 import { useFontScale } from "@/hooks/useFontScale";
 import { useAccessibility } from "@/hooks/useAccessibility";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -71,6 +72,8 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
   const [eveningState, setEveningState] = useState<SessionState>(persisted.eveningState ?? initialSession);
   const { theme } = useTheme();
   const isLight = theme === "light";
+  const isMobile = useIsMobile();
+  const mobileFocus = isMobile && focusMode;
 
   const enterFocus = (tab: SessionType) => {
     setActiveTab(tab);
@@ -206,7 +209,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
             className="relative z-10 flex flex-col items-center w-full flex-1"
           >
             {/* Header */}
-            <header className={`text-center px-6 safe-area-top ${focusMode ? "pt-3 pb-0.5" : "pt-6 sm:pt-8 pb-1"}`}>
+            <header className={`text-center px-6 safe-area-top ${mobileFocus ? "hidden" : focusMode ? "pt-3 pb-0.5" : "pt-6 sm:pt-8 pb-1"}`}>
               {/* H1 — مرئي على الصفحات المخصّصة (الصباح/المساء)، ومخفي بصريًا على الجذر */}
               {pageHeading ? (
                 <motion.div
@@ -431,6 +434,8 @@ function InlineSession({
     [type]
   );
   const { scale: fontScale } = useFontScale();
+  const isMobile = useIsMobile();
+  const mobileFocus = !!focusMode && isMobile;
 
   const currentIndex = state.index;
   const currentRep = state.rep;
@@ -609,12 +614,12 @@ function InlineSession({
       </div>
       {/* Top bar — utilities row (font + a11y + focus controls + counter) */}
       <div className="flex items-center justify-between px-4 sm:px-6 pb-1.5 gap-2">
-        <div className="flex items-center gap-1.5 min-w-0">
+        <div className={`flex items-center gap-1.5 min-w-0 ${mobileFocus ? "hidden" : ""}`}>
           <FocusFontControl />
           <AccessibilityToggle compact />
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className={`flex items-center gap-1.5 ${mobileFocus ? "ms-auto" : ""}`}>
           {focusMode && onResetProgress && (
             <button
               onClick={onResetProgress}
@@ -634,16 +639,18 @@ function InlineSession({
               ⌃
             </button>
           )}
-          <span
-            className="text-muted-foreground/40 text-[11px] font-naskh tabular-nums whitespace-nowrap pl-1"
-            aria-hidden="true"
-          >
-            {focusMode ? (
-              <span className="tabular-nums">حاليًا</span>
-            ) : (
-              <>{currentIndex + 1} / {adhkarList.length}</>
-            )}
-          </span>
+          {!mobileFocus && (
+            <span
+              className="text-muted-foreground/40 text-[11px] font-naskh tabular-nums whitespace-nowrap pl-1"
+              aria-hidden="true"
+            >
+              {focusMode ? (
+                <span className="tabular-nums">حاليًا</span>
+              ) : (
+                <>{currentIndex + 1} / {adhkarList.length}</>
+              )}
+            </span>
+          )}
         </div>
       </div>
 
@@ -656,15 +663,17 @@ function InlineSession({
             transition={{ duration: 0.5, ease: "easeOut" }}
           />
         </div>
-        <motion.p
-          key={type}
-          initial={{ opacity: 0, y: -4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
-          className="pt-2 text-center text-[11px] font-naskh text-muted-foreground/35"
-        >
-          {sessionLabel}
-        </motion.p>
+        {!mobileFocus && (
+          <motion.p
+            key={type}
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="pt-2 text-center text-[11px] font-naskh text-muted-foreground/35"
+          >
+            {sessionLabel}
+          </motion.p>
+        )}
       </div>
 
       {/* Main content - scrollable */}
@@ -731,11 +740,13 @@ function InlineSession({
       </div>
 
       {/* Source */}
-      <div className="px-6 pb-1.5">
-        <p className="text-center text-[10px] text-muted-foreground/25 font-naskh leading-relaxed truncate">
-          📖 {currentDhikr.source}
-        </p>
-      </div>
+      {!mobileFocus && (
+        <div className="px-6 pb-1.5">
+          <p className="text-center text-[10px] text-muted-foreground/25 font-naskh leading-relaxed truncate">
+            📖 {currentDhikr.source}
+          </p>
+        </div>
+      )}
 
       {/* Sticky bottom action bar — primary navigation, thumb-reachable on mobile */}
       <div className="px-4 sm:px-6 pb-3 pt-1 safe-area-bottom">
@@ -989,10 +1000,12 @@ function FocusFontControl() {
 
   return (
     <div
-      className="flex items-center gap-0.5 rounded-full border border-border/30 bg-background/40 backdrop-blur-sm px-0.5 touch-manipulation"
+      className="flex items-center gap-0.5 rounded-full border border-border/30 bg-background/40 backdrop-blur-sm px-0.5 touch-manipulation relative z-20"
       role="group"
       aria-label="ضبط حجم الخط"
+      onPointerDown={(e) => e.stopPropagation()}
       onPointerDownCapture={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
     >
       <button
         type="button"
