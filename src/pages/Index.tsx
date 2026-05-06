@@ -72,6 +72,8 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
   const [eveningState, setEveningState] = useState<SessionState>(persisted.eveningState ?? initialSession);
   const { theme } = useTheme();
   const isLight = theme === "light";
+  const isMobile = useIsMobile();
+  const mobileFocus = isMobile && focusMode;
 
   const enterFocus = (tab: SessionType) => {
     setActiveTab(tab);
