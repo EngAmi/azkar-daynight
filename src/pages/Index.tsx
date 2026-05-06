@@ -740,11 +740,13 @@ function InlineSession({
       </div>
 
       {/* Source */}
-      <div className="px-6 pb-1.5">
-        <p className="text-center text-[10px] text-muted-foreground/25 font-naskh leading-relaxed truncate">
-          📖 {currentDhikr.source}
-        </p>
-      </div>
+      {!mobileFocus && (
+        <div className="px-6 pb-1.5">
+          <p className="text-center text-[10px] text-muted-foreground/25 font-naskh leading-relaxed truncate">
+            📖 {currentDhikr.source}
+          </p>
+        </div>
+      )}
 
       {/* Sticky bottom action bar — primary navigation, thumb-reachable on mobile */}
       <div className="px-4 sm:px-6 pb-3 pt-1 safe-area-bottom">
