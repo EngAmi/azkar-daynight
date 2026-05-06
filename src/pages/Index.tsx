@@ -663,15 +663,17 @@ function InlineSession({
             transition={{ duration: 0.5, ease: "easeOut" }}
           />
         </div>
-        <motion.p
-          key={type}
-          initial={{ opacity: 0, y: -4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
-          className="pt-2 text-center text-[11px] font-naskh text-muted-foreground/35"
-        >
-          {sessionLabel}
-        </motion.p>
+        {!mobileFocus && (
+          <motion.p
+            key={type}
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="pt-2 text-center text-[11px] font-naskh text-muted-foreground/35"
+          >
+            {sessionLabel}
+          </motion.p>
+        )}
       </div>
 
       {/* Main content - scrollable */}
