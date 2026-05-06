@@ -989,10 +989,12 @@ function FocusFontControl() {
 
   return (
     <div
-      className="flex items-center gap-0.5 rounded-full border border-border/30 bg-background/40 backdrop-blur-sm px-0.5 touch-manipulation"
+      className="flex items-center gap-0.5 rounded-full border border-border/30 bg-background/40 backdrop-blur-sm px-0.5 touch-manipulation relative z-20"
       role="group"
       aria-label="ضبط حجم الخط"
+      onPointerDown={(e) => e.stopPropagation()}
       onPointerDownCapture={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
     >
       <button
         type="button"
