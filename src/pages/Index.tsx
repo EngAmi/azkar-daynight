@@ -434,6 +434,8 @@ function InlineSession({
     [type]
   );
   const { scale: fontScale } = useFontScale();
+  const isMobile = useIsMobile();
+  const mobileFocus = !!focusMode && isMobile;
 
   const currentIndex = state.index;
   const currentRep = state.rep;
