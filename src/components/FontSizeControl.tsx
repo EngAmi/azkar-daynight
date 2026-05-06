@@ -14,10 +14,12 @@ export function FontSizeControl() {
 
   return (
     <div
-      className="flex items-center gap-0.5 rounded-full bg-secondary/40 border border-border/40 backdrop-blur-sm px-1 py-1 touch-manipulation"
+      className="flex items-center gap-0.5 rounded-full bg-secondary/40 border border-border/40 backdrop-blur-sm px-1 py-1 touch-manipulation relative z-20"
       role="group"
       aria-label="حجم الخط"
+      onPointerDown={(e) => e.stopPropagation()}
       onPointerDownCapture={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
     >
       <button
         type="button"
