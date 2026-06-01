@@ -309,17 +309,19 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
             </AnimatePresence>
 
             {/* Swipeable session content */}
-            <SwipeableContent
-              activeTab={activeTab}
-              onTabChange={setActiveTab}
-              focusMode={focusMode}
-              onExitFocus={() => setFocusMode(false)}
-              onResetProgress={resetProgress}
-              morningState={morningState}
-              eveningState={eveningState}
-              setMorningState={setMorningState}
-              setEveningState={setEveningState}
-            />
+            <main className="flex-1 w-full flex flex-col overflow-hidden">
+              <SwipeableContent
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                focusMode={focusMode}
+                onExitFocus={() => setFocusMode(false)}
+                onResetProgress={resetProgress}
+                morningState={morningState}
+                eveningState={eveningState}
+                setMorningState={setMorningState}
+                setEveningState={setEveningState}
+              />
+            </main>
 
             {/* Footer */}
             <footer className={`px-6 pb-4 safe-area-bottom text-center ${focusMode ? "hidden sm:block" : ""}`}>

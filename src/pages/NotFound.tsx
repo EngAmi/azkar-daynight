@@ -1,5 +1,8 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { SeoHead } from "@/components/SeoHead";
+
+const SITE = "https://azkar-daynight.lovable.app";
 
 const NotFound = () => {
   const location = useLocation();
@@ -9,15 +12,22 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">404</h1>
-        <p className="mb-4 text-xl text-muted-foreground">Oops! Page not found</p>
-        <a href="/" className="text-primary underline hover:text-primary/90">
-          Return to Home
-        </a>
-      </div>
-    </div>
+    <>
+      <SeoHead
+        title="الصفحة غير موجودة — الذاكرين"
+        description="الصفحة التي تبحث عنها غير متوفرة. عُد إلى الرئيسية لقراءة أذكار الصباح والمساء."
+        canonical={`${SITE}/`}
+      />
+      <main className="flex min-h-screen items-center justify-center bg-muted">
+        <div className="text-center">
+          <h1 className="mb-4 text-4xl font-bold">404</h1>
+          <p className="mb-4 text-xl text-muted-foreground">الصفحة غير موجودة</p>
+          <a href="/" className="text-primary underline hover:text-primary/90">
+            العودة إلى الرئيسية
+          </a>
+        </div>
+      </main>
+    </>
   );
 };
 
