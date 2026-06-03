@@ -123,10 +123,19 @@
   /* Arabic Quran/Dhikr text styling */
   .dhikr-text {
     font-family: 'Amiri', serif;
-    @apply text-foreground leading-[2.2] tracking-wide;
+    @apply text-foreground tracking-wide;
     font-feature-settings: "liga" 1;
     font-size: calc(1.5rem * var(--font-scale, 1)) !important;
+    /* line-height نسبي حتى يتمدد مع حجم الخط ويمنع تراكب الأسطر */
+    line-height: 2.2 !important;
+    /* التفاف تلقائي يحفظ الكلمات العربية الطويلة من القصّ */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: normal;
+    hyphens: auto;
+    max-width: 100%;
   }
+
 
   /* Subtle shimmer on gold elements */
   .gold-shimmer {
@@ -156,9 +165,16 @@
   /* Fadl (virtue) text */
   .fadl-text {
     font-family: 'Noto Naskh Arabic', serif;
-    @apply text-accent-foreground/70 leading-relaxed;
+    @apply text-accent-foreground/70;
     font-size: calc(1.125rem * var(--font-scale, 1)) !important;
+    line-height: 1.9 !important;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: normal;
+    hyphens: auto;
+    max-width: 100%;
   }
+
 
   /* Accessibility mode — enlarges Arabic typography & opens up line spacing */
   .a11y-mode .dhikr-text {
