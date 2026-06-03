@@ -5,98 +5,98 @@
 @layer base {
   :root,
   .dark {
-    /* Luxury midnight palette — deep desaturated indigo with warm champagne gold.
-       Tuned for low eye-strain: softer whites, warmer accents, less blue light. */
-    --background: 224 22% 6%;
-    --foreground: 38 22% 86%;
+    /* Emerald Prestige — deep emerald with luxurious gold, low eye-strain night palette */
+    --background: 160 48% 6%;
+    --foreground: 44 32% 90%;
 
-    --card: 224 20% 9%;
-    --card-foreground: 38 22% 86%;
+    --card: 160 42% 9%;
+    --card-foreground: 44 32% 90%;
 
-    --popover: 224 22% 8%;
-    --popover-foreground: 38 22% 86%;
+    --popover: 160 45% 8%;
+    --popover-foreground: 44 32% 90%;
 
-    /* Champagne gold — softer, warmer, less saturated for nighttime comfort */
-    --primary: 38 48% 62%;
-    --primary-foreground: 224 25% 8%;
+    /* Champagne gold — fixed gold accent (#c9a84c) */
+    --primary: 44 56% 54%;
+    --primary-foreground: 160 50% 8%;
 
-    --secondary: 224 16% 13%;
-    --secondary-foreground: 38 18% 78%;
+    --secondary: 160 28% 13%;
+    --secondary-foreground: 44 24% 82%;
 
-    --muted: 224 14% 15%;
-    --muted-foreground: 224 8% 58%;
+    --muted: 160 22% 15%;
+    --muted-foreground: 160 10% 62%;
 
-    --accent: 38 28% 20%;
-    --accent-foreground: 38 38% 78%;
+    --accent: 161 45% 20%;
+    --accent-foreground: 44 38% 86%;
 
     --destructive: 0 50% 38%;
-    --destructive-foreground: 38 30% 92%;
+    --destructive-foreground: 44 32% 92%;
 
-    --border: 224 14% 17%;
-    --input: 224 14% 17%;
-    --ring: 38 48% 62%;
+    --border: 160 22% 17%;
+    --input: 160 22% 17%;
+    --ring: 44 56% 54%;
 
     --radius: 1rem;
 
     /* Custom luxury tokens */
-    --glow-gold: 36 42% 56%;
-    --glow-soft: 224 22% 18%;
-    --surface-glass: 224 20% 10%;
+    --glow-gold: 42 52% 52%;
+    --glow-soft: 161 38% 18%;
+    --surface-glass: 160 42% 10%;
 
-    --sidebar-background: 224 22% 6%;
-    --sidebar-foreground: 38 22% 86%;
-    --sidebar-primary: 38 48% 62%;
-    --sidebar-primary-foreground: 224 25% 8%;
-    --sidebar-accent: 224 16% 13%;
-    --sidebar-accent-foreground: 38 18% 78%;
-    --sidebar-border: 224 14% 17%;
-    --sidebar-ring: 38 48% 62%;
+    --sidebar-background: 160 48% 6%;
+    --sidebar-foreground: 44 32% 90%;
+    --sidebar-primary: 44 56% 54%;
+    --sidebar-primary-foreground: 160 50% 8%;
+    --sidebar-accent: 160 28% 13%;
+    --sidebar-accent-foreground: 44 24% 82%;
+    --sidebar-border: 160 22% 17%;
+    --sidebar-ring: 44 56% 54%;
   }
 
-  /* Spiritual dawn palette — light/day mode */
+  /* Emerald Prestige — light/day mode (warm cream + deep emerald + gold) */
   .light {
-    --background: 38 45% 96%;
-    --foreground: 220 30% 14%;
+    --background: 44 50% 95%;
+    --foreground: 160 50% 10%;
 
-    --card: 38 50% 98%;
-    --card-foreground: 220 30% 14%;
+    --card: 44 56% 98%;
+    --card-foreground: 160 50% 10%;
 
-    --popover: 38 50% 98%;
-    --popover-foreground: 220 30% 14%;
+    --popover: 44 56% 98%;
+    --popover-foreground: 160 50% 10%;
 
-    --primary: 35 60% 38%;
-    --primary-foreground: 38 50% 98%;
+    --primary: 161 72% 22%;
+    --primary-foreground: 44 50% 96%;
 
-    --secondary: 38 35% 90%;
-    --secondary-foreground: 220 25% 20%;
+    --secondary: 44 40% 88%;
+    --secondary-foreground: 160 45% 16%;
 
-    --muted: 38 30% 92%;
-    --muted-foreground: 220 12% 38%;
+    --muted: 44 35% 90%;
+    --muted-foreground: 160 14% 36%;
 
-    --accent: 38 50% 86%;
-    --accent-foreground: 35 60% 28%;
+    --accent: 44 55% 80%;
+    --accent-foreground: 161 65% 20%;
 
-    --destructive: 0 70% 45%;
-    --destructive-foreground: 38 50% 98%;
+    --destructive: 0 70% 42%;
+    --destructive-foreground: 44 50% 96%;
 
-    --border: 38 25% 84%;
-    --input: 38 25% 84%;
-    --ring: 35 60% 45%;
+    --border: 44 25% 80%;
+    --input: 44 25% 80%;
+    --ring: 161 72% 26%;
 
-    --glow-gold: 36 55% 50%;
-    --glow-soft: 38 32% 78%;
-    --surface-glass: 38 50% 95%;
+    --glow-gold: 42 60% 48%;
+    --glow-soft: 44 35% 78%;
+    --surface-glass: 44 55% 94%;
 
-    --sidebar-background: 38 45% 96%;
-    --sidebar-foreground: 220 30% 14%;
-    --sidebar-primary: 35 60% 38%;
-    --sidebar-primary-foreground: 38 50% 98%;
-    --sidebar-accent: 38 35% 90%;
-    --sidebar-accent-foreground: 220 25% 20%;
-    --sidebar-border: 38 25% 84%;
-    --sidebar-ring: 35 60% 45%;
+    --sidebar-background: 44 50% 95%;
+    --sidebar-foreground: 160 50% 10%;
+    --sidebar-primary: 161 72% 22%;
+    --sidebar-primary-foreground: 44 50% 96%;
+    --sidebar-accent: 44 40% 88%;
+    --sidebar-accent-foreground: 160 45% 16%;
+    --sidebar-border: 44 25% 80%;
+    --sidebar-ring: 161 72% 26%;
   }
 }
+
 
 @layer base {
   * {
@@ -109,7 +109,8 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Noto Naskh Arabic', 'Amiri', serif;
+    /* Karla for Latin UI, Noto Naskh for Arabic — both kept for proper script handling */
+    font-family: 'Karla', 'Noto Naskh Arabic', 'Amiri', serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior: none;
@@ -117,6 +118,7 @@
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
+
 }
 
 @layer components {
