@@ -16,7 +16,11 @@ export default {
       fontFamily: {
         amiri: ["Amiri", "serif"],
         naskh: ["Noto Naskh Arabic", "Amiri", "serif"],
+        serif: ["Cormorant Garamond", "Amiri", "serif"],
+        sans: ["Karla", "Noto Naskh Arabic", "system-ui", "sans-serif"],
+        display: ["Cormorant Garamond", "Amiri", "serif"],
       },
+
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
