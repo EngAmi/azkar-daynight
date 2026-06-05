@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+/* خطوط احتياطية بمقاييس مضبوطة لتقليل قفزة التخطيط (CLS/FOUT) أثناء تحميل خطوط Google */
+@font-face {
+  font-family: 'Karla Fallback';
+  src: local('Segoe UI'), local('Helvetica Neue'), local('Arial');
+  font-display: swap;
+  ascent-override: 92%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+  size-adjust: 102%;
+}
+@font-face {
+  font-family: 'Cormorant Fallback';
+  src: local('Georgia'), local('Times New Roman'), local('Times');
+  font-display: swap;
+  ascent-override: 95%;
+  descent-override: 28%;
+  line-gap-override: 0%;
+  size-adjust: 105%;
+}
+@font-face {
+  font-family: 'Amiri Fallback';
+  src: local('Geeza Pro'), local('Damascus'), local('Traditional Arabic'), local('Arial');
+  font-display: swap;
+  ascent-override: 110%;
+  descent-override: 55%;
+  line-gap-override: 0%;
+  size-adjust: 108%;
+}
+
 @layer base {
   :root,
   .dark {
