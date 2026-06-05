@@ -14,11 +14,11 @@ export default {
     },
     extend: {
       fontFamily: {
-        amiri: ["Amiri", "serif"],
-        naskh: ["Noto Naskh Arabic", "Amiri", "serif"],
-        serif: ["Cormorant Garamond", "Amiri", "serif"],
-        sans: ["Karla", "Noto Naskh Arabic", "system-ui", "sans-serif"],
-        display: ["Cormorant Garamond", "Amiri", "serif"],
+        amiri: ["Amiri", "Amiri Fallback", "serif"],
+        naskh: ["Noto Naskh Arabic", "Amiri", "Amiri Fallback", "serif"],
+        serif: ["Cormorant Garamond", "Cormorant Fallback", "Amiri", "serif"],
+        sans: ["Karla", "Karla Fallback", "Noto Naskh Arabic", "system-ui", "sans-serif"],
+        display: ["Cormorant Garamond", "Cormorant Fallback", "Amiri", "serif"],
       },
 
       colors: {
