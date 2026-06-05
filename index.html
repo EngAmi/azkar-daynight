@@ -60,11 +60,26 @@
     <link rel="dns-prefetch" href="https://alazkar.today" />
     <link rel="preconnect" href="https://alazkar.today" crossorigin />
 
-    <!-- Fonts: preconnect + preload critical Amiri 400 to avoid FOUT -->
+    <!-- Fonts: preconnect + non-blocking stylesheet + preload critical woff2 files -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Karla:wght@300;400;500;600;700&display=swap">
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Karla:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Preload أهم ملفات الخطوط: Amiri 400 (نص الذكر) + Karla 400 (واجهة لاتينية) + Cormorant 600 (عناوين) -->
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+          href="https://fonts.gstatic.com/s/amiri/v27/J7aRnpd8CGxBHpUrtLYS6pNLAjk.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+          href="https://fonts.gstatic.com/s/karla/v31/qkBbXvYC6trAT55ZBi1ueQVIjQTD-JqqFENLR7fHGw.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+          href="https://fonts.gstatic.com/s/cormorantgaramond/v16/co3YmX5slCNuHLi8bLeY9MK7whWMhyjornFLsS6V7w.woff2">
+
+    <!-- تحميل غير حاجب: preload ثم تحويل إلى stylesheet -->
+    <link rel="preload" as="style"
+          href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Karla:wght@300;400;500;600;700&display=swap"
+          onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+      <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Karla:wght@300;400;500;600;700&display=swap">
+    </noscript>
 
 
     <!-- Structured Data: WebApplication -->
