@@ -138,8 +138,8 @@
 
   body {
     @apply bg-background text-foreground;
-    /* Karla for Latin UI, Noto Naskh for Arabic — both kept for proper script handling */
-    font-family: 'Karla', 'Noto Naskh Arabic', 'Amiri', serif;
+    /* Karla للواجهة اللاتينية + خط احتياطي مضبوط + Noto Naskh/Amiri للعربية */
+    font-family: 'Karla', 'Karla Fallback', 'Noto Naskh Arabic', 'Amiri', 'Amiri Fallback', serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior: none;
