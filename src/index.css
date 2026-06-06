@@ -79,6 +79,20 @@
     --sidebar-accent-foreground: 42 22% 80%;
     --sidebar-border: 162 18% 15%;
     --sidebar-ring: 41 48% 60%;
+
+    /* Semantic aliases — short names for easy theming. Map to canonical shadcn tokens. */
+    --bg: var(--background);
+    --text: var(--foreground);
+    --text-muted: var(--muted-foreground);
+    --surface: var(--card);
+    --surface-elevated: var(--popover);
+    --gold: var(--primary);
+    --gold-foreground: var(--primary-foreground);
+    --gold-glow: var(--glow-gold);
+    --emerald: var(--accent);
+    --emerald-soft: var(--glow-soft);
+    --line: var(--border);
+    --focus: var(--ring);
   }
 
   /* Emerald Prestige — light/day mode (warm cream + deep emerald + gold) */
@@ -123,6 +137,20 @@
     --sidebar-accent-foreground: 160 45% 16%;
     --sidebar-border: 44 25% 80%;
     --sidebar-ring: 161 72% 26%;
+
+    /* Semantic aliases — light theme inherits the same mapping (values come from above). */
+    --bg: var(--background);
+    --text: var(--foreground);
+    --text-muted: var(--muted-foreground);
+    --surface: var(--card);
+    --surface-elevated: var(--popover);
+    --gold: var(--primary);
+    --gold-foreground: var(--primary-foreground);
+    --gold-glow: var(--glow-gold);
+    --emerald: var(--accent);
+    --emerald-soft: var(--glow-soft);
+    --line: var(--border);
+    --focus: var(--ring);
   }
 }
 
