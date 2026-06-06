@@ -60,8 +60,27 @@ export default {
           soft: "hsl(var(--glow-soft))",
         },
         surface: {
+          DEFAULT: "hsl(var(--surface))",
+          elevated: "hsl(var(--surface-elevated))",
           glass: "hsl(var(--surface-glass))",
         },
+        // Short semantic aliases — bg/text/gold/emerald for ergonomic theming
+        bg: "hsl(var(--bg))",
+        text: {
+          DEFAULT: "hsl(var(--text))",
+          muted: "hsl(var(--text-muted))",
+        },
+        gold: {
+          DEFAULT: "hsl(var(--gold))",
+          foreground: "hsl(var(--gold-foreground))",
+          glow: "hsl(var(--gold-glow))",
+        },
+        emerald: {
+          DEFAULT: "hsl(var(--emerald))",
+          soft: "hsl(var(--emerald-soft))",
+        },
+        line: "hsl(var(--line))",
+        focus: "hsl(var(--focus))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
