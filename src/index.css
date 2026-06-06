@@ -34,51 +34,51 @@
 @layer base {
   :root,
   .dark {
-    /* Emerald Prestige — deep emerald with luxurious gold, low eye-strain night palette */
-    --background: 160 48% 6%;
-    --foreground: 44 32% 90%;
+    /* Emerald Prestige — refined night palette (deeper, warmer, lower contrast for khushu') */
+    --background: 165 38% 5%;
+    --foreground: 42 26% 86%;
 
-    --card: 160 42% 9%;
-    --card-foreground: 44 32% 90%;
+    --card: 164 32% 8%;
+    --card-foreground: 42 26% 86%;
 
-    --popover: 160 45% 8%;
-    --popover-foreground: 44 32% 90%;
+    --popover: 164 35% 7%;
+    --popover-foreground: 42 26% 86%;
 
-    /* Champagne gold — fixed gold accent (#c9a84c) */
-    --primary: 44 56% 54%;
-    --primary-foreground: 160 50% 8%;
+    /* Champagne gold — softer, warmer (~#caa766) easier on the eye at night */
+    --primary: 41 48% 60%;
+    --primary-foreground: 165 42% 7%;
 
-    --secondary: 160 28% 13%;
-    --secondary-foreground: 44 24% 82%;
+    --secondary: 163 22% 12%;
+    --secondary-foreground: 42 22% 80%;
 
-    --muted: 160 22% 15%;
-    --muted-foreground: 160 10% 62%;
+    --muted: 163 18% 13%;
+    --muted-foreground: 160 8% 58%;
 
-    --accent: 161 45% 20%;
-    --accent-foreground: 44 38% 86%;
+    --accent: 162 32% 17%;
+    --accent-foreground: 42 32% 82%;
 
-    --destructive: 0 50% 38%;
-    --destructive-foreground: 44 32% 92%;
+    --destructive: 0 42% 36%;
+    --destructive-foreground: 42 26% 90%;
 
-    --border: 160 22% 17%;
-    --input: 160 22% 17%;
-    --ring: 44 56% 54%;
+    --border: 162 18% 15%;
+    --input: 162 18% 15%;
+    --ring: 41 48% 60%;
 
     --radius: 1rem;
 
-    /* Custom luxury tokens */
-    --glow-gold: 42 52% 52%;
-    --glow-soft: 161 38% 18%;
-    --surface-glass: 160 42% 10%;
+    /* Custom luxury tokens — warmer gold glow, softer emerald veil */
+    --glow-gold: 40 50% 56%;
+    --glow-soft: 162 30% 16%;
+    --surface-glass: 163 32% 9%;
 
-    --sidebar-background: 160 48% 6%;
-    --sidebar-foreground: 44 32% 90%;
-    --sidebar-primary: 44 56% 54%;
-    --sidebar-primary-foreground: 160 50% 8%;
-    --sidebar-accent: 160 28% 13%;
-    --sidebar-accent-foreground: 44 24% 82%;
-    --sidebar-border: 160 22% 17%;
-    --sidebar-ring: 44 56% 54%;
+    --sidebar-background: 165 38% 5%;
+    --sidebar-foreground: 42 26% 86%;
+    --sidebar-primary: 41 48% 60%;
+    --sidebar-primary-foreground: 165 42% 7%;
+    --sidebar-accent: 163 22% 12%;
+    --sidebar-accent-foreground: 42 22% 80%;
+    --sidebar-border: 162 18% 15%;
+    --sidebar-ring: 41 48% 60%;
   }
 
   /* Emerald Prestige — light/day mode (warm cream + deep emerald + gold) */
