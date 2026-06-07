@@ -108,7 +108,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
   }, [activeTab, focusMode, morningState, eveningState]);
 
   return (
-    <div className={`relative flex flex-col min-h-[100dvh] bg-background overflow-hidden transition-colors duration-700 ${focusMode ? "focus-mode" : ""}`}>
+    <div className={`relative flex flex-col min-h-[100dvh] bg-background overflow-hidden transition-[background-color,color] duration-[900ms] ease-[cubic-bezier(0.22,0.61,0.36,1)] ${focusMode ? "focus-mode" : ""}`}>
       {/* canonical الجذر — يُعاد تطبيقه دائمًا عند العودة لهذه الصفحة لمنع تسرّب canonical من المسارات المخصّصة */}
       {!pageHeading && (
         <SeoHead
