@@ -108,7 +108,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
   }, [activeTab, focusMode, morningState, eveningState]);
 
   return (
-    <div className="relative flex flex-col min-h-[100dvh] bg-background overflow-hidden transition-colors duration-700">
+    <div className={`relative flex flex-col min-h-[100dvh] bg-background overflow-hidden transition-colors duration-700 ${focusMode ? "focus-mode" : ""}`}>
       {/* canonical الجذر — يُعاد تطبيقه دائمًا عند العودة لهذه الصفحة لمنع تسرّب canonical من المسارات المخصّصة */}
       {!pageHeading && (
         <SeoHead
@@ -139,7 +139,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
           className="absolute -bottom-40 left-1/4 w-[520px] h-[520px] rounded-full blur-[180px]"
           style={{
             background: isLight
-              ? "radial-gradient(circle, hsl(36 60% 72% / 0.6) 0%, transparent 70%)"
+              ? "radial-gradient(circle, hsl(var(--glow-soft) / 0.6) 0%, transparent 70%)"
               : "radial-gradient(circle, hsl(var(--glow-soft) / 0.7) 0%, transparent 70%)",
           }}
         />
