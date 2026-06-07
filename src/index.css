@@ -131,6 +131,9 @@
     --glow-gold: 42 60% 48%;
     --glow-soft: 44 35% 78%;
     --surface-glass: 44 55% 94%;
+    /* Themed overlay — soft deep emerald veil for light mode */
+    --overlay: 160 50% 8%;
+    --overlay-opacity: 0.55;
 
     --sidebar-background: 44 50% 95%;
     --sidebar-foreground: 160 50% 10%;
