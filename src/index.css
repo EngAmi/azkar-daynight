@@ -73,6 +73,10 @@
     /* Themed overlay (replaces bg-black/80) — deep emerald veil for dark mode */
     --overlay: 165 42% 3%;
     --overlay-opacity: 0.78;
+    /* Stronger border specifically for overlay panels — stays readable even when veil is light */
+    --overlay-border: 41 38% 50%;
+    --overlay-border-opacity: 0.45;
+    --overlay-ring: 41 48% 60%;
 
     --sidebar-background: 165 38% 5%;
     --sidebar-foreground: 42 26% 86%;
