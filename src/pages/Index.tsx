@@ -66,7 +66,9 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
 
   const persisted = useMemo(() => loadPersisted(), []);
 
-  const [activeTab, setActiveTab] = useState<SessionType>(initialTab ?? persisted.activeTab ?? defaultType);
+  // Always default by time-of-day on each visit (morning before 3pm, evening after).
+  // User can still toggle freely during the session; the choice is not persisted across visits.
+  const [activeTab, setActiveTab] = useState<SessionType>(initialTab ?? defaultType);
   const [focusMode, setFocusMode] = useState<boolean>(persisted.focusMode ?? false);
   const [morningState, setMorningState] = useState<SessionState>(persisted.morningState ?? initialSession);
   const [eveningState, setEveningState] = useState<SessionState>(persisted.eveningState ?? initialSession);
