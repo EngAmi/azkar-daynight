@@ -10,6 +10,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { useFontScale } from "@/hooks/useFontScale";
 import { useAccessibility } from "@/hooks/useAccessibility";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { getCurrentSessionType } from "@/lib/timeOfDay";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -61,12 +62,12 @@ interface IndexProps {
 
 const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => {
   const [isReady, setIsReady] = useState(false);
-  const hour = new Date().getHours();
-  const defaultType: SessionType = hour >= 15 ? "evening" : "morning";
+  // يعتمد على المنطقة الزمنية المحلية للمستخدم تلقائيًا (Intl) لضمان توحيد السلوك عبر الأجهزة.
+  const defaultType: SessionType = getCurrentSessionType();
 
   const persisted = useMemo(() => loadPersisted(), []);
 
-  // Always default by time-of-day on each visit (morning before 3pm, evening after).
+  // Always default by time-of-day on each visit (morning 3am–2:59pm, evening otherwise).
   // User can still toggle freely during the session; the choice is not persisted across visits.
   const [activeTab, setActiveTab] = useState<SessionType>(initialTab ?? defaultType);
   const [focusMode, setFocusMode] = useState<boolean>(persisted.focusMode ?? false);
