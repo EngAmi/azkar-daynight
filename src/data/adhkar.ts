@@ -40,6 +40,7 @@ const rawAdhkar: Dhikr[] = [
     fadl: "من قرأ آيتين من آخر سورة البقرة في ليلة كفتاه",
     source: "البخاري (4008)، ومسلم (807)",
     type: 2,
+    audio: "/__l5e/assets-v1/53fbf6d0-72b4-486b-9177-fd7d33329872/amana-rasool.mp3",
   },
   {
     id: 4,
