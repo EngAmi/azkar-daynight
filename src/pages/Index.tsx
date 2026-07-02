@@ -932,7 +932,8 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
       return;
     }
 
-    const audio = new Audio(`${AUDIO_BASE_URL}${audioFile}`);
+    const src = /^(https?:)?\/\//.test(audioFile) ? audioFile : `${AUDIO_BASE_URL}${audioFile}`;
+    const audio = new Audio(src);
     audioRef.current = audio;
     audio.onended = () => setIsPlaying(false);
     audio.onerror = () => setIsPlaying(false);
