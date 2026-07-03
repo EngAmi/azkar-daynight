@@ -26,6 +26,8 @@ interface SessionState {
   index: number;
   rep: number;
   completed: boolean;
+  /** ms epoch of the last user-driven change; used to detect stale sessions across periods */
+  updatedAt?: number;
 }
 
 const initialSession: SessionState = { index: 0, rep: 0, completed: false };
@@ -49,6 +51,33 @@ function loadPersisted(): Partial<PersistedState> {
   } catch {
     return {};
   }
+}
+
+/**
+ * حدود الفترة الزمنية الحالية لكل نوع أذكار (بحسب توقيت المستخدم المحلي):
+ *  - الصباح: من الساعة 3 صباحًا اليوم.
+ *  - المساء: من الساعة 3 مساءً اليوم (أو أمس إن كان الوقت الحالي قبل 3 صباحًا).
+ * تُستخدم لتحديد ما إذا كانت الجلسة المحفوظة لا تزال ضمن نفس الفترة الصالحة للاستئناف.
+ */
+function periodStart(type: SessionType, now: Date = new Date()): number {
+  const d = new Date(now);
+  if (type === "morning") {
+    d.setHours(3, 0, 0, 0);
+    return d.getTime();
+  }
+  // evening
+  if (now.getHours() < 3) {
+    d.setDate(d.getDate() - 1);
+  }
+  d.setHours(15, 0, 0, 0);
+  return d.getTime();
+}
+
+function isResumable(state: SessionState, type: SessionType): boolean {
+  if (!state || state.completed) return false;
+  if (state.index === 0 && state.rep === 0) return false;
+  if (!state.updatedAt) return false;
+  return state.updatedAt >= periodStart(type);
 }
 
 interface IndexProps {
