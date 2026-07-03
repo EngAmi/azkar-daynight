@@ -448,6 +448,62 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Resume-where-you-stopped prompt */}
+      <AlertDialog
+        open={resumePrompt !== null}
+        onOpenChange={(open) => {
+          if (!open && resumePrompt) {
+            acknowledgedTabs.current.add(resumePrompt);
+            setResumePrompt(null);
+          }
+        }}
+      >
+        <AlertDialogContent
+          className="glass-surface border-primary/20 max-w-sm rounded-2xl
+            duration-500 ease-out
+            data-[state=open]:animate-in data-[state=closed]:animate-out
+            data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0
+            data-[state=open]:zoom-in-[0.98] data-[state=closed]:zoom-out-[0.98]"
+        >
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-amiri text-xl text-center text-primary">
+              {resumePrompt === "morning" ? "تريد استكمال أذكار الصباح؟" : "تريد استكمال أذكار المساء؟"}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="font-naskh text-center text-muted-foreground/80 leading-relaxed">
+              {(() => {
+                const s = resumePrompt === "morning" ? morningState : eveningState;
+                return `توقّفت عند الذكر رقم ${s.index + 1}. تحبّ تكمل من حيث توقفت أم تبدأ من جديد؟`;
+              })()}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="sm:justify-center gap-2">
+            <AlertDialogCancel
+              onClick={() => {
+                if (resumePrompt) {
+                  acknowledgedTabs.current.add(resumePrompt);
+                  startOverActiveTab();
+                }
+                setResumePrompt(null);
+              }}
+              className="font-naskh rounded-full border-border/40"
+            >
+              ابدأ من جديد
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (resumePrompt) {
+                  acknowledgedTabs.current.add(resumePrompt);
+                }
+                setResumePrompt(null);
+              }}
+              className="font-naskh rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              متابعة من حيث توقفت
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
