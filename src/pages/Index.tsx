@@ -26,6 +26,8 @@ interface SessionState {
   index: number;
   rep: number;
   completed: boolean;
+  /** ms epoch of the last user-driven change; used to detect stale sessions across periods */
+  updatedAt?: number;
 }
 
 const initialSession: SessionState = { index: 0, rep: 0, completed: false };
@@ -51,6 +53,33 @@ function loadPersisted(): Partial<PersistedState> {
   }
 }
 
+/**
+ * حدود الفترة الزمنية الحالية لكل نوع أذكار (بحسب توقيت المستخدم المحلي):
+ *  - الصباح: من الساعة 3 صباحًا اليوم.
+ *  - المساء: من الساعة 3 مساءً اليوم (أو أمس إن كان الوقت الحالي قبل 3 صباحًا).
+ * تُستخدم لتحديد ما إذا كانت الجلسة المحفوظة لا تزال ضمن نفس الفترة الصالحة للاستئناف.
+ */
+function periodStart(type: SessionType, now: Date = new Date()): number {
+  const d = new Date(now);
+  if (type === "morning") {
+    d.setHours(3, 0, 0, 0);
+    return d.getTime();
+  }
+  // evening
+  if (now.getHours() < 3) {
+    d.setDate(d.getDate() - 1);
+  }
+  d.setHours(15, 0, 0, 0);
+  return d.getTime();
+}
+
+function isResumable(state: SessionState, type: SessionType): boolean {
+  if (!state || state.completed) return false;
+  if (state.index === 0 && state.rep === 0) return false;
+  if (!state.updatedAt) return false;
+  return state.updatedAt >= periodStart(type);
+}
+
 interface IndexProps {
   /** Force a specific tab on mount — used by /azkar-sabah and /azkar-massa routes */
   initialTab?: SessionType;
@@ -71,8 +100,36 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
   // User can still toggle freely during the session; the choice is not persisted across visits.
   const [activeTab, setActiveTab] = useState<SessionType>(initialTab ?? defaultType);
   const [focusMode, setFocusMode] = useState<boolean>(persisted.focusMode ?? false);
-  const [morningState, setMorningState] = useState<SessionState>(persisted.morningState ?? initialSession);
-  const [eveningState, setEveningState] = useState<SessionState>(persisted.eveningState ?? initialSession);
+  const [morningStateRaw, setMorningStateRaw] = useState<SessionState>(persisted.morningState ?? initialSession);
+  const [eveningStateRaw, setEveningStateRaw] = useState<SessionState>(persisted.eveningState ?? initialSession);
+
+  // Wrap the setters so every user-driven state change is timestamped automatically.
+  // We only stamp when index/rep/completed actually change — pure timestamp-only writes
+  // would loop with the persistence effect.
+  const stampSetter =
+    (setter: React.Dispatch<React.SetStateAction<SessionState>>) =>
+    (updater: React.SetStateAction<SessionState>) => {
+      setter((prev) => {
+        const next = typeof updater === "function"
+          ? (updater as (p: SessionState) => SessionState)(prev)
+          : updater;
+        const changed =
+          next.index !== prev.index ||
+          next.rep !== prev.rep ||
+          next.completed !== prev.completed;
+        return changed ? { ...next, updatedAt: Date.now() } : next;
+      });
+    };
+  const setMorningState = useMemo(() => stampSetter(setMorningStateRaw), []);
+  const setEveningState = useMemo(() => stampSetter(setEveningStateRaw), []);
+  const morningState = morningStateRaw;
+  const eveningState = eveningStateRaw;
+
+  // Resume-prompt state — appears once per tab per app-load when an incomplete
+  // session from the same morning/evening period is detected.
+  const [resumePrompt, setResumePrompt] = useState<SessionType | null>(null);
+  const acknowledgedTabs = useRef<Set<SessionType>>(new Set());
+
   const { theme } = useTheme();
   const isLight = theme === "light";
   const isMobile = useIsMobile();
@@ -89,9 +146,18 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
     } catch {
       // ignore
     }
-    setMorningState(initialSession);
-    setEveningState(initialSession);
+    setMorningStateRaw(initialSession);
+    setEveningStateRaw(initialSession);
     setFocusMode(false);
+  };
+
+  // Start over just the current tab (used by the resume prompt).
+  const startOverActiveTab = () => {
+    if (activeTab === "morning") {
+      setMorningStateRaw({ ...initialSession, updatedAt: Date.now() });
+    } else {
+      setEveningStateRaw({ ...initialSession, updatedAt: Date.now() });
+    }
   };
 
   useEffect(() => {
@@ -99,6 +165,31 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
     const timer = setTimeout(() => setIsReady(true), 850);
     return () => clearTimeout(timer);
   }, []);
+
+  // On mount: silently clear stale sessions from prior periods (e.g. yesterday's
+  // morning still lingering when today's morning starts). Only same-period
+  // incomplete sessions survive to trigger the resume prompt.
+  useEffect(() => {
+    if (morningStateRaw.updatedAt && morningStateRaw.updatedAt < periodStart("morning")) {
+      setMorningStateRaw(initialSession);
+    }
+    if (eveningStateRaw.updatedAt && eveningStateRaw.updatedAt < periodStart("evening")) {
+      setEveningStateRaw(initialSession);
+    }
+    // Intentionally empty deps — runs once on mount against the persisted values.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Open the resume prompt for the active tab if it has a resumable session
+  // that hasn't been acknowledged yet in this app-load.
+  useEffect(() => {
+    if (!isReady) return;
+    if (acknowledgedTabs.current.has(activeTab)) return;
+    const state = activeTab === "morning" ? morningStateRaw : eveningStateRaw;
+    if (isResumable(state, activeTab)) {
+      setResumePrompt(activeTab);
+    }
+  }, [isReady, activeTab, morningStateRaw, eveningStateRaw]);
 
   // Persist session state on changes
   useEffect(() => {
@@ -109,6 +200,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
       // ignore quota / private mode errors
     }
   }, [activeTab, focusMode, morningState, eveningState]);
+
 
   return (
     <div className={`relative flex flex-col min-h-[100dvh] bg-background overflow-hidden transition-[background-color,color] duration-[900ms] ease-[cubic-bezier(0.22,0.61,0.36,1)] ${focusMode ? "focus-mode" : ""}`}>
@@ -356,6 +448,62 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Resume-where-you-stopped prompt */}
+      <AlertDialog
+        open={resumePrompt !== null}
+        onOpenChange={(open) => {
+          if (!open && resumePrompt) {
+            acknowledgedTabs.current.add(resumePrompt);
+            setResumePrompt(null);
+          }
+        }}
+      >
+        <AlertDialogContent
+          className="glass-surface border-primary/20 max-w-sm rounded-2xl
+            duration-500 ease-out
+            data-[state=open]:animate-in data-[state=closed]:animate-out
+            data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0
+            data-[state=open]:zoom-in-[0.98] data-[state=closed]:zoom-out-[0.98]"
+        >
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-amiri text-xl text-center text-primary">
+              {resumePrompt === "morning" ? "تريد استكمال أذكار الصباح؟" : "تريد استكمال أذكار المساء؟"}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="font-naskh text-center text-muted-foreground/80 leading-relaxed">
+              {(() => {
+                const s = resumePrompt === "morning" ? morningState : eveningState;
+                return `توقّفت عند الذكر رقم ${s.index + 1}. تحبّ تكمل من حيث توقفت أم تبدأ من جديد؟`;
+              })()}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="sm:justify-center gap-2">
+            <AlertDialogCancel
+              onClick={() => {
+                if (resumePrompt) {
+                  acknowledgedTabs.current.add(resumePrompt);
+                  startOverActiveTab();
+                }
+                setResumePrompt(null);
+              }}
+              className="font-naskh rounded-full border-border/40"
+            >
+              ابدأ من جديد
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (resumePrompt) {
+                  acknowledgedTabs.current.add(resumePrompt);
+                }
+                setResumePrompt(null);
+              }}
+              className="font-naskh rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              متابعة من حيث توقفت
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
