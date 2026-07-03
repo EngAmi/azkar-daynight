@@ -100,8 +100,36 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
   // User can still toggle freely during the session; the choice is not persisted across visits.
   const [activeTab, setActiveTab] = useState<SessionType>(initialTab ?? defaultType);
   const [focusMode, setFocusMode] = useState<boolean>(persisted.focusMode ?? false);
-  const [morningState, setMorningState] = useState<SessionState>(persisted.morningState ?? initialSession);
-  const [eveningState, setEveningState] = useState<SessionState>(persisted.eveningState ?? initialSession);
+  const [morningStateRaw, setMorningStateRaw] = useState<SessionState>(persisted.morningState ?? initialSession);
+  const [eveningStateRaw, setEveningStateRaw] = useState<SessionState>(persisted.eveningState ?? initialSession);
+
+  // Wrap the setters so every user-driven state change is timestamped automatically.
+  // We only stamp when index/rep/completed actually change — pure timestamp-only writes
+  // would loop with the persistence effect.
+  const stampSetter =
+    (setter: React.Dispatch<React.SetStateAction<SessionState>>) =>
+    (updater: React.SetStateAction<SessionState>) => {
+      setter((prev) => {
+        const next = typeof updater === "function"
+          ? (updater as (p: SessionState) => SessionState)(prev)
+          : updater;
+        const changed =
+          next.index !== prev.index ||
+          next.rep !== prev.rep ||
+          next.completed !== prev.completed;
+        return changed ? { ...next, updatedAt: Date.now() } : next;
+      });
+    };
+  const setMorningState = useMemo(() => stampSetter(setMorningStateRaw), []);
+  const setEveningState = useMemo(() => stampSetter(setEveningStateRaw), []);
+  const morningState = morningStateRaw;
+  const eveningState = eveningStateRaw;
+
+  // Resume-prompt state — appears once per tab per app-load when an incomplete
+  // session from the same morning/evening period is detected.
+  const [resumePrompt, setResumePrompt] = useState<SessionType | null>(null);
+  const acknowledgedTabs = useRef<Set<SessionType>>(new Set());
+
   const { theme } = useTheme();
   const isLight = theme === "light";
   const isMobile = useIsMobile();
@@ -118,9 +146,18 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
     } catch {
       // ignore
     }
-    setMorningState(initialSession);
-    setEveningState(initialSession);
+    setMorningStateRaw(initialSession);
+    setEveningStateRaw(initialSession);
     setFocusMode(false);
+  };
+
+  // Start over just the current tab (used by the resume prompt).
+  const startOverActiveTab = () => {
+    if (activeTab === "morning") {
+      setMorningStateRaw({ ...initialSession, updatedAt: Date.now() });
+    } else {
+      setEveningStateRaw({ ...initialSession, updatedAt: Date.now() });
+    }
   };
 
   useEffect(() => {
@@ -128,6 +165,31 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
     const timer = setTimeout(() => setIsReady(true), 850);
     return () => clearTimeout(timer);
   }, []);
+
+  // On mount: silently clear stale sessions from prior periods (e.g. yesterday's
+  // morning still lingering when today's morning starts). Only same-period
+  // incomplete sessions survive to trigger the resume prompt.
+  useEffect(() => {
+    if (morningStateRaw.updatedAt && morningStateRaw.updatedAt < periodStart("morning")) {
+      setMorningStateRaw(initialSession);
+    }
+    if (eveningStateRaw.updatedAt && eveningStateRaw.updatedAt < periodStart("evening")) {
+      setEveningStateRaw(initialSession);
+    }
+    // Intentionally empty deps — runs once on mount against the persisted values.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Open the resume prompt for the active tab if it has a resumable session
+  // that hasn't been acknowledged yet in this app-load.
+  useEffect(() => {
+    if (!isReady) return;
+    if (acknowledgedTabs.current.has(activeTab)) return;
+    const state = activeTab === "morning" ? morningStateRaw : eveningStateRaw;
+    if (isResumable(state, activeTab)) {
+      setResumePrompt(activeTab);
+    }
+  }, [isReady, activeTab, morningStateRaw, eveningStateRaw]);
 
   // Persist session state on changes
   useEffect(() => {
@@ -138,6 +200,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
       // ignore quota / private mode errors
     }
   }, [activeTab, focusMode, morningState, eveningState]);
+
 
   return (
     <div className={`relative flex flex-col min-h-[100dvh] bg-background overflow-hidden transition-[background-color,color] duration-[900ms] ease-[cubic-bezier(0.22,0.61,0.36,1)] ${focusMode ? "focus-mode" : ""}`}>
