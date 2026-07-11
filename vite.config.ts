@@ -66,6 +66,19 @@ export default defineConfig(({ mode }) => ({
               rangeRequests: true,
             },
           },
+          {
+            // Same-origin audio files (e.g. project-hosted mp3s) — cache for offline replay
+            urlPattern: ({ url, request, sameOrigin }) =>
+              sameOrigin && (request.destination === "audio" || /\.(mp3|m4a|ogg|wav)$/i.test(url.pathname)),
+            handler: "CacheFirst",
+            options: {
+              cacheName: "adhkar-audio-local",
+              expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 60 },
+              cacheableResponse: { statuses: [0, 200] },
+              rangeRequests: true,
+            },
+          },
+
         ],
       },
     }),
