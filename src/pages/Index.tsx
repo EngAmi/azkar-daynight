@@ -11,6 +11,7 @@ import { useFontScale } from "@/hooks/useFontScale";
 import { useAccessibility } from "@/hooks/useAccessibility";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getCurrentSessionType } from "@/lib/timeOfDay";
+import { prefetchSessionAudio } from "@/lib/prefetchAudio";
 import {
   AlertDialog,
   AlertDialogAction,
