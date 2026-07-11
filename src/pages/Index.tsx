@@ -770,6 +770,16 @@ function InlineSession({
         <div className={`flex items-center gap-1.5 min-w-0 ${mobileFocus ? "hidden" : ""}`}>
           <FocusFontControl />
           <AccessibilityToggle compact />
+          {canGoPrev && (
+            <button
+              onClick={() => setConfirmRestart(true)}
+              aria-label="العودة لبداية الأذكار"
+              title="من البداية"
+              className="min-h-[32px] min-w-[32px] w-8 h-8 text-muted-foreground/50 hover:text-primary hover:border-primary/40 active:scale-90 transition-all text-sm rounded-full border border-border/40 bg-background/40 backdrop-blur-sm flex items-center justify-center touch-manipulation"
+            >
+              ↺
+            </button>
+          )}
         </div>
 
         <div className={`flex items-center gap-1.5 ${mobileFocus ? "ms-auto" : ""}`}>
@@ -792,28 +802,27 @@ function InlineSession({
               ⌃
             </button>
           )}
-          {!mobileFocus && (
-            <span
-              className="text-muted-foreground/40 text-[11px] font-naskh tabular-nums whitespace-nowrap pl-1"
-              aria-hidden="true"
-            >
-              {focusMode ? (
-                <span className="tabular-nums">حاليًا</span>
-              ) : (
-                <>{currentIndex + 1} / {adhkarList.length}</>
-              )}
-            </span>
-          )}
         </div>
       </div>
 
-      {/* Progress bar */}
+      {/* Luxury progress — gold label + count + refined bar */}
       <div className="px-6">
-        <div className="w-full h-[2px] bg-border/20 rounded-full overflow-hidden">
+        <div className="mx-auto max-w-lg flex items-center justify-between mb-1.5 px-0.5">
+          <span className="text-[10px] font-naskh text-primary/60 tracking-[0.2em] uppercase">
+            {mobileFocus ? sessionLabel : "التقدّم"}
+          </span>
+          <span
+            className="text-[10px] font-naskh text-primary/70 tabular-nums tracking-wider"
+            aria-hidden="true"
+          >
+            {currentIndex + 1} <span className="text-primary/30">/</span> {adhkarList.length}
+          </span>
+        </div>
+        <div className="mx-auto max-w-lg h-[3px] bg-border/25 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-primary/40 rounded-full"
+            className="h-full rounded-full bg-gradient-to-l from-primary/90 via-primary/70 to-primary/50 shadow-[0_0_10px_hsl(var(--primary)/0.35)]"
             animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           />
         </div>
         {!mobileFocus && (
@@ -842,14 +851,13 @@ function InlineSession({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: direction * -40 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
-              className="w-full max-w-lg flex flex-col items-center gap-4 sm:gap-5"
+              className="w-full max-w-lg flex flex-col items-center gap-5 sm:gap-6"
             >
               {/* Dhikr text — fluid, responsive sizing that adapts to screen + content length */}
               <div className="w-full text-center relative">
                 <p
                   className="dhikr-text text-balance transition-[font-size] duration-300 mx-auto"
                   style={{
-                    // clamp(min, preferred-by-viewport, max) — adapts smoothly across screens
                     fontSize:
                       currentDhikr.content.length > 280
                         ? "clamp(0.85rem, 2.6vw + 0.4rem, 1.15rem)"
@@ -872,69 +880,66 @@ function InlineSession({
                 <motion.span
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="text-[11px] font-naskh text-muted-foreground/30 bg-muted/30 px-3 py-1 rounded-full"
+                  className="text-[11px] font-naskh text-muted-foreground/40 bg-muted/30 px-3 py-1 rounded-full border border-border/30"
                 >
                   {currentDhikr.countDescription}
                 </motion.span>
               )}
 
-              {/* Breathing circle — slightly larger on mobile for easy thumb tapping */}
-              <div className="flex-shrink-0 pb-1">
-                <BreathingCircle
-                  onComplete={handleRepComplete}
-                  size={isHighCount ? 150 : 170}
-                  currentRep={currentRep}
-                  totalReps={currentDhikr.count}
-                />
+              {/* Central interaction row — Prev · Breathing Circle · Skip (luxury balanced layout) */}
+              <div className="flex items-center justify-center gap-4 sm:gap-8 w-full pt-1">
+                <button
+                  onClick={handlePrev}
+                  disabled={!canGoPrev}
+                  aria-label="الذكر السابق (سهم يمين)"
+                  title="السابق — سهم يمين"
+                  aria-keyshortcuts="ArrowRight"
+                  className="group flex-shrink-0 min-h-[52px] min-w-[52px] w-13 h-13 sm:w-14 sm:h-14 rounded-2xl border border-border/40 bg-background/50 backdrop-blur-md text-muted-foreground/60 hover:text-primary hover:border-primary/40 hover:bg-primary/5 active:scale-90 disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center touch-manipulation shadow-sm"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-active:translate-x-0.5">
+                    <path d="M9 6l6 6-6 6" />
+                  </svg>
+                </button>
+
+                <div className="flex-shrink-0">
+                  <BreathingCircle
+                    onComplete={handleRepComplete}
+                    size={isHighCount ? 150 : 170}
+                    currentRep={currentRep}
+                    totalReps={currentDhikr.count}
+                  />
+                </div>
+
+                <button
+                  onClick={handleSkip}
+                  aria-label="الذكر التالي (سهم يسار)"
+                  title="التالي — سهم يسار"
+                  aria-keyshortcuts="ArrowLeft"
+                  className="group flex-shrink-0 min-h-[52px] min-w-[52px] w-13 h-13 sm:w-14 sm:h-14 rounded-2xl border border-primary/30 bg-primary/10 backdrop-blur-md text-primary hover:bg-primary hover:text-primary-foreground hover:border-primary active:scale-90 transition-all duration-300 flex items-center justify-center touch-manipulation shadow-[0_2px_12px_hsl(var(--primary)/0.15)]"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-active:-translate-x-0.5">
+                    <path d="M15 6l-6 6 6 6" />
+                  </svg>
+                </button>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Source */}
+      {/* Source — refined, centered, delicate divider */}
       {!mobileFocus && (
-        <div className="px-6 pb-1.5">
-          <p className="text-center text-[10px] text-muted-foreground/25 font-naskh leading-relaxed truncate">
-            📖 {currentDhikr.source}
-          </p>
+        <div className="px-6 pb-3 safe-area-bottom">
+          <div className="mx-auto max-w-lg flex items-center gap-3 opacity-60">
+            <div className="flex-1 h-px bg-gradient-to-l from-transparent via-primary/20 to-transparent" />
+            <p className="text-center text-[10px] text-muted-foreground/50 font-naskh leading-relaxed truncate">
+              {currentDhikr.source}
+            </p>
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+          </div>
         </div>
       )}
 
-      {/* Sticky bottom action bar — primary navigation, thumb-reachable on mobile */}
-      <div className="px-4 sm:px-6 pb-3 pt-1 safe-area-bottom">
-        <div className="mx-auto max-w-lg flex items-center justify-between gap-2">
-          <button
-            onClick={handlePrev}
-            disabled={!canGoPrev}
-            aria-label="الذكر السابق (سهم يمين)"
-            title="السابق — سهم يمين"
-            aria-keyshortcuts="ArrowRight"
-            className="min-h-[44px] flex-1 sm:flex-initial text-primary hover:text-primary-foreground hover:bg-primary active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-sm font-naskh px-4 py-2.5 rounded-full border border-primary/40 bg-primary/10 touch-manipulation"
-          >
-            → السابق
-          </button>
-          {canGoPrev && (
-            <button
-              onClick={() => setConfirmRestart(true)}
-              aria-label="العودة لبداية الأذكار"
-              title="من البداية"
-              className="min-h-[44px] min-w-[44px] text-accent-foreground bg-accent/70 hover:bg-accent active:scale-95 transition-all text-base font-naskh px-3 py-2.5 rounded-full border border-primary/20 flex items-center justify-center touch-manipulation"
-            >
-              ↺
-            </button>
-          )}
-          <button
-            onClick={handleSkip}
-            aria-label="الذكر التالي (سهم يسار)"
-            title="التالي — سهم يسار"
-            aria-keyshortcuts="ArrowLeft"
-            className="min-h-[44px] flex-1 sm:flex-initial text-primary-foreground bg-primary hover:bg-primary/90 active:scale-95 transition-all text-sm font-naskh px-4 py-2.5 rounded-full border border-primary shadow-md shadow-primary/30 touch-manipulation"
-          >
-            تخطي ←
-          </button>
-        </div>
-      </div>
       <AlertDialog open={confirmRestart} onOpenChange={setConfirmRestart}>
         <AlertDialogContent
           className="glass-surface border-primary/20 max-w-sm rounded-2xl
