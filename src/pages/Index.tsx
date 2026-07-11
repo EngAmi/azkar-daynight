@@ -606,6 +606,14 @@ function InlineSession({
     setDirection(1);
   }, [type]);
 
+  // Prefetch all audio files for the active session so they replay offline.
+  // Runs in the background at idle time with limited concurrency; aborts on
+  // tab change / unmount to avoid wasting bandwidth.
+  useEffect(() => {
+    const controller = prefetchSessionAudio(adhkarList.map((d) => d.audio));
+    return () => controller.abort();
+  }, [adhkarList]);
+
   const currentDhikr: Dhikr | undefined = adhkarList[currentIndex];
 
   // Scroll to top when dhikr changes
