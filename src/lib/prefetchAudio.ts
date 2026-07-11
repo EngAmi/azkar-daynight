@@ -27,10 +27,10 @@ async function prefetchOne(url: string, signal?: AbortSignal): Promise<void> {
       mode: "no-cors",
       credentials: "omit",
       cache: "default",
-      // @ts-expect-error — priority is a valid but not-yet-typed hint
+      // Low priority hint so we never contend with the currently-playing audio.
       priority: "low",
       signal,
-    });
+    } as RequestInit & { priority?: "low" | "high" | "auto" });
     done.add(url);
   } catch {
     // ignore — user may be offline; SW will serve whatever it already has
