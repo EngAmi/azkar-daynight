@@ -364,10 +364,11 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                   transition={{ duration: 0.5, ease: "easeInOut" }}
                   className="w-full overflow-hidden"
                 >
-                  {/* Top controls: font size + accessibility + theme */}
+                  {/* Top controls: font size + accessibility + reminders + theme */}
                   <div className="flex items-center justify-end gap-2 px-4 pt-1 w-full">
                     <FontSizeControl />
                     <AccessibilityToggle />
+                    <ReminderSettings />
                     <ThemeToggle />
                   </div>
 
