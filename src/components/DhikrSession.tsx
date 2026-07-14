@@ -5,6 +5,9 @@ import { BreathingCircle } from "@/components/BreathingCircle";
 import { SessionProgress } from "@/components/SessionProgress";
 import { CompletionScreen } from "@/components/CompletionScreen";
 import { DhikrFadl } from "@/components/DhikrFadl";
+import { shareDhikrAsImage } from "@/lib/shareDhikrImage";
+import { toast } from "@/hooks/use-toast";
+import { Share2 } from "lucide-react";
 
 interface DhikrSessionProps {
   type: SessionType;
@@ -22,8 +25,36 @@ export function DhikrSession({ type, onExit }: DhikrSessionProps) {
   const [isCompleted, setIsCompleted] = useState(false);
   const [showFadl, setShowFadl] = useState(false);
   const [direction, setDirection] = useState(1); // 1 = forward, -1 = backward
+  const [isSharing, setIsSharing] = useState(false);
 
   const currentDhikr: Dhikr | undefined = adhkarList[currentIndex];
+
+  const handleShare = useCallback(async () => {
+    if (!currentDhikr || isSharing) return;
+    setIsSharing(true);
+    try {
+      const result = await shareDhikrAsImage({
+        content: currentDhikr.content,
+        source: currentDhikr.source,
+        sessionType: type,
+      });
+      if (result === "downloaded") {
+        toast({
+          title: "تم حفظ الصورة",
+          description: "يمكنك مشاركتها من مجلد التنزيلات.",
+        });
+      }
+    } catch {
+      toast({
+        title: "تعذّرت المشاركة",
+        description: "حاول مرة أخرى.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSharing(false);
+    }
+  }, [currentDhikr, isSharing, type]);
+
 
   const handleRepComplete = useCallback(() => {
     if (!currentDhikr) return;
@@ -121,14 +152,25 @@ export function DhikrSession({ type, onExit }: DhikrSessionProps) {
 
       {/* Minimal top bar */}
       <div className="flex items-center justify-between px-4 pt-4 pb-2 safe-area-top">
-        <button
-          onClick={onExit}
-          aria-label="إنهاء الجلسة (Escape)"
-          aria-keyshortcuts="Escape"
-          className="text-muted-foreground/40 hover:text-muted-foreground transition-colors text-sm font-naskh p-2"
-        >
-          إنهاء
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={onExit}
+            aria-label="إنهاء الجلسة (Escape)"
+            aria-keyshortcuts="Escape"
+            className="text-muted-foreground/40 hover:text-muted-foreground transition-colors text-sm font-naskh p-2"
+          >
+            إنهاء
+          </button>
+          <button
+            onClick={handleShare}
+            disabled={isSharing}
+            aria-label="مشاركة الذكر كصورة"
+            title="مشاركة كصورة"
+            className="text-muted-foreground/40 hover:text-primary transition-colors p-2 disabled:opacity-40 disabled:cursor-wait"
+          >
+            <Share2 className="w-4 h-4" aria-hidden="true" />
+          </button>
+        </div>
         <div className="flex items-center gap-1">
           <button
             onClick={handlePrevious}
