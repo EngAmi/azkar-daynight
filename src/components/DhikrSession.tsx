@@ -25,8 +25,36 @@ export function DhikrSession({ type, onExit }: DhikrSessionProps) {
   const [isCompleted, setIsCompleted] = useState(false);
   const [showFadl, setShowFadl] = useState(false);
   const [direction, setDirection] = useState(1); // 1 = forward, -1 = backward
+  const [isSharing, setIsSharing] = useState(false);
 
   const currentDhikr: Dhikr | undefined = adhkarList[currentIndex];
+
+  const handleShare = useCallback(async () => {
+    if (!currentDhikr || isSharing) return;
+    setIsSharing(true);
+    try {
+      const result = await shareDhikrAsImage({
+        content: currentDhikr.content,
+        source: currentDhikr.source,
+        sessionType: type,
+      });
+      if (result === "downloaded") {
+        toast({
+          title: "تم حفظ الصورة",
+          description: "يمكنك مشاركتها من مجلد التنزيلات.",
+        });
+      }
+    } catch {
+      toast({
+        title: "تعذّرت المشاركة",
+        description: "حاول مرة أخرى.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSharing(false);
+    }
+  }, [currentDhikr, isSharing, type]);
+
 
   const handleRepComplete = useCallback(() => {
     if (!currentDhikr) return;
