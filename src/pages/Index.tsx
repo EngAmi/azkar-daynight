@@ -169,6 +169,30 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
     return () => clearTimeout(timer);
   }, []);
 
+  // Install the daily-reminder scheduler once on mount.
+  useEffect(() => {
+    const uninstall = installReminderScheduler();
+    return uninstall;
+  }, []);
+
+  // Deep-link support: ?session=morning|evening opens that tab in focus mode
+  // (used by tap-to-open on notifications).
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const s = params.get("session");
+      if (s === "morning" || s === "evening") {
+        setActiveTab(s);
+        setFocusMode(true);
+        params.delete("session");
+        const q = params.toString();
+        window.history.replaceState({}, "", window.location.pathname + (q ? `?${q}` : ""));
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
   // On mount: silently clear stale sessions from prior periods (e.g. yesterday's
   // morning still lingering when today's morning starts). Only same-period
   // incomplete sessions survive to trigger the resume prompt.
