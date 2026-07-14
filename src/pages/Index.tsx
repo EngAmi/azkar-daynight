@@ -12,6 +12,8 @@ import { useAccessibility } from "@/hooks/useAccessibility";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getCurrentSessionType } from "@/lib/timeOfDay";
 import { prefetchSessionAudio } from "@/lib/prefetchAudio";
+import { installReminderScheduler } from "@/lib/notifications";
+import { ReminderSettings } from "@/components/ReminderSettings";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -165,6 +167,30 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
     // شاشة تهدئة قصيرة قبل ظهور الأذكار — تمنح المستخدم لحظة سكون
     const timer = setTimeout(() => setIsReady(true), 850);
     return () => clearTimeout(timer);
+  }, []);
+
+  // Install the daily-reminder scheduler once on mount.
+  useEffect(() => {
+    const uninstall = installReminderScheduler();
+    return uninstall;
+  }, []);
+
+  // Deep-link support: ?session=morning|evening opens that tab in focus mode
+  // (used by tap-to-open on notifications).
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const s = params.get("session");
+      if (s === "morning" || s === "evening") {
+        setActiveTab(s);
+        setFocusMode(true);
+        params.delete("session");
+        const q = params.toString();
+        window.history.replaceState({}, "", window.location.pathname + (q ? `?${q}` : ""));
+      }
+    } catch {
+      // ignore
+    }
   }, []);
 
   // On mount: silently clear stale sessions from prior periods (e.g. yesterday's
@@ -362,10 +388,11 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                   transition={{ duration: 0.5, ease: "easeInOut" }}
                   className="w-full overflow-hidden"
                 >
-                  {/* Top controls: font size + accessibility + theme */}
+                  {/* Top controls: font size + accessibility + reminders + theme */}
                   <div className="flex items-center justify-end gap-2 px-4 pt-1 w-full">
                     <FontSizeControl />
                     <AccessibilityToggle />
+                    <ReminderSettings />
                     <ThemeToggle />
                   </div>
 
