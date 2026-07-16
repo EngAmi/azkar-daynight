@@ -192,10 +192,11 @@ export async function generateDhikrImage(
   }
 
   // المصدر
-  if (input.source) {
+  const sourceText = input.source?.trim();
+  if (sourceText) {
     ctx.fillStyle = "rgba(242, 234, 214, 0.55)";
     ctx.font = '28px "Amiri", "Amiri Fallback", serif';
-    const srcLines = wrapArabic(ctx, input.source, textMaxWidth);
+    const srcLines = wrapArabic(ctx, sourceText, textMaxWidth);
     let sy = CANVAS_H - margin - 220;
     for (const line of srcLines.slice(0, 2)) {
       ctx.fillText(line, CANVAS_W / 2, sy);
@@ -206,14 +207,18 @@ export async function generateDhikrImage(
   // زخرفة سفلية
   drawGoldOrnament(ctx, CANVAS_W / 2, CANVAS_H - margin - 130, 32);
 
-  // توقيع الموقع
+  // توقيع الموقع (قابل للتخصيص)
+  const signature = (input.signature ?? DEFAULT_SIGNATURE).trim() || DEFAULT_SIGNATURE;
+  const signatureUrl = (input.signatureUrl ?? DEFAULT_SIGNATURE_URL).trim();
   ctx.fillStyle = "rgba(202, 167, 102, 0.7)";
   ctx.font = 'bold 32px "Amiri", "Amiri Fallback", serif';
-  ctx.fillText("الذاكرين", CANVAS_W / 2, CANVAS_H - margin - 70);
-  ctx.fillStyle = "rgba(242, 234, 214, 0.4)";
-  ctx.font = '22px "Karla", system-ui, sans-serif';
-  ctx.direction = "ltr";
-  ctx.fillText("azkar-daynight.lovable.app", CANVAS_W / 2, CANVAS_H - margin - 30);
+  ctx.fillText(signature, CANVAS_W / 2, CANVAS_H - margin - 70);
+  if (signatureUrl) {
+    ctx.fillStyle = "rgba(242, 234, 214, 0.4)";
+    ctx.font = '22px "Karla", system-ui, sans-serif';
+    ctx.direction = "ltr";
+    ctx.fillText(signatureUrl, CANVAS_W / 2, CANVAS_H - margin - 30);
+  }
 
   return await new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(
