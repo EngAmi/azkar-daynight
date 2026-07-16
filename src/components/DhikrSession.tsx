@@ -5,8 +5,7 @@ import { BreathingCircle } from "@/components/BreathingCircle";
 import { SessionProgress } from "@/components/SessionProgress";
 import { CompletionScreen } from "@/components/CompletionScreen";
 import { DhikrFadl } from "@/components/DhikrFadl";
-import { shareDhikrAsImage } from "@/lib/shareDhikrImage";
-import { toast } from "@/hooks/use-toast";
+import { ShareDhikrPreview } from "@/components/ShareDhikrPreview";
 import { Share2 } from "lucide-react";
 
 interface DhikrSessionProps {
