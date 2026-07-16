@@ -5,8 +5,7 @@ import { BreathingCircle } from "@/components/BreathingCircle";
 import { SessionProgress } from "@/components/SessionProgress";
 import { CompletionScreen } from "@/components/CompletionScreen";
 import { DhikrFadl } from "@/components/DhikrFadl";
-import { shareDhikrAsImage } from "@/lib/shareDhikrImage";
-import { toast } from "@/hooks/use-toast";
+import { ShareDhikrPreview } from "@/components/ShareDhikrPreview";
 import { Share2 } from "lucide-react";
 
 interface DhikrSessionProps {
@@ -25,35 +24,14 @@ export function DhikrSession({ type, onExit }: DhikrSessionProps) {
   const [isCompleted, setIsCompleted] = useState(false);
   const [showFadl, setShowFadl] = useState(false);
   const [direction, setDirection] = useState(1); // 1 = forward, -1 = backward
-  const [isSharing, setIsSharing] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   const currentDhikr: Dhikr | undefined = adhkarList[currentIndex];
 
-  const handleShare = useCallback(async () => {
-    if (!currentDhikr || isSharing) return;
-    setIsSharing(true);
-    try {
-      const result = await shareDhikrAsImage({
-        content: currentDhikr.content,
-        source: currentDhikr.source,
-        sessionType: type,
-      });
-      if (result === "downloaded") {
-        toast({
-          title: "تم حفظ الصورة",
-          description: "يمكنك مشاركتها من مجلد التنزيلات.",
-        });
-      }
-    } catch {
-      toast({
-        title: "تعذّرت المشاركة",
-        description: "حاول مرة أخرى.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSharing(false);
-    }
-  }, [currentDhikr, isSharing, type]);
+  const handleShare = useCallback(() => {
+    if (!currentDhikr) return;
+    setShareOpen(true);
+  }, [currentDhikr]);
 
 
   const handleRepComplete = useCallback(() => {
@@ -163,10 +141,9 @@ export function DhikrSession({ type, onExit }: DhikrSessionProps) {
           </button>
           <button
             onClick={handleShare}
-            disabled={isSharing}
             aria-label="مشاركة الذكر كصورة"
             title="مشاركة كصورة"
-            className="text-muted-foreground/40 hover:text-primary transition-colors p-2 disabled:opacity-40 disabled:cursor-wait"
+            className="text-muted-foreground/40 hover:text-primary transition-colors p-2"
           >
             <Share2 className="w-4 h-4" aria-hidden="true" />
           </button>
@@ -253,6 +230,14 @@ export function DhikrSession({ type, onExit }: DhikrSessionProps) {
           {currentDhikr.source}
         </p>
       </div>
+
+      <ShareDhikrPreview
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        content={currentDhikr.content}
+        defaultSource={currentDhikr.source}
+        sessionType={type}
+      />
     </div>
   );
 }
