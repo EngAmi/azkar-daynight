@@ -230,6 +230,14 @@ export function DhikrSession({ type, onExit }: DhikrSessionProps) {
           {currentDhikr.source}
         </p>
       </div>
+
+      <ShareDhikrPreview
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        content={currentDhikr.content}
+        defaultSource={currentDhikr.source}
+        sessionType={type}
+      />
     </div>
   );
 }
