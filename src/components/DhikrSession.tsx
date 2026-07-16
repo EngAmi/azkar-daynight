@@ -141,10 +141,9 @@ export function DhikrSession({ type, onExit }: DhikrSessionProps) {
           </button>
           <button
             onClick={handleShare}
-            disabled={isSharing}
             aria-label="مشاركة الذكر كصورة"
             title="مشاركة كصورة"
-            className="text-muted-foreground/40 hover:text-primary transition-colors p-2 disabled:opacity-40 disabled:cursor-wait"
+            className="text-muted-foreground/40 hover:text-primary transition-colors p-2"
           >
             <Share2 className="w-4 h-4" aria-hidden="true" />
           </button>
