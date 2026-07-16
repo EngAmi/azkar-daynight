@@ -262,9 +262,9 @@ function drawGoldOrnament(
  * @returns "shared" | "downloaded"
  */
 export async function shareDhikrAsImage(
-  input: ShareDhikrInput
+  input: ShareDhikrInput & { blob?: Blob }
 ): Promise<"shared" | "downloaded"> {
-  const blob = await generateDhikrImage(input);
+  const blob = input.blob ?? (await generateDhikrImage(input));
   const filename = `dhikr-${Date.now()}.png`;
   const file = new File([blob], filename, { type: "image/png" });
 
