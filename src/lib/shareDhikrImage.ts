@@ -9,7 +9,14 @@ export interface ShareDhikrInput {
   content: string;
   source?: string;
   sessionType?: "morning" | "evening";
+  /** توقيع مخصّص أسفل البطاقة. الافتراضي: "الذاكرين". */
+  signature?: string;
+  /** رابط/نص التوقيع الفرعي. الافتراضي: نطاق الموقع. */
+  signatureUrl?: string;
 }
+
+export const DEFAULT_SIGNATURE = "الذاكرين";
+export const DEFAULT_SIGNATURE_URL = "azkar-daynight.lovable.app";
 
 const CANVAS_W = 1080;
 const CANVAS_H = 1920;
