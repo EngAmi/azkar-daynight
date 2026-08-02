@@ -942,7 +942,7 @@ function InlineSession({
                 <div className="flex-shrink-0">
                   <BreathingCircle
                     onComplete={handleRepComplete}
-                    size={isHighCount ? 150 : 170}
+                    size={isMobile ? (isHighCount ? 120 : 134) : isHighCount ? 150 : 170}
                     currentRep={currentRep}
                     totalReps={currentDhikr.count}
                   />
