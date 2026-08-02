@@ -389,7 +389,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                   className="w-full overflow-hidden"
                 >
                   {/* Top controls: font size + accessibility + reminders + theme */}
-                  <div className="flex items-center justify-end gap-2 px-4 pt-1 w-full">
+                  <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2 px-4 pt-1 w-full">
                     <FontSizeControl />
                     <AccessibilityToggle />
                     <ReminderSettings />
@@ -432,7 +432,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
             </AnimatePresence>
 
             {/* Swipeable session content */}
-            <main className="flex-1 w-full flex flex-col overflow-hidden">
+            <main className="flex-1 min-h-0 w-full flex flex-col overflow-hidden">
               <SwipeableContent
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
@@ -579,7 +579,7 @@ function SwipeableContent({
   const setState = activeTab === "morning" ? setMorningState : setEveningState;
 
   return (
-    <div className="flex-1 w-full overflow-hidden">
+    <div className="flex-1 min-h-0 w-full flex flex-col overflow-hidden">
       <InlineSession
         type={activeTab}
         state={state}
@@ -791,7 +791,7 @@ function InlineSession({
 
   return (
     <motion.div
-      className="flex flex-col h-full touch-pan-y"
+      className="flex flex-col flex-1 min-h-0 h-full touch-pan-y"
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.15}
