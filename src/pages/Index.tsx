@@ -389,7 +389,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                   className="w-full overflow-hidden"
                 >
                   {/* Top controls: font size + accessibility + reminders + theme */}
-                  <div className="flex items-center justify-end gap-2 px-4 pt-1 w-full">
+                  <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2 px-4 pt-1 w-full">
                     <FontSizeControl />
                     <AccessibilityToggle />
                     <ReminderSettings />
@@ -432,7 +432,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
             </AnimatePresence>
 
             {/* Swipeable session content */}
-            <main className="flex-1 w-full flex flex-col overflow-hidden">
+            <main className="flex-1 min-h-0 w-full flex flex-col overflow-hidden">
               <SwipeableContent
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
@@ -579,7 +579,7 @@ function SwipeableContent({
   const setState = activeTab === "morning" ? setMorningState : setEveningState;
 
   return (
-    <div className="flex-1 w-full overflow-hidden">
+    <div className="flex-1 min-h-0 w-full flex flex-col overflow-hidden">
       <InlineSession
         type={activeTab}
         state={state}
@@ -791,7 +791,7 @@ function InlineSession({
 
   return (
     <motion.div
-      className="flex flex-col h-full touch-pan-y"
+      className="flex flex-col flex-1 min-h-0 h-full touch-pan-y"
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.15}
@@ -804,7 +804,7 @@ function InlineSession({
       {/* Top bar — utilities row (font + a11y + focus controls + counter) */}
       <div className="flex items-center justify-between px-4 sm:px-6 pb-1.5 gap-2">
         <div className={`flex items-center gap-1.5 min-w-0 ${mobileFocus ? "hidden" : ""}`}>
-          <FocusFontControl />
+          {focusMode && <FocusFontControl />}
           <AccessibilityToggle compact />
           {canGoPrev && (
             <button
@@ -843,7 +843,7 @@ function InlineSession({
 
       {/* Luxury progress — gold label + count + refined bar */}
       <div className="px-6">
-        <div className="mx-auto max-w-lg flex items-center justify-between mb-1.5 px-0.5">
+        <div className="mx-auto w-full max-w-lg sm:max-w-2xl flex items-center justify-between mb-1.5 px-0.5">
           <span className="text-[10px] font-naskh text-primary/60 tracking-[0.2em] uppercase">
             {mobileFocus ? sessionLabel : "التقدّم"}
           </span>
@@ -854,7 +854,7 @@ function InlineSession({
             {currentIndex + 1} <span className="text-primary/30">/</span> {adhkarList.length}
           </span>
         </div>
-        <div className="mx-auto max-w-lg h-[3px] bg-border/25 rounded-full overflow-hidden">
+        <div className="mx-auto w-full max-w-lg sm:max-w-2xl h-[3px] bg-border/25 rounded-full overflow-hidden">
           <motion.div
             className="h-full rounded-full bg-gradient-to-l from-primary/90 via-primary/70 to-primary/50 shadow-[0_0_10px_hsl(var(--primary)/0.35)]"
             animate={{ width: `${progress}%` }}
@@ -887,27 +887,29 @@ function InlineSession({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: direction * -40 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
-              className="w-full max-w-lg flex flex-col items-center gap-5 sm:gap-6"
+              className="w-full max-w-lg sm:max-w-2xl lg:max-w-3xl flex flex-col items-center gap-5 sm:gap-6"
             >
               {/* Dhikr text — fluid, responsive sizing that adapts to screen + content length */}
               <div className="w-full text-center relative">
                 <p
                   className="dhikr-text text-balance transition-[font-size] duration-300 mx-auto"
                   style={{
-                    fontSize:
+                    ["--dhikr-size" as string]:
                       currentDhikr.content.length > 280
-                        ? "clamp(0.85rem, 2.6vw + 0.4rem, 1.15rem)"
+                        ? "clamp(0.95rem, 2.2vw + 0.55rem, 1.45rem)"
                         : currentDhikr.content.length > 180
-                          ? "clamp(0.95rem, 3vw + 0.45rem, 1.3rem)"
+                          ? "clamp(1.05rem, 2.5vw + 0.6rem, 1.7rem)"
                           : currentDhikr.content.length > 90
-                            ? "clamp(1.05rem, 3.4vw + 0.5rem, 1.5rem)"
-                            : "clamp(1.2rem, 4vw + 0.55rem, 1.75rem)",
-                    lineHeight: currentDhikr.content.length > 180 ? 2.1 : 2.3,
-                    maxWidth: "min(100%, 60ch)",
-                  }}
+                            ? "clamp(1.15rem, 2.8vw + 0.65rem, 1.95rem)"
+                            : "clamp(1.3rem, 3.2vw + 0.7rem, 2.3rem)",
+                    ["--dhikr-leading" as string]:
+                      currentDhikr.content.length > 180 ? "2.1" : "2.3",
+                    maxWidth: "min(100%, 62ch)",
+                  } as React.CSSProperties}
                 >
                   {currentDhikr.content}
                 </p>
+
                 <SpeakButton audioFile={currentDhikr.audio} />
               </div>
 
@@ -940,7 +942,7 @@ function InlineSession({
                 <div className="flex-shrink-0">
                   <BreathingCircle
                     onComplete={handleRepComplete}
-                    size={isHighCount ? 150 : 170}
+                    size={isMobile ? (isHighCount ? 120 : 134) : isHighCount ? 150 : 170}
                     currentRep={currentRep}
                     totalReps={currentDhikr.count}
                   />
@@ -966,7 +968,7 @@ function InlineSession({
       {/* Source — refined, centered, delicate divider */}
       {!mobileFocus && (
         <div className="px-6 pb-3 safe-area-bottom">
-          <div className="mx-auto max-w-lg flex items-center gap-3 opacity-60">
+          <div className="mx-auto w-full max-w-lg sm:max-w-2xl flex items-center gap-3 opacity-60">
             <div className="flex-1 h-px bg-gradient-to-l from-transparent via-primary/20 to-transparent" />
             <p className="text-center text-[10px] text-muted-foreground/50 font-naskh leading-relaxed truncate">
               {currentDhikr.source}
