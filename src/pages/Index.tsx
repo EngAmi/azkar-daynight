@@ -843,7 +843,7 @@ function InlineSession({
 
       {/* Luxury progress — gold label + count + refined bar */}
       <div className="px-6">
-        <div className="mx-auto max-w-lg flex items-center justify-between mb-1.5 px-0.5">
+        <div className="mx-auto w-full max-w-lg sm:max-w-2xl flex items-center justify-between mb-1.5 px-0.5">
           <span className="text-[10px] font-naskh text-primary/60 tracking-[0.2em] uppercase">
             {mobileFocus ? sessionLabel : "التقدّم"}
           </span>
@@ -854,7 +854,7 @@ function InlineSession({
             {currentIndex + 1} <span className="text-primary/30">/</span> {adhkarList.length}
           </span>
         </div>
-        <div className="mx-auto max-w-lg h-[3px] bg-border/25 rounded-full overflow-hidden">
+        <div className="mx-auto w-full max-w-lg sm:max-w-2xl h-[3px] bg-border/25 rounded-full overflow-hidden">
           <motion.div
             className="h-full rounded-full bg-gradient-to-l from-primary/90 via-primary/70 to-primary/50 shadow-[0_0_10px_hsl(var(--primary)/0.35)]"
             animate={{ width: `${progress}%` }}
@@ -887,7 +887,7 @@ function InlineSession({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: direction * -40 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
-              className="w-full max-w-lg flex flex-col items-center gap-5 sm:gap-6"
+              className="w-full max-w-lg sm:max-w-2xl lg:max-w-3xl flex flex-col items-center gap-5 sm:gap-6"
             >
               {/* Dhikr text — fluid, responsive sizing that adapts to screen + content length */}
               <div className="w-full text-center relative">
@@ -968,7 +968,7 @@ function InlineSession({
       {/* Source — refined, centered, delicate divider */}
       {!mobileFocus && (
         <div className="px-6 pb-3 safe-area-bottom">
-          <div className="mx-auto max-w-lg flex items-center gap-3 opacity-60">
+          <div className="mx-auto w-full max-w-lg sm:max-w-2xl flex items-center gap-3 opacity-60">
             <div className="flex-1 h-px bg-gradient-to-l from-transparent via-primary/20 to-transparent" />
             <p className="text-center text-[10px] text-muted-foreground/50 font-naskh leading-relaxed truncate">
               {currentDhikr.source}
