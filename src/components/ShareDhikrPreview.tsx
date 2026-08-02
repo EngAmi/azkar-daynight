@@ -20,6 +20,35 @@ import {
 } from "@/lib/shareDhikrImage";
 import { toast } from "@/hooks/use-toast";
 
+const SIG_KEY = "share-dhikr:signature";
+const SIG_URL_KEY = "share-dhikr:signatureUrl";
+const SOURCES_KEY = "share-dhikr:sources";
+
+function readLS(key: string, fallback: string) {
+  try {
+    return localStorage.getItem(key) ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function readSources(): Record<string, string> {
+  try {
+    return JSON.parse(localStorage.getItem(SOURCES_KEY) ?? "{}") ?? {};
+  } catch {
+    return {};
+  }
+}
+
+/** مفتاح مختصر ومستقر لنص الذكر. */
+function contentKey(content: string) {
+  let h = 0;
+  for (let i = 0; i < content.length; i++) {
+    h = (h * 31 + content.charCodeAt(i)) | 0;
+  }
+  return String(h);
+}
+
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
