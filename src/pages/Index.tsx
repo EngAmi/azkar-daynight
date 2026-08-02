@@ -894,20 +894,22 @@ function InlineSession({
                 <p
                   className="dhikr-text text-balance transition-[font-size] duration-300 mx-auto"
                   style={{
-                    fontSize:
+                    ["--dhikr-size" as string]:
                       currentDhikr.content.length > 280
-                        ? "clamp(0.85rem, 2.6vw + 0.4rem, 1.15rem)"
+                        ? "clamp(0.95rem, 2.2vw + 0.55rem, 1.45rem)"
                         : currentDhikr.content.length > 180
-                          ? "clamp(0.95rem, 3vw + 0.45rem, 1.3rem)"
+                          ? "clamp(1.05rem, 2.5vw + 0.6rem, 1.7rem)"
                           : currentDhikr.content.length > 90
-                            ? "clamp(1.05rem, 3.4vw + 0.5rem, 1.5rem)"
-                            : "clamp(1.2rem, 4vw + 0.55rem, 1.75rem)",
-                    lineHeight: currentDhikr.content.length > 180 ? 2.1 : 2.3,
-                    maxWidth: "min(100%, 60ch)",
-                  }}
+                            ? "clamp(1.15rem, 2.8vw + 0.65rem, 1.95rem)"
+                            : "clamp(1.3rem, 3.2vw + 0.7rem, 2.3rem)",
+                    ["--dhikr-leading" as string]:
+                      currentDhikr.content.length > 180 ? "2.1" : "2.3",
+                    maxWidth: "min(100%, 62ch)",
+                  } as React.CSSProperties}
                 >
                   {currentDhikr.content}
                 </p>
+
                 <SpeakButton audioFile={currentDhikr.audio} />
               </div>
 
