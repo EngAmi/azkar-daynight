@@ -804,7 +804,7 @@ function InlineSession({
       {/* Top bar — utilities row (font + a11y + focus controls + counter) */}
       <div className="flex items-center justify-between px-4 sm:px-6 pb-1.5 gap-2">
         <div className={`flex items-center gap-1.5 min-w-0 ${mobileFocus ? "hidden" : ""}`}>
-          <FocusFontControl />
+          {focusMode && <FocusFontControl />}
           <AccessibilityToggle compact />
           {canGoPrev && (
             <button
