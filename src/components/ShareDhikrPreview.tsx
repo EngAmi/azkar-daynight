@@ -20,6 +20,35 @@ import {
 } from "@/lib/shareDhikrImage";
 import { toast } from "@/hooks/use-toast";
 
+const SIG_KEY = "share-dhikr:signature";
+const SIG_URL_KEY = "share-dhikr:signatureUrl";
+const SOURCES_KEY = "share-dhikr:sources";
+
+function readLS(key: string, fallback: string) {
+  try {
+    return localStorage.getItem(key) ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function readSources(): Record<string, string> {
+  try {
+    return JSON.parse(localStorage.getItem(SOURCES_KEY) ?? "{}") ?? {};
+  } catch {
+    return {};
+  }
+}
+
+/** مفتاح مختصر ومستقر لنص الذكر. */
+function contentKey(content: string) {
+  let h = 0;
+  for (let i = 0; i < content.length; i++) {
+    h = (h * 31 + content.charCodeAt(i)) | 0;
+  }
+  return String(h);
+}
+
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -40,20 +69,49 @@ export function ShareDhikrPreview({
   sessionType,
 }: Props) {
   const [source, setSource] = useState(defaultSource ?? "");
-  const [signature, setSignature] = useState(DEFAULT_SIGNATURE);
-  const [signatureUrl, setSignatureUrl] = useState(DEFAULT_SIGNATURE_URL);
+  const [signature, setSignature] = useState(() =>
+    readLS(SIG_KEY, DEFAULT_SIGNATURE)
+  );
+  const [signatureUrl, setSignatureUrl] = useState(() =>
+    readLS(SIG_URL_KEY, DEFAULT_SIGNATURE_URL)
+  );
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isRendering, setIsRendering] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const currentBlobRef = useRef<Blob | null>(null);
   const currentUrlRef = useRef<string | null>(null);
 
-  // إعادة تعيين المصدر عند فتح الحوار على ذكر جديد
+  // عند الفتح: استرجع المصدر المحفوظ لهذا الذكر إن وُجد
   useEffect(() => {
     if (open) {
-      setSource(defaultSource ?? "");
+      const saved = readSources()[contentKey(content)];
+      setSource(saved ?? defaultSource ?? "");
     }
-  }, [open, defaultSource]);
+  }, [open, defaultSource, content]);
+
+  // حفظ التوقيع والرابط لكل المشاركات القادمة على نفس الجهاز
+  useEffect(() => {
+    try {
+      localStorage.setItem(SIG_KEY, signature);
+      localStorage.setItem(SIG_URL_KEY, signatureUrl);
+    } catch {
+      /* تجاهل */
+    }
+  }, [signature, signatureUrl]);
+
+  // حفظ المصدر المخصّص لهذا الذكر تحديدًا
+  useEffect(() => {
+    if (!open) return;
+    try {
+      const map = readSources();
+      const key = contentKey(content);
+      if (source.trim() && source !== (defaultSource ?? "")) map[key] = source;
+      else delete map[key];
+      localStorage.setItem(SOURCES_KEY, JSON.stringify(map));
+    } catch {
+      /* تجاهل */
+    }
+  }, [open, source, content, defaultSource]);
 
   // إعادة توليد الصورة عندما تتغيّر المدخلات (مع debounce صغير)
   useEffect(() => {
