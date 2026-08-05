@@ -1,0 +1,27 @@
+{
+  "customizations": [
+    { "token": "--background/--foreground/--card/--popover/--primary/--secondary/--muted/--accent/--destructive/--border/--input/--ring dark palette (Emerald Prestige night)", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".light full day palette (warm cream + deep emerald + gold)", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--radius: 1rem", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--glow-gold / --glow-soft / --surface-glass luxury tokens", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--overlay / --overlay-opacity / --overlay-border / --overlay-border-opacity / --overlay-ring themed overlay tokens", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--sidebar-* token set (dark + light)", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "semantic aliases --bg/--text/--text-muted/--surface/--surface-elevated/--gold/--gold-foreground/--gold-glow/--emerald/--emerald-soft/--line/--focus", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".focus-mode palette scope + 900ms eased transitions + prefers-reduced-motion guard", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "@font-face fallbacks: Karla Fallback / Cormorant Fallback / Amiri Fallback (size-adjust metrics)", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "body base styles (Arabic font stack, antialiasing, overscroll, tap-highlight)", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".dhikr-text (fluid --dhikr-size clamp + --font-scale + wrapping)", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".fadl-text", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".gold-shimmer", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".glass-surface", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".breathing-glow", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".a11y-mode typography overrides", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".text-balance utility", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".scrollbar-hide utility", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "@keyframes shimmer / breathe / float / pulse-ring / fill-circle", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "font-amiri / font-naskh / font-serif / font-sans / font-display utilities", "source": "tailwind.config.ts", "reappliedIn": "src/styles.css" },
+    { "token": "color utilities glow-gold/glow-soft, surface/surface-elevated/surface-glass, bg/text/text-muted, gold/gold-foreground/gold-glow, emerald/emerald-soft, line, focus, sidebar-*", "source": "tailwind.config.ts", "reappliedIn": "src/styles.css" },
+    { "token": "borderRadius sm/md/lg mapped to var(--radius) offsets", "source": "tailwind.config.ts", "reappliedIn": "src/styles.css" },
+    { "token": "animate-float / animate-pulse-ring / animate-accordion-down / animate-accordion-up", "source": "tailwind.config.ts", "reappliedIn": "src/styles.css" }
+  ]
+}
