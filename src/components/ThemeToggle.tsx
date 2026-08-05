@@ -12,7 +12,7 @@ export function ThemeToggle() {
         onClick={toggle}
         aria-label={isLight ? "تفعيل الوضع الليلي" : "تفعيل الوضع النهاري"}
         title={isLight ? "الوضع الليلي" : "الوضع النهاري"}
-        className="relative w-9 h-9 rounded-full flex items-center justify-center bg-secondary/40 border border-border/40 text-muted-foreground hover:text-primary hover:border-primary/40 transition-all duration-300 backdrop-blur-sm"
+        className="relative w-9 h-9 rounded-full flex items-center justify-center bg-secondary/40 border border-border/40 text-muted-foreground hover:text-primary hover:border-primary/40 transition-all duration-300 backdrop-blur-xs"
       >
         <AnimatePresence mode="wait" initial={false}>
           <motion.span

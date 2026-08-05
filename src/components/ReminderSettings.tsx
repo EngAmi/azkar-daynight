@@ -84,7 +84,7 @@ export function ReminderSettings() {
         <button
           aria-label="إعدادات التذكيرات"
           title="تذكيرات الأذكار"
-          className="relative w-9 h-9 rounded-full flex items-center justify-center bg-secondary/40 border border-border/40 text-muted-foreground hover:text-primary hover:border-primary/40 transition-all duration-300 backdrop-blur-sm"
+          className="relative w-9 h-9 rounded-full flex items-center justify-center bg-secondary/40 border border-border/40 text-muted-foreground hover:text-primary hover:border-primary/40 transition-all duration-300 backdrop-blur-xs"
         >
           {settings.enabled && permission === "granted" ? (
             <Bell className="w-4 h-4" />
@@ -131,7 +131,7 @@ export function ReminderSettings() {
                 type="time"
                 value={settings.morningTime}
                 onChange={(e) => handleTimeChange("morningTime", e.target.value)}
-                className="bg-secondary/40 border border-border/40 rounded-lg px-3 py-2 text-sm font-naskh text-foreground focus:outline-none focus:border-primary/60 transition-colors"
+                className="bg-secondary/40 border border-border/40 rounded-lg px-3 py-2 text-sm font-naskh text-foreground focus:outline-hidden focus:border-primary/60 transition-colors"
                 dir="ltr"
               />
             </div>
@@ -144,7 +144,7 @@ export function ReminderSettings() {
                 type="time"
                 value={settings.eveningTime}
                 onChange={(e) => handleTimeChange("eveningTime", e.target.value)}
-                className="bg-secondary/40 border border-border/40 rounded-lg px-3 py-2 text-sm font-naskh text-foreground focus:outline-none focus:border-primary/60 transition-colors"
+                className="bg-secondary/40 border border-border/40 rounded-lg px-3 py-2 text-sm font-naskh text-foreground focus:outline-hidden focus:border-primary/60 transition-colors"
                 dir="ltr"
               />
             </div>

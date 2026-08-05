@@ -1,8 +1,128 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
 
-/* خطوط احتياطية بمقاييس مضبوطة لتقليل قفزة التخطيط (CLS/FOUT) أثناء تحميل خطوط Google */
+@custom-variant dark (&:is(.dark *));
+@custom-variant light (&:is(.light *));
+
+/*
+ * Emerald Prestige design system — ported from the pre-migration src/index.css
+ * and tailwind.config.ts. Color tokens stay as raw HSL triplets (consumed as
+ * hsl(var(--x))) so all existing component CSS keeps working unchanged.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-ring-offset-background: hsl(var(--background));
+
+  /* Custom luxury tokens */
+  --color-glow-gold: hsl(var(--glow-gold));
+  --color-glow-soft: hsl(var(--glow-soft));
+  --color-surface: hsl(var(--surface));
+  --color-surface-elevated: hsl(var(--surface-elevated));
+  --color-surface-glass: hsl(var(--surface-glass));
+
+  /* Short semantic aliases — bg/text/gold/emerald for ergonomic theming */
+  --color-bg: hsl(var(--bg));
+  --color-text: hsl(var(--text));
+  --color-text-muted: hsl(var(--text-muted));
+  --color-gold: hsl(var(--gold));
+  --color-gold-foreground: hsl(var(--gold-foreground));
+  --color-gold-glow: hsl(var(--gold-glow));
+  --color-emerald: hsl(var(--emerald));
+  --color-emerald-soft: hsl(var(--emerald-soft));
+  --color-line: hsl(var(--line));
+  --color-focus: hsl(var(--focus));
+
+  --color-sidebar: hsl(var(--sidebar-background));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  /* Fonts */
+  --font-amiri: "Amiri", "Amiri Fallback", serif;
+  --font-naskh: "Noto Naskh Arabic", "Amiri", "Amiri Fallback", serif;
+  --font-serif: "Cormorant Garamond", "Cormorant Fallback", "Amiri", serif;
+  --font-sans: "Karla", "Karla Fallback", "Noto Naskh Arabic", system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", "Cormorant Fallback", "Amiri", serif;
+
+  /* Animations */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-ring: pulse-ring 2s ease-in-out infinite;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+  @keyframes pulse-ring {
+    0% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    50% {
+      opacity: 0.3;
+    }
+    100% {
+      transform: scale(1.4);
+      opacity: 0;
+    }
+  }
+}
+
+/* خطوط احتياطية بمقاييس مضبوطة لتقليل قفزة التخطيط (CLS/FOUT) أثناء تحميل الخطوط */
 @font-face {
   font-family: 'Karla Fallback';
   src: local('Segoe UI'), local('Helvetica Neue'), local('Arial');
@@ -204,11 +324,9 @@
   }
 }
 
-
-
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
 
   html {
@@ -216,7 +334,8 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     /* Karla للواجهة اللاتينية + خط احتياطي مضبوط + Noto Naskh/Amiri للعربية */
     font-family: 'Karla', 'Karla Fallback', 'Noto Naskh Arabic', 'Amiri', 'Amiri Fallback', serif;
     -webkit-font-smoothing: antialiased;
@@ -226,14 +345,14 @@
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
-
 }
 
 @layer components {
   /* Arabic Quran/Dhikr text styling */
   .dhikr-text {
     font-family: 'Amiri', 'Amiri Fallback', serif;
-    @apply text-foreground tracking-wide;
+    color: hsl(var(--foreground));
+    letter-spacing: 0.025em;
     font-feature-settings: "liga" 1;
     /* --dhikr-size يُضبط ديناميكيًا حسب طول النص وعرض الشاشة */
     font-size: calc(var(--dhikr-size, clamp(1.1rem, 3.2vw + 0.5rem, 1.75rem)) * var(--font-scale, 1)) !important;
@@ -246,8 +365,6 @@
     hyphens: auto;
     max-width: 100%;
   }
-
-
 
   /* Subtle shimmer on gold elements */
   .gold-shimmer {
@@ -277,7 +394,7 @@
   /* Fadl (virtue) text */
   .fadl-text {
     font-family: 'Noto Naskh Arabic', 'Amiri Fallback', serif;
-    @apply text-accent-foreground/70;
+    color: hsl(var(--accent-foreground) / 0.7);
     font-size: calc(1.125rem * var(--font-scale, 1)) !important;
     line-height: 1.9 !important;
     overflow-wrap: break-word;
@@ -286,7 +403,6 @@
     hyphens: auto;
     max-width: 100%;
   }
-
 
   /* Accessibility mode — enlarges Arabic typography & opens up line spacing */
   .a11y-mode .dhikr-text {
@@ -326,11 +442,11 @@
 }
 
 @keyframes breathe {
-  0%, 100% { 
+  0%, 100% {
     opacity: 0.4;
     transform: scale(1);
   }
-  50% { 
+  50% {
     opacity: 0.8;
     transform: scale(1.05);
   }
