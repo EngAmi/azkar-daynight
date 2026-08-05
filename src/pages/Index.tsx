@@ -811,7 +811,7 @@ function InlineSession({
               onClick={() => setConfirmRestart(true)}
               aria-label="العودة لبداية الأذكار"
               title="من البداية"
-              className="min-h-[32px] min-w-[32px] w-8 h-8 text-muted-foreground/50 hover:text-primary hover:border-primary/40 active:scale-90 transition-all text-sm rounded-full border border-border/40 bg-background/40 backdrop-blur-sm flex items-center justify-center touch-manipulation"
+              className="min-h-[32px] min-w-[32px] w-8 h-8 text-muted-foreground/50 hover:text-primary hover:border-primary/40 active:scale-90 transition-all text-sm rounded-full border border-border/40 bg-background/40 backdrop-blur-xs flex items-center justify-center touch-manipulation"
             >
               ↺
             </button>
@@ -932,7 +932,7 @@ function InlineSession({
                   aria-label="الذكر السابق (سهم يمين)"
                   title="السابق — سهم يمين"
                   aria-keyshortcuts="ArrowRight"
-                  className="group flex-shrink-0 min-h-[52px] min-w-[52px] w-13 h-13 sm:w-14 sm:h-14 rounded-2xl border border-border/40 bg-background/50 backdrop-blur-md text-muted-foreground/60 hover:text-primary hover:border-primary/40 hover:bg-primary/5 active:scale-90 disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center touch-manipulation shadow-sm"
+                  className="group flex-shrink-0 min-h-[52px] min-w-[52px] w-13 h-13 sm:w-14 sm:h-14 rounded-2xl border border-border/40 bg-background/50 backdrop-blur-md text-muted-foreground/60 hover:text-primary hover:border-primary/40 hover:bg-primary/5 active:scale-90 disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center touch-manipulation shadow-xs"
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-active:translate-x-0.5">
                     <path d="M9 6l6 6-6 6" />
@@ -1197,7 +1197,7 @@ function FocusFontControl() {
 
   return (
     <div
-      className="flex items-center gap-0.5 rounded-full border border-border/30 bg-background/40 backdrop-blur-sm px-0.5 touch-manipulation relative z-20"
+      className="flex items-center gap-0.5 rounded-full border border-border/30 bg-background/40 backdrop-blur-xs px-0.5 touch-manipulation relative z-20"
       role="group"
       aria-label="ضبط حجم الخط"
       onPointerDown={(e) => e.stopPropagation()}
