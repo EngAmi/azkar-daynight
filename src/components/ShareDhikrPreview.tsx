@@ -123,7 +123,7 @@ export function ShareDhikrPreview({
         const input: ShareDhikrInput = {
           content,
           source,
-          sessionType,
+          ...(sessionType ? { sessionType } : {}),
           signature,
           signatureUrl,
         };
@@ -170,7 +170,7 @@ export function ShareDhikrPreview({
       const input: ShareDhikrInput & { blob?: Blob } = {
         content,
         source,
-        sessionType,
+        ...(sessionType ? { sessionType } : {}),
         signature,
         signatureUrl,
         ...(blob ? { blob } : {}),
