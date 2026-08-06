@@ -54,9 +54,9 @@ export function useNavigate(): NavigateFn {
     tsNav({
       to: pathname,
       search: search as never,
-      hash,
+      ...(hash !== undefined ? { hash } : {}),
       state: options?.state as never,
-      replace: options?.replace,
+      ...(options?.replace !== undefined ? { replace: options.replace } : {}),
     });
   }, [tsNav, router]) as NavigateFn;
 }
@@ -109,7 +109,11 @@ export function useSearchParams(): [URLSearchParams, (init: URLSearchParams | Re
             : new URLSearchParams(init);
       const searchObj: Record<string, string> = {};
       next.forEach((v, k) => { searchObj[k] = v; });
-      nav({ to: live.pathname, search: searchObj as never, replace: opts?.replace });
+      nav({
+        to: live.pathname,
+        search: searchObj as never,
+        ...(opts?.replace !== undefined ? { replace: opts.replace } : {}),
+      });
     },
     [nav, router],
   );
