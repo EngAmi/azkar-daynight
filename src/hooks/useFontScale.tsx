@@ -35,14 +35,14 @@ export function FontScaleProvider({ children }: { children: ReactNode }) {
   const increase = useCallback(() => {
     setScale((s) => {
       const i = SCALES.indexOf(s);
-      return SCALES[Math.min(i + 1, SCALES.length - 1)];
+      return SCALES[Math.min(i + 1, SCALES.length - 1)] ?? s;
     });
   }, []);
 
   const decrease = useCallback(() => {
     setScale((s) => {
       const i = SCALES.indexOf(s);
-      return SCALES[Math.max(i - 1, 0)];
+      return SCALES[Math.max(i - 1, 0)] ?? s;
     });
   }, []);
 

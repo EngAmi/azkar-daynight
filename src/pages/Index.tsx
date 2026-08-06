@@ -910,7 +910,7 @@ function InlineSession({
                   {currentDhikr.content}
                 </p>
 
-                <SpeakButton audioFile={currentDhikr.audio} />
+                <SpeakButton {...(currentDhikr.audio ? { audioFile: currentDhikr.audio } : {})} />
               </div>
 
               {/* Count description badge */}

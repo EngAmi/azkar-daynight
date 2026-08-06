@@ -39,6 +39,7 @@ export function BreathingCircle({
       }, 1500);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [ripples]);
 
   return (

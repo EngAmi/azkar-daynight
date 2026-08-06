@@ -62,7 +62,8 @@ export function prefetchSessionAudio(
     const workers = Array.from({ length: Math.min(concurrency, urls.length) }, async () => {
       while (cursor < urls.length && !controller.signal.aborted) {
         const i = cursor++;
-        await prefetchOne(urls[i], controller.signal);
+        const url = urls[i];
+        if (url) await prefetchOne(url, controller.signal);
       }
     });
     void Promise.all(workers);

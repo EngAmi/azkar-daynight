@@ -65,7 +65,7 @@ interface NextTarget {
 }
 
 function parseHM(hm: string): { h: number; m: number } {
-  const [h, m] = hm.split(":").map((v) => parseInt(v, 10));
+  const [h = NaN, m = NaN] = hm.split(":").map((v) => parseInt(v, 10));
   return {
     h: Number.isFinite(h) ? Math.min(23, Math.max(0, h)) : 7,
     m: Number.isFinite(m) ? Math.min(59, Math.max(0, m)) : 0,
