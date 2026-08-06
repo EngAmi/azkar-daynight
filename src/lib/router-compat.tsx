@@ -139,8 +139,8 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
       ref={ref as never}
       to={pathname as never}
       search={search as never}
-      hash={hash}
-      replace={replace}
+      {...(hash !== undefined ? { hash } : {})}
+      {...(replace !== undefined ? { replace } : {})}
       state={state as never}
       {...((rest ?? {}) as Record<string, unknown>)}
     >
@@ -154,7 +154,15 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
 
 export function Navigate({ to, replace, state }: { to: string; replace?: boolean; state?: unknown }) {
   const { pathname, search, hash } = parseTo(to);
-  return <TSNavigate to={pathname as never} search={search as never} hash={hash} state={state as never} replace={replace} />;
+  return (
+    <TSNavigate
+      to={pathname as never}
+      search={search as never}
+      {...(hash !== undefined ? { hash } : {})}
+      state={state as never}
+      {...(replace !== undefined ? { replace } : {})}
+    />
+  );
 }
 
 // ---------- Outlet ----------
