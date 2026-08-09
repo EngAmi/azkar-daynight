@@ -213,7 +213,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         type: "text/javascript",
         children:
-          "(function(){try{var k='azkar-theme-preference';var p=localStorage.getItem(k)||'auto';var m=(p==='light'||p==='dark')?p:((new Date().getHours()>=6&&new Date().getHours()<18)?'light':'dark');var r=document.documentElement;r.classList.remove('light','dark');r.classList.add(m);var meta=document.querySelector('meta[name=\"theme-color\"]');if(meta){var bg=getComputedStyle(r).getPropertyValue('--background').trim();if(bg)meta.setAttribute('content','hsl('+bg+')');}}catch(e){}})();",
+          "(function(){try{var k='azkar-theme-preference';var p=localStorage.getItem(k)||'auto';var m;if(p==='light'||p==='dark'){m=p;}else if(p==='system'){m=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}else{var h=new Date().getHours();m=(h>=6&&h<18)?'light':'dark';}var r=document.documentElement;r.classList.remove('light','dark');r.classList.add(m);var meta=document.querySelector('meta[name=\"theme-color\"]');if(meta){var bg=getComputedStyle(r).getPropertyValue('--background').trim();if(bg)meta.setAttribute('content','hsl('+bg+')');}}catch(e){}})();",
       },
       { type: "application/ld+json", children: webApplicationJsonLd },
       { type: "application/ld+json", children: webSiteJsonLd },
