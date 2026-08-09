@@ -46,6 +46,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (typeof window === "undefined") return "dark";
     const stored = localStorage.getItem(STORAGE_KEY) as ThemePreference | null;
     if (stored === "light" || stored === "dark") return stored;
+    if (document.documentElement.classList.contains("light")) return "light";
+    if (document.documentElement.classList.contains("dark")) return "dark";
     return getAutoTheme();
   });
 
