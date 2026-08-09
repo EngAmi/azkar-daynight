@@ -1,9 +1,9 @@
-import { Sun, Moon, Sparkles } from "lucide-react";
+import { Sun, Moon, Sparkles, MonitorSmartphone } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function ThemeToggle() {
-  const { theme, preference, toggle, setPreference } = useTheme();
+  const { theme, preference, toggle, setPreference, systemSync, toggleSystemSync } = useTheme();
   const isLight = theme === "light";
 
   return (
@@ -28,7 +28,22 @@ export function ThemeToggle() {
         </AnimatePresence>
       </button>
 
-      {preference !== "auto" && (
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleSystemSync();
+        }}
+        aria-label={systemSync ? "إيقاف المزامنة مع ثيم النظام" : "مزامنة مع ثيم النظام"}
+        aria-pressed={systemSync}
+        title={systemSync ? "مزامن مع ثيم النظام" : "مزامنة مع ثيم النظام"}
+        className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
+          systemSync ? "text-primary" : "text-muted-foreground/40 hover:text-primary/70"
+        }`}
+      >
+        <MonitorSmartphone className="w-3.5 h-3.5" />
+      </button>
+
+      {preference !== "auto" && preference !== "system" && (
         <button
           onClick={(e) => {
             e.stopPropagation();
