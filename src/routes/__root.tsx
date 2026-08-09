@@ -205,6 +205,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
     ],
     scripts: [
+      {
+        type: "text/javascript",
+        children:
+          "(function(){try{var k='azkar-font-scale';var s=localStorage.getItem(k);if(!s)return;var n=parseFloat(s);var a=[0.85,1,1.15,1.3,1.5];if(a.indexOf(n)!==-1){document.documentElement.style.setProperty('--font-scale',String(n));}}catch(e){}})();",
+      },
       { type: "application/ld+json", children: webApplicationJsonLd },
       { type: "application/ld+json", children: webSiteJsonLd },
       { type: "application/ld+json", children: faqJsonLd },
