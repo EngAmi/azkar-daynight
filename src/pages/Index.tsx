@@ -5,6 +5,7 @@ import { BreathingCircle } from "@/components/BreathingCircle";
 import { DhikrFadl } from "@/components/DhikrFadl";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { FontSizeControl } from "@/components/FontSizeControl";
+import { ArabicFontControl } from "@/components/ArabicFontControl";
 import { SeoHead } from "@/components/SeoHead";
 import { useTheme } from "@/hooks/useTheme";
 import { useFontScale } from "@/hooks/useFontScale";
@@ -403,6 +404,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                   {/* Top controls: font size + accessibility + reminders + theme */}
                   <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2 px-4 pt-1 w-full">
                     <FontSizeControl />
+                    <ArabicFontControl />
                     <AccessibilityToggle />
                     <ReminderSettings />
                     <ThemeToggle />
