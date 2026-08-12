@@ -15,6 +15,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/useTheme";
 import { FontScaleProvider } from "@/hooks/useFontScale";
+import { ArabicFontProvider } from "@/hooks/useArabicFont";
 import { AccessibilityProvider } from "@/hooks/useAccessibility";
 import { useLocation, Navigate } from "@/lib/router-compat";
 import { reportLovableError } from "@/lib/lovable-error-reporting";
@@ -215,6 +216,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         children:
           "(function(){try{var k='azkar-theme-preference';var p=localStorage.getItem(k)||'auto';var m;if(p==='light'||p==='dark'){m=p;}else if(p==='system'){m=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}else{var h=new Date().getHours();m=(h>=6&&h<18)?'light':'dark';}var r=document.documentElement;r.classList.remove('light','dark');r.classList.add(m);var meta=document.querySelector('meta[name=\"theme-color\"]');if(meta){var bg=getComputedStyle(r).getPropertyValue('--background').trim();if(bg)meta.setAttribute('content','hsl('+bg+')');}}catch(e){}})();",
       },
+      {
+        type: "text/javascript",
+        children:
+          "(function(){try{var m={amiri:[\"'Amiri','Amiri Fallback',serif\",1,1],naskh:[\"'Noto Naskh Arabic','Amiri',serif\",0.94,1.04],scheherazade:[\"'Scheherazade New','Amiri',serif\",1.06,1.06],tajawal:[\"'Tajawal','Noto Naskh Arabic',sans-serif\",0.92,1.06]};var f=localStorage.getItem('azkar-arabic-font');if(!f||!m[f])return;var r=document.documentElement;r.style.setProperty('--arabic-font',m[f][0]);r.style.setProperty('--arabic-font-adjust',String(m[f][1]));r.style.setProperty('--arabic-leading-adjust',String(m[f][2]));r.setAttribute('data-arabic-font',f);}catch(e){}})();",
+      },
       { type: "application/ld+json", children: webApplicationJsonLd },
       { type: "application/ld+json", children: webSiteJsonLd },
       { type: "application/ld+json", children: faqJsonLd },
@@ -259,6 +265,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <FontScaleProvider>
+          <ArabicFontProvider>
           <AccessibilityProvider>
             <TooltipProvider>
               <Toaster />
@@ -267,6 +274,7 @@ function RootComponent() {
               <Outlet />
             </TooltipProvider>
           </AccessibilityProvider>
+          </ArabicFontProvider>
         </FontScaleProvider>
       </ThemeProvider>
     </QueryClientProvider>
