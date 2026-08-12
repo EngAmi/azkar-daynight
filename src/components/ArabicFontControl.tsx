@@ -33,7 +33,7 @@ export function ArabicFontControl() {
           </span>
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56" dir="rtl">
+      <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-naskh text-xs text-muted-foreground">
           نوع الخط العربي
         </DropdownMenuLabel>
