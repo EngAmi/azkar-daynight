@@ -20,8 +20,6 @@ export function ArabicFontControl() {
           type="button"
           aria-label={`نوع الخط العربي — الحالي ${current.label}`}
           title="نوع الخط العربي"
-          onPointerDownCapture={(e) => e.stopPropagation()}
-          onTouchStart={(e) => e.stopPropagation()}
           className="flex items-center gap-1.5 h-11 sm:h-9 px-3 rounded-full bg-secondary/60 border border-gold/25 backdrop-blur-md text-gold/90 hover:text-gold hover:border-gold/40 hover:bg-gold/10 active:scale-95 transition-all duration-200 touch-manipulation relative z-20"
         >
           <Type className="w-4 h-4" />
