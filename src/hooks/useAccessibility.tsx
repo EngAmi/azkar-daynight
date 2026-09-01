@@ -11,16 +11,21 @@ interface AccessibilityContextValue {
 const AccessibilityContext = createContext<AccessibilityContextValue | undefined>(undefined);
 
 export function AccessibilityProvider({ children }: { children: ReactNode }) {
-  const [a11yMode, setA11yMode] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem(STORAGE_KEY) === "1";
-  });
+  const [a11yMode, setA11yMode] = useState<boolean>(false);
+
+  // مزامنة الحالة مع ما طبّقه سكربت الرأس (يمنع الومضة واختلاف الـhydration)
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored === "1" || document.documentElement.classList.contains("a11y-mode")) {
+      setA11yMode(true);
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, a11yMode ? "1" : "0");
-    if (typeof document !== "undefined") {
-      document.documentElement.classList.toggle("a11y-mode", a11yMode);
-    }
+    const root = document.documentElement;
+    root.classList.toggle("a11y-mode", a11yMode);
+    root.setAttribute("data-a11y", a11yMode ? "on" : "off");
   }, [a11yMode]);
 
   const toggle = useCallback(() => setA11yMode((v) => !v), []);
