@@ -87,6 +87,43 @@ export function ArabicFontControl() {
               </button>
             );
           })}
+
+          <div className="mt-1.5 pt-1.5 border-t border-gold/15">
+            <div className="flex items-center justify-between px-3 pb-1.5">
+              <span className="font-naskh text-[11px] text-muted-foreground">تباعد النص</span>
+              {!isAutoSpacing && (
+                <button
+                  type="button"
+                  onClick={() => { haptic(); resetSpacing(); }}
+                  className="font-naskh text-[11px] text-gold/80 hover:text-gold"
+                >
+                  تلقائي
+                </button>
+              )}
+            </div>
+            <div role="group" aria-label="تباعد النص" className="flex gap-1 px-1.5 pb-1">
+              {spacings.map((s) => {
+                const active = s.id === spacing;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    aria-pressed={active}
+                    title={s.hint}
+                    onClick={() => { haptic(); setSpacing(s.id); }}
+                    className={`flex-1 rounded-lg py-1.5 font-naskh text-xs transition-colors ${
+                      active ? "bg-gold/15 text-gold border border-gold/40" : "border border-transparent text-foreground/80 hover:bg-secondary/70"
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="px-3 pb-1 font-naskh text-[10px] leading-relaxed text-muted-foreground">
+              {isAutoSpacing ? "تباعد تلقائي مناسب لهذا الخط" : "تباعد مخصّص محفوظ لهذا الخط"}
+            </p>
+          </div>
         </div>
       )}
     </div>
