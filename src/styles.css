@@ -415,21 +415,37 @@
     max-width: 100%;
   }
 
-  /* Accessibility mode — enlarges Arabic typography & opens up line spacing */
+  /* وضع الوصول — يرفع التباين ويكبّر النص تلقائيًا مع احترام اختيار المستخدم */
+  .a11y-mode {
+    --a11y-boost: 1.2;
+  }
   .a11y-mode .dhikr-text {
-    font-size: 1.65rem !important;
-    line-height: 3.1 !important;
-    letter-spacing: 0.02em;
+    color: hsl(var(--foreground));
+    line-height: calc(var(--dhikr-leading, 2.1) * var(--arabic-leading-adjust, 1) * 1.12) !important;
+    letter-spacing: 0.022em;
   }
   .a11y-mode .fadl-text {
-    font-size: 1.2rem;
-    line-height: 2.4;
+    color: hsl(var(--accent-foreground) / 0.95);
+    line-height: calc(2.15 * var(--arabic-leading-adjust, 1)) !important;
   }
-  .a11y-mode .font-amiri {
-    line-height: 1.9;
-  }
+  .a11y-mode .font-amiri,
   .a11y-mode .font-naskh {
-    line-height: 1.9;
+    line-height: 1.95;
+  }
+  /* رفع التباين العام: نصوص ثانوية أوضح وحدود أظهر */
+  .a11y-mode .text-muted-foreground {
+    color: hsl(var(--foreground) / 0.88) !important;
+  }
+  .a11y-mode [class*="border"] {
+    border-color: hsl(var(--foreground) / 0.35);
+  }
+  .a11y-mode button,
+  .a11y-mode a {
+    text-decoration-thickness: 2px;
+  }
+  .a11y-mode :focus-visible {
+    outline: 3px solid hsl(var(--ring, var(--foreground)));
+    outline-offset: 3px;
   }
 }
 
