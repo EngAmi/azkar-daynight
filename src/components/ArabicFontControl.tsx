@@ -9,7 +9,7 @@ const haptic = () => {
 };
 
 export function ArabicFontControl() {
-  const { font, fonts, setFont } = useArabicFont();
+  const { font, fonts, setFont, spacing, spacings, isAutoSpacing, setSpacing, resetSpacing } = useArabicFont();
   const current = fonts.find((f) => f.id === font) ?? fonts[0]!;
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
