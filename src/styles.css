@@ -352,18 +352,26 @@
   .dhikr-text {
     font-family: var(--arabic-font, 'Amiri', 'Amiri Fallback', serif);
     color: hsl(var(--foreground));
-    letter-spacing: 0.025em;
+    letter-spacing: var(--arabic-letter-spacing, 0.025em);
+    word-spacing: var(--arabic-word-spacing, 0.04em);
     font-feature-settings: "liga" 1;
     /* --dhikr-size يُضبط ديناميكيًا حسب طول النص وعرض الشاشة */
     font-size: calc(var(--dhikr-size, clamp(1.1rem, 3.2vw + 0.5rem, 1.75rem)) * var(--font-scale, 1) * var(--arabic-font-adjust, 1)) !important;
     /* line-height نسبي حتى يتمدد مع حجم الخط ويمنع تراكب الأسطر */
     line-height: calc(var(--dhikr-leading, 2.1) * var(--arabic-leading-adjust, 1)) !important;
+    /* هوامش رأسية متناسبة مع الخط وكثافة التباعد المختارة */
+    padding-block: calc(var(--arabic-block-gap, 1.15rem) * 0.35);
     /* التفاف تلقائي يحفظ الكلمات العربية الطويلة من القصّ */
     overflow-wrap: break-word;
     word-wrap: break-word;
     word-break: normal;
     hyphens: auto;
     max-width: 100%;
+  }
+
+  .dhikr-text + .dhikr-text,
+  .dhikr-text p + p {
+    margin-block-start: var(--arabic-block-gap, 1.15rem);
   }
 
   /* Subtle shimmer on gold elements */
