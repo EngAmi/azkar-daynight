@@ -403,7 +403,7 @@
   .fadl-text {
     font-family: var(--arabic-font, 'Noto Naskh Arabic', 'Amiri Fallback', serif);
     color: hsl(var(--accent-foreground) / 0.7);
-    font-size: calc(1.125rem * var(--font-scale, 1) * var(--arabic-font-adjust, 1)) !important;
+    font-size: calc(1.125rem * var(--font-scale, 1) * var(--a11y-boost, 1) * var(--arabic-font-adjust, 1)) !important;
     line-height: calc(1.9 * var(--arabic-leading-adjust, 1)) !important;
     word-spacing: var(--arabic-word-spacing, 0.02em);
     letter-spacing: var(--arabic-letter-spacing, 0);
