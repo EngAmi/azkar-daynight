@@ -400,7 +400,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
 
             {/* Header chrome — hidden in Focus Mode */}
             <AnimatePresence initial={false}>
-              {!focusMode && (
+              {!focusMode && !locked && (
                 <motion.div
                   key="chrome"
                   initial={{ opacity: 0, height: 0 }}
