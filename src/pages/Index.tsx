@@ -869,7 +869,7 @@ function InlineSession({
       </div>
       {/* Top bar — utilities row (font + a11y + focus controls + counter) */}
       <div className="flex items-center justify-between px-4 sm:px-6 pb-1.5 gap-2">
-        <div className={`flex items-center gap-1.5 min-w-0 ${mobileFocus ? "hidden" : ""}`}>
+        <div className={`flex items-center gap-1.5 min-w-0 ${locked || mobileFocus ? "hidden" : ""}`}>
           {focusMode && <FocusFontControl />}
           <AccessibilityToggle compact />
           {canGoPrev && (
@@ -884,8 +884,8 @@ function InlineSession({
           )}
         </div>
 
-        <div className={`flex items-center gap-1.5 ${mobileFocus ? "ms-auto" : ""}`}>
-          {focusMode && onResetProgress && (
+        <div className={`flex items-center gap-1.5 ${mobileFocus || locked ? "ms-auto" : ""}`}>
+          {focusMode && !locked && onResetProgress && (
             <button
               onClick={onResetProgress}
               aria-label="نسخ التقدم"
@@ -895,7 +895,10 @@ function InlineSession({
               نَسخ
             </button>
           )}
-          {focusMode && onExitFocus && (
+          {onToggleLock && (
+            <LockButton locked={!!locked} onToggle={onToggleLock} />
+          )}
+          {focusMode && !locked && onExitFocus && (
             <button
               onClick={onExitFocus}
               aria-label="خروج من وضع التركيز"
