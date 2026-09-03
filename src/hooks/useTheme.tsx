@@ -82,6 +82,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return () => mq.removeEventListener("change", handler);
   }, [preference]);
 
+  // مزامنة فورية بين التبويبات المفتوحة
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== STORAGE_KEY || !e.newValue) return;
+      const next = e.newValue as ThemePreference;
+      setPreferenceState(next);
+      setTheme(resolveTheme(next));
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   useEffect(() => {
     if (preference !== "auto") return;
     const tick = () => {
