@@ -454,11 +454,27 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
             </AnimatePresence>
 
             {/* Swipeable session content */}
-            <main className="flex-1 min-h-0 w-full flex flex-col overflow-hidden">
+            <main
+              ref={lockRef}
+              tabIndex={locked ? -1 : undefined}
+              role={locked ? "dialog" : undefined}
+              aria-modal={locked ? true : undefined}
+              aria-label={
+                locked
+                  ? `وضع التركيز المُقفل — ${activeTab === "morning" ? "أذكار الصباح" : "أذكار المساء"}. اضغط Escape مرتين للخروج.`
+                  : undefined
+              }
+              className="flex-1 min-h-0 w-full flex flex-col overflow-hidden outline-none"
+            >
               <SwipeableContent
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
                 focusMode={focusMode}
+                locked={locked}
+                onToggleLock={() => {
+                  setFocusMode(true);
+                  setLocked((v) => !v);
+                }}
                 onExitFocus={() => setFocusMode(false)}
                 onResetProgress={resetProgress}
                 morningState={morningState}
@@ -466,10 +482,28 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                 setMorningState={setMorningState}
                 setEveningState={setEveningState}
               />
+              {/* تلميح الخروج المتعمّد — يظهر بعد أول ضغطة Escape */}
+              <div aria-live="polite" role="status" className="sr-only">
+                {exitHintVisible ? "اضغط Escape مرة أخرى للخروج من وضع التركيز المُقفل" : ""}
+              </div>
+              <AnimatePresence>
+                {locked && exitHintVisible && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.3 }}
+                    aria-hidden="true"
+                    className="pointer-events-none fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-full border border-border/50 bg-background/90 px-4 py-2 text-[11px] font-naskh text-muted-foreground backdrop-blur-sm"
+                  >
+                    اضغط Escape مرة أخرى للخروج
+                  </motion.p>
+                )}
+              </AnimatePresence>
             </main>
 
             {/* Footer */}
-            <footer className={`px-6 pb-4 safe-area-bottom text-center ${focusMode ? "hidden sm:block" : ""}`}>
+            <footer className={`px-6 pb-4 safe-area-bottom text-center ${locked ? "hidden" : focusMode ? "hidden sm:block" : ""}`}>
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
