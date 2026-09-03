@@ -182,6 +182,16 @@ export function ArabicFontProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, [spacingMap]);
 
+  // مزامنة فورية بين التبويبات المفتوحة
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY && isValid(e.newValue)) setFontState(e.newValue);
+      if (e.key === SPACING_STORAGE_KEY) setSpacingMap(readSpacingMap());
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   const setFont = useCallback((id: ArabicFontId) => setFontState(id), []);
 
   const setSpacing = useCallback(
