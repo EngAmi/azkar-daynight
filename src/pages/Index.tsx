@@ -11,6 +11,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { useFontScale } from "@/hooks/useFontScale";
 import { useAccessibility } from "@/hooks/useAccessibility";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useFocusLock } from "@/hooks/useFocusLock";
 import { getCurrentSessionType } from "@/lib/timeOfDay";
 import { prefetchSessionAudio } from "@/lib/prefetchAudio";
 import { installReminderScheduler } from "@/lib/notifications";
