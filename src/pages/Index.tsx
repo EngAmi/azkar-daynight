@@ -11,6 +11,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { useFontScale } from "@/hooks/useFontScale";
 import { useAccessibility } from "@/hooks/useAccessibility";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useFocusLock } from "@/hooks/useFocusLock";
 import { getCurrentSessionType } from "@/lib/timeOfDay";
 import { prefetchSessionAudio } from "@/lib/prefetchAudio";
 import { installReminderScheduler } from "@/lib/notifications";
@@ -139,6 +140,12 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
   const isMobile = useIsMobile();
   const mobileFocus = isMobile && focusMode;
 
+  // وضع التركيز المُقفل: بلا قوائم ولا مخارج ظاهرة، ولا تمرير للصفحة.
+  const [locked, setLocked] = useState(false);
+  const lockRef = useRef<HTMLDivElement>(null);
+  const requestUnlock = useMemo(() => () => setLocked(false), []);
+  const { exitHintVisible } = useFocusLock(locked, lockRef, requestUnlock);
+
   const enterFocus = (tab: SessionType) => {
     setActiveTab(tab);
     setFocusMode(true);
@@ -153,6 +160,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
     setMorningStateRaw(initialSession);
     setEveningStateRaw(initialSession);
     setFocusMode(false);
+    setLocked(false);
   };
 
   // Start over just the current tab (used by the resume prompt).
@@ -344,7 +352,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
             className="relative z-10 flex flex-col items-center w-full flex-1"
           >
             {/* Header */}
-            <header className={`text-center px-6 safe-area-top ${mobileFocus ? "hidden" : focusMode ? "pt-3 pb-0.5" : "pt-6 sm:pt-8 pb-1"}`}>
+            <header className={`text-center px-6 safe-area-top ${locked || mobileFocus ? "hidden" : focusMode ? "pt-3 pb-0.5" : "pt-6 sm:pt-8 pb-1"}`}>
               {/* H1 — مرئي على الصفحات المخصّصة (الصباح/المساء)، ومخفي بصريًا على الجذر */}
               {pageHeading ? (
                 <motion.div
@@ -392,7 +400,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
 
             {/* Header chrome — hidden in Focus Mode */}
             <AnimatePresence initial={false}>
-              {!focusMode && (
+              {!focusMode && !locked && (
                 <motion.div
                   key="chrome"
                   initial={{ opacity: 0, height: 0 }}
@@ -446,11 +454,27 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
             </AnimatePresence>
 
             {/* Swipeable session content */}
-            <main className="flex-1 min-h-0 w-full flex flex-col overflow-hidden">
+            <main
+              ref={lockRef}
+              tabIndex={locked ? -1 : undefined}
+              role={locked ? "dialog" : undefined}
+              aria-modal={locked ? true : undefined}
+              aria-label={
+                locked
+                  ? `وضع التركيز المُقفل — ${activeTab === "morning" ? "أذكار الصباح" : "أذكار المساء"}. اضغط Escape مرتين للخروج.`
+                  : undefined
+              }
+              className="flex-1 min-h-0 w-full flex flex-col overflow-hidden outline-none"
+            >
               <SwipeableContent
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
                 focusMode={focusMode}
+                locked={locked}
+                onToggleLock={() => {
+                  setFocusMode(true);
+                  setLocked((v) => !v);
+                }}
                 onExitFocus={() => setFocusMode(false)}
                 onResetProgress={resetProgress}
                 morningState={morningState}
@@ -458,10 +482,28 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                 setMorningState={setMorningState}
                 setEveningState={setEveningState}
               />
+              {/* تلميح الخروج المتعمّد — يظهر بعد أول ضغطة Escape */}
+              <div aria-live="polite" role="status" className="sr-only">
+                {exitHintVisible ? "اضغط Escape مرة أخرى للخروج من وضع التركيز المُقفل" : ""}
+              </div>
+              <AnimatePresence>
+                {locked && exitHintVisible && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.3 }}
+                    aria-hidden="true"
+                    className="pointer-events-none fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-full border border-border/50 bg-background/90 px-4 py-2 text-[11px] font-naskh text-muted-foreground backdrop-blur-sm"
+                  >
+                    اضغط Escape مرة أخرى للخروج
+                  </motion.p>
+                )}
+              </AnimatePresence>
             </main>
 
             {/* Footer */}
-            <footer className={`px-6 pb-4 safe-area-bottom text-center ${focusMode ? "hidden sm:block" : ""}`}>
+            <footer className={`px-6 pb-4 safe-area-bottom text-center ${locked ? "hidden" : focusMode ? "hidden sm:block" : ""}`}>
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -572,6 +614,8 @@ function SwipeableContent({
   activeTab,
   onTabChange,
   focusMode,
+  locked,
+  onToggleLock,
   onExitFocus,
   onResetProgress,
   morningState,
@@ -582,6 +626,8 @@ function SwipeableContent({
   activeTab: SessionType;
   onTabChange: (tab: SessionType) => void;
   focusMode: boolean;
+  locked: boolean;
+  onToggleLock: () => void;
   onExitFocus: () => void;
   onResetProgress: () => void;
   morningState: SessionState;
@@ -599,9 +645,11 @@ function SwipeableContent({
         state={state}
         setState={setState}
         focusMode={focusMode}
+        locked={locked}
+        onToggleLock={onToggleLock}
         onExitFocus={onExitFocus}
         onResetProgress={onResetProgress}
-        onTabChange={onTabChange}
+        onTabChange={locked ? undefined : onTabChange}
       />
     </div>
   );
@@ -612,6 +660,8 @@ function InlineSession({
   state,
   setState,
   focusMode,
+  locked,
+  onToggleLock,
   onExitFocus,
   onResetProgress,
   onTabChange,
@@ -620,6 +670,8 @@ function InlineSession({
   state: SessionState;
   setState: React.Dispatch<React.SetStateAction<SessionState>>;
   focusMode?: boolean;
+  locked?: boolean;
+  onToggleLock?: () => void;
   onExitFocus?: () => void;
   onResetProgress?: () => void;
   onTabChange?: (tab: SessionType) => void;
@@ -817,7 +869,7 @@ function InlineSession({
       </div>
       {/* Top bar — utilities row (font + a11y + focus controls + counter) */}
       <div className="flex items-center justify-between px-4 sm:px-6 pb-1.5 gap-2">
-        <div className={`flex items-center gap-1.5 min-w-0 ${mobileFocus ? "hidden" : ""}`}>
+        <div className={`flex items-center gap-1.5 min-w-0 ${locked || mobileFocus ? "hidden" : ""}`}>
           {focusMode && <FocusFontControl />}
           <AccessibilityToggle compact />
           {canGoPrev && (
@@ -832,8 +884,8 @@ function InlineSession({
           )}
         </div>
 
-        <div className={`flex items-center gap-1.5 ${mobileFocus ? "ms-auto" : ""}`}>
-          {focusMode && onResetProgress && (
+        <div className={`flex items-center gap-1.5 ${mobileFocus || locked ? "ms-auto" : ""}`}>
+          {focusMode && !locked && onResetProgress && (
             <button
               onClick={onResetProgress}
               aria-label="نسخ التقدم"
@@ -843,7 +895,10 @@ function InlineSession({
               نَسخ
             </button>
           )}
-          {focusMode && onExitFocus && (
+          {onToggleLock && (
+            <LockButton locked={!!locked} onToggle={onToggleLock} />
+          )}
+          {focusMode && !locked && onExitFocus && (
             <button
               onClick={onExitFocus}
               aria-label="خروج من وضع التركيز"
