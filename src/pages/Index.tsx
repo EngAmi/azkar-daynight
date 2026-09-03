@@ -160,6 +160,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
     setMorningStateRaw(initialSession);
     setEveningStateRaw(initialSession);
     setFocusMode(false);
+    setLocked(false);
   };
 
   // Start over just the current tab (used by the resume prompt).
