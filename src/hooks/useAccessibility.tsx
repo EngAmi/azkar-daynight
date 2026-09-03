@@ -28,6 +28,15 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
     root.setAttribute("data-a11y", a11yMode ? "on" : "off");
   }, [a11yMode]);
 
+  // مزامنة فورية بين التبويبات المفتوحة
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY) setA11yMode(e.newValue === "1");
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   const toggle = useCallback(() => setA11yMode((v) => !v), []);
 
   return (
