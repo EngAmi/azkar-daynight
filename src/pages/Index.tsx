@@ -660,6 +660,8 @@ function InlineSession({
   state,
   setState,
   focusMode,
+  locked,
+  onToggleLock,
   onExitFocus,
   onResetProgress,
   onTabChange,
@@ -668,6 +670,8 @@ function InlineSession({
   state: SessionState;
   setState: React.Dispatch<React.SetStateAction<SessionState>>;
   focusMode?: boolean;
+  locked?: boolean;
+  onToggleLock?: () => void;
   onExitFocus?: () => void;
   onResetProgress?: () => void;
   onTabChange?: (tab: SessionType) => void;
