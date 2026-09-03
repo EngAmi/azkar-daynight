@@ -140,6 +140,12 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
   const isMobile = useIsMobile();
   const mobileFocus = isMobile && focusMode;
 
+  // وضع التركيز المُقفل: بلا قوائم ولا مخارج ظاهرة، ولا تمرير للصفحة.
+  const [locked, setLocked] = useState(false);
+  const lockRef = useRef<HTMLDivElement>(null);
+  const requestUnlock = useMemo(() => () => setLocked(false), []);
+  const { exitHintVisible } = useFocusLock(locked, lockRef, requestUnlock);
+
   const enterFocus = (tab: SessionType) => {
     setActiveTab(tab);
     setFocusMode(true);
