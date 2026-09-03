@@ -41,12 +41,15 @@ function applyThemeClass(mode: ThemeMode) {
     root.classList.add("dark");
     root.classList.remove("light");
   }
-  const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) {
-    // اقرأ قيمة --background (HSL خام) من الثيمة الفعّالة بدل استخدام ألوان ثابتة
+  // اقرأ اللون بعد إطار واحد حتى تكون متغيّرات الثيمة الجديدة فعّالة
+  const syncMetaColor = () => {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) return;
     const bg = getComputedStyle(root).getPropertyValue("--background").trim();
     if (bg) meta.setAttribute("content", `hsl(${bg})`);
-  }
+  };
+  if (typeof requestAnimationFrame === "function") requestAnimationFrame(syncMetaColor);
+  else syncMetaColor();
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
