@@ -645,9 +645,11 @@ function SwipeableContent({
         state={state}
         setState={setState}
         focusMode={focusMode}
+        locked={locked}
+        onToggleLock={onToggleLock}
         onExitFocus={onExitFocus}
         onResetProgress={onResetProgress}
-        onTabChange={onTabChange}
+        onTabChange={locked ? undefined : onTabChange}
       />
     </div>
   );
