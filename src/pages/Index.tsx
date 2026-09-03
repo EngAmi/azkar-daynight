@@ -614,6 +614,8 @@ function SwipeableContent({
   activeTab,
   onTabChange,
   focusMode,
+  locked,
+  onToggleLock,
   onExitFocus,
   onResetProgress,
   morningState,
@@ -624,6 +626,8 @@ function SwipeableContent({
   activeTab: SessionType;
   onTabChange: (tab: SessionType) => void;
   focusMode: boolean;
+  locked: boolean;
+  onToggleLock: () => void;
   onExitFocus: () => void;
   onResetProgress: () => void;
   morningState: SessionState;
