@@ -674,7 +674,7 @@ function InlineSession({
   onToggleLock?: () => void;
   onExitFocus?: () => void;
   onResetProgress?: () => void;
-  onTabChange?: (tab: SessionType) => void;
+  onTabChange?: ((tab: SessionType) => void) | undefined;
 }) {
   const adhkarList = useMemo(
     () => (type === "morning" ? getMorningAdhkar() : getEveningAdhkar()),
