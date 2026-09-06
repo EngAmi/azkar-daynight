@@ -1252,6 +1252,87 @@ function AccessibilityToggle({ compact = false }: { compact?: boolean }) {
   );
 }
 
+/**
+ * زر قفل وضع التركيز.
+ * • عند القفل: يخفي كل القوائم والمخارج ويمنع تمرير الصفحة.
+ * • للخروج: ضغطة مطوّلة (٩٠٠ مللي) أو Escape مرتين — حتى لا يخرج بالخطأ.
+ * يعتمد أحجام لمس ٤٤ بكسل ويحترم إعدادات التباين وحجم الخط.
+ */
+function LockButton({ locked, onToggle }: { locked: boolean; onToggle: () => void }) {
+  const HOLD_MS = 900;
+  const [holding, setHolding] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clear = () => {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = null;
+    setHolding(false);
+  };
+
+  const buzz = () => {
+    try {
+      navigator.vibrate?.(12);
+    } catch {
+      // ignore
+    }
+  };
+
+  const startHold = () => {
+    if (!locked) return;
+    setHolding(true);
+    timer.current = setTimeout(() => {
+      clear();
+      buzz();
+      onToggle();
+    }, HOLD_MS);
+  };
+
+  useEffect(() => clear, []);
+
+  return (
+    <button
+      type="button"
+      aria-pressed={locked}
+      aria-label={
+        locked
+          ? "وضع التركيز المُقفل مُفعّل — اضغط مطوّلًا أو Escape مرتين للخروج"
+          : "تفعيل وضع التركيز المُقفل — إخفاء كل القوائم ومنع التمرير"
+      }
+      title={locked ? "اضغط مطوّلًا للخروج" : "وضع التركيز المُقفل"}
+      onClick={() => {
+        if (locked) return; // الخروج يحتاج ضغطة مطوّلة
+        buzz();
+        onToggle();
+      }}
+      onPointerDown={startHold}
+      onPointerUp={clear}
+      onPointerLeave={clear}
+      onPointerCancel={clear}
+      onKeyDown={(e) => {
+        if (locked && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          if (!timer.current) startHold();
+        }
+      }}
+      onKeyUp={clear}
+      className={`relative min-h-11 min-w-11 rounded-full border flex items-center justify-center text-sm font-naskh transition-all duration-300 touch-manipulation overflow-hidden ${
+        locked
+          ? "border-primary/50 bg-primary/10 text-primary shadow-[0_0_12px_hsl(var(--primary)/0.18)]"
+          : "border-border/40 text-muted-foreground/50 hover:text-primary hover:border-primary/30"
+      }`}
+    >
+      <span
+        aria-hidden
+        className={`absolute inset-x-0 bottom-0 bg-primary/25 transition-[height] ease-linear ${holding ? "h-full" : "h-0"}`}
+        style={{ transitionDuration: holding ? `${HOLD_MS}ms` : "150ms" }}
+      />
+      <span aria-hidden className="relative leading-none">
+        {locked ? "🔒" : "🔓"}
+      </span>
+    </button>
+  );
+}
+
 // Inline, minimal font-size control for Focus Mode
 function FocusFontControl() {
   const { scale, increase, decrease, reset, canIncrease, canDecrease } = useFontScale();
