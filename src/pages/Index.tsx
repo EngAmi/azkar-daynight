@@ -553,61 +553,34 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
         )}
       </AnimatePresence>
 
-      {/* Resume-where-you-stopped prompt */}
-      <AlertDialog
-        open={resumePrompt !== null}
-        onOpenChange={(open) => {
-          if (!open && resumePrompt) {
-            acknowledgedTabs.current.add(resumePrompt);
-            setResumePrompt(null);
-          }
-        }}
-      >
-        <AlertDialogContent
-          className="glass-surface border-primary/20 max-w-sm rounded-2xl
-            duration-500 ease-out
-            data-[state=open]:animate-in data-[state=closed]:animate-out
-            data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0
-            data-[state=open]:zoom-in-[0.98] data-[state=closed]:zoom-out-[0.98]"
-        >
-          <AlertDialogHeader>
-            <AlertDialogTitle className="font-amiri text-xl text-center text-primary">
-              {resumePrompt === "morning" ? "تريد استكمال أذكار الصباح؟" : "تريد استكمال أذكار المساء؟"}
-            </AlertDialogTitle>
-            <AlertDialogDescription className="font-naskh text-center text-muted-foreground/80 leading-relaxed">
-              {(() => {
-                const s = resumePrompt === "morning" ? morningState : eveningState;
-                return `توقّفت عند الذكر رقم ${s.index + 1}. تحبّ تكمل من حيث توقفت أم تبدأ من جديد؟`;
-              })()}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="sm:justify-center gap-2">
-            <AlertDialogCancel
+      {/* إشعار هادئ بالاستئناف التلقائي — بلا نوافذ ولا قوائم */}
+      <AnimatePresence>
+        {resumedNotice && !locked && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            role="status"
+            aria-live="polite"
+            className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3
+              glass-surface border border-primary/20 rounded-full px-4 py-2 shadow-lg"
+          >
+            <span className="font-naskh text-xs text-muted-foreground/80">
+              {`تم استئناف جلستك من الذكر ${((resumedNotice === "morning" ? morningState : eveningState).index) + 1}`}
+            </span>
+            <button
               onClick={() => {
-                if (resumePrompt) {
-                  acknowledgedTabs.current.add(resumePrompt);
-                  startOverActiveTab();
-                }
-                setResumePrompt(null);
+                startOverActiveTab();
+                setResumedNotice(null);
               }}
-              className="font-naskh rounded-full border-border/40"
+              className="font-naskh text-xs text-primary hover:text-primary/80 transition-colors"
             >
-              ابدأ من جديد
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                if (resumePrompt) {
-                  acknowledgedTabs.current.add(resumePrompt);
-                }
-                setResumePrompt(null);
-              }}
-              className="font-naskh rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              متابعة من حيث توقفت
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              من البداية
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
