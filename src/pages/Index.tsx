@@ -101,9 +101,21 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
 
   const persisted = useMemo(() => loadPersisted(), []);
 
-  // Always default by time-of-day on each visit (morning 3am–2:59pm, evening otherwise).
-  // User can still toggle freely during the session; the choice is not persisted across visits.
-  const [activeTab, setActiveTab] = useState<SessionType>(initialTab ?? defaultType);
+  // استئناف تلقائي: إن كانت هناك جلسة غير مكتملة من نفس الفترة، نفتح تبويبها مباشرة.
+  // وإلا نعتمد على توقيت اليوم (صباح 3ص–2:59م، مساء غير ذلك).
+  const autoResumeTab: SessionType | null = useMemo(() => {
+    const m = persisted.morningState;
+    const e = persisted.eveningState;
+    const candidates: SessionType[] = [];
+    if (m && isResumable(m, "morning")) candidates.push("morning");
+    if (e && isResumable(e, "evening")) candidates.push("evening");
+    if (candidates.length === 0) return null;
+    if (candidates.length === 1) return candidates[0]!;
+    // اختر الأحدث تعديلًا
+    return (m!.updatedAt ?? 0) >= (e!.updatedAt ?? 0) ? "morning" : "evening";
+  }, [persisted]);
+
+  const [activeTab, setActiveTab] = useState<SessionType>(initialTab ?? autoResumeTab ?? defaultType);
   const [focusMode, setFocusMode] = useState<boolean>(persisted.focusMode ?? false);
   const [morningStateRaw, setMorningStateRaw] = useState<SessionState>(persisted.morningState ?? initialSession);
   const [eveningStateRaw, setEveningStateRaw] = useState<SessionState>(persisted.eveningState ?? initialSession);
