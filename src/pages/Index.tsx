@@ -142,9 +142,8 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
   const morningState = morningStateRaw;
   const eveningState = eveningStateRaw;
 
-  // Resume-prompt state — appears once per tab per app-load when an incomplete
-  // session from the same morning/evening period is detected.
-  const [resumePrompt, setResumePrompt] = useState<SessionType | null>(null);
+  // إشعار الاستئناف التلقائي — يظهر مرة واحدة لكل تبويب في كل فتح للتطبيق.
+  const [resumedNotice, setResumedNotice] = useState<SessionType | null>(null);
   const acknowledgedTabs = useRef<Set<SessionType>>(new Set());
 
   const { theme } = useTheme();
