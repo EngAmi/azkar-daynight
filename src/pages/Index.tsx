@@ -101,9 +101,21 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
 
   const persisted = useMemo(() => loadPersisted(), []);
 
-  // Always default by time-of-day on each visit (morning 3am–2:59pm, evening otherwise).
-  // User can still toggle freely during the session; the choice is not persisted across visits.
-  const [activeTab, setActiveTab] = useState<SessionType>(initialTab ?? defaultType);
+  // استئناف تلقائي: إن كانت هناك جلسة غير مكتملة من نفس الفترة، نفتح تبويبها مباشرة.
+  // وإلا نعتمد على توقيت اليوم (صباح 3ص–2:59م، مساء غير ذلك).
+  const autoResumeTab: SessionType | null = useMemo(() => {
+    const m = persisted.morningState;
+    const e = persisted.eveningState;
+    const candidates: SessionType[] = [];
+    if (m && isResumable(m, "morning")) candidates.push("morning");
+    if (e && isResumable(e, "evening")) candidates.push("evening");
+    if (candidates.length === 0) return null;
+    if (candidates.length === 1) return candidates[0]!;
+    // اختر الأحدث تعديلًا
+    return (m!.updatedAt ?? 0) >= (e!.updatedAt ?? 0) ? "morning" : "evening";
+  }, [persisted]);
+
+  const [activeTab, setActiveTab] = useState<SessionType>(initialTab ?? autoResumeTab ?? defaultType);
   const [focusMode, setFocusMode] = useState<boolean>(persisted.focusMode ?? false);
   const [morningStateRaw, setMorningStateRaw] = useState<SessionState>(persisted.morningState ?? initialSession);
   const [eveningStateRaw, setEveningStateRaw] = useState<SessionState>(persisted.eveningState ?? initialSession);
@@ -130,9 +142,8 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
   const morningState = morningStateRaw;
   const eveningState = eveningStateRaw;
 
-  // Resume-prompt state — appears once per tab per app-load when an incomplete
-  // session from the same morning/evening period is detected.
-  const [resumePrompt, setResumePrompt] = useState<SessionType | null>(null);
+  // إشعار الاستئناف التلقائي — يظهر مرة واحدة لكل تبويب في كل فتح للتطبيق.
+  const [resumedNotice, setResumedNotice] = useState<SessionType | null>(null);
   const acknowledgedTabs = useRef<Set<SessionType>>(new Set());
 
   const { theme } = useTheme();
@@ -216,16 +227,24 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Open the resume prompt for the active tab if it has a resumable session
-  // that hasn't been acknowledged yet in this app-load.
+  // استئناف تلقائي صامت: نُكمل من مكان التوقّف دون أي نافذة أو قائمة،
+  // ونكتفي بإشعار لطيف يختفي وحده مع إمكانية البدء من جديد.
   useEffect(() => {
     if (!isReady) return;
     if (acknowledgedTabs.current.has(activeTab)) return;
     const state = activeTab === "morning" ? morningStateRaw : eveningStateRaw;
     if (isResumable(state, activeTab)) {
-      setResumePrompt(activeTab);
+      acknowledgedTabs.current.add(activeTab);
+      setResumedNotice(activeTab);
     }
   }, [isReady, activeTab, morningStateRaw, eveningStateRaw]);
+
+  // إخفاء الإشعار تلقائيًا بعد لحظات
+  useEffect(() => {
+    if (!resumedNotice) return;
+    const t = setTimeout(() => setResumedNotice(null), 5000);
+    return () => clearTimeout(t);
+  }, [resumedNotice]);
 
   // Persist session state on changes
   useEffect(() => {
@@ -533,61 +552,34 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
         )}
       </AnimatePresence>
 
-      {/* Resume-where-you-stopped prompt */}
-      <AlertDialog
-        open={resumePrompt !== null}
-        onOpenChange={(open) => {
-          if (!open && resumePrompt) {
-            acknowledgedTabs.current.add(resumePrompt);
-            setResumePrompt(null);
-          }
-        }}
-      >
-        <AlertDialogContent
-          className="glass-surface border-primary/20 max-w-sm rounded-2xl
-            duration-500 ease-out
-            data-[state=open]:animate-in data-[state=closed]:animate-out
-            data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0
-            data-[state=open]:zoom-in-[0.98] data-[state=closed]:zoom-out-[0.98]"
-        >
-          <AlertDialogHeader>
-            <AlertDialogTitle className="font-amiri text-xl text-center text-primary">
-              {resumePrompt === "morning" ? "تريد استكمال أذكار الصباح؟" : "تريد استكمال أذكار المساء؟"}
-            </AlertDialogTitle>
-            <AlertDialogDescription className="font-naskh text-center text-muted-foreground/80 leading-relaxed">
-              {(() => {
-                const s = resumePrompt === "morning" ? morningState : eveningState;
-                return `توقّفت عند الذكر رقم ${s.index + 1}. تحبّ تكمل من حيث توقفت أم تبدأ من جديد؟`;
-              })()}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="sm:justify-center gap-2">
-            <AlertDialogCancel
+      {/* إشعار هادئ بالاستئناف التلقائي — بلا نوافذ ولا قوائم */}
+      <AnimatePresence>
+        {resumedNotice && !locked && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            role="status"
+            aria-live="polite"
+            className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3
+              glass-surface border border-primary/20 rounded-full px-4 py-2 shadow-lg"
+          >
+            <span className="font-naskh text-xs text-muted-foreground/80">
+              {`تم استئناف جلستك من الذكر ${((resumedNotice === "morning" ? morningState : eveningState).index) + 1}`}
+            </span>
+            <button
               onClick={() => {
-                if (resumePrompt) {
-                  acknowledgedTabs.current.add(resumePrompt);
-                  startOverActiveTab();
-                }
-                setResumePrompt(null);
+                startOverActiveTab();
+                setResumedNotice(null);
               }}
-              className="font-naskh rounded-full border-border/40"
+              className="font-naskh text-xs text-primary hover:text-primary/80 transition-colors"
             >
-              ابدأ من جديد
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                if (resumePrompt) {
-                  acknowledgedTabs.current.add(resumePrompt);
-                }
-                setResumePrompt(null);
-              }}
-              className="font-naskh rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              متابعة من حيث توقفت
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              من البداية
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
