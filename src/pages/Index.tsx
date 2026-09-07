@@ -228,16 +228,24 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Open the resume prompt for the active tab if it has a resumable session
-  // that hasn't been acknowledged yet in this app-load.
+  // استئناف تلقائي صامت: نُكمل من مكان التوقّف دون أي نافذة أو قائمة،
+  // ونكتفي بإشعار لطيف يختفي وحده مع إمكانية البدء من جديد.
   useEffect(() => {
     if (!isReady) return;
     if (acknowledgedTabs.current.has(activeTab)) return;
     const state = activeTab === "morning" ? morningStateRaw : eveningStateRaw;
     if (isResumable(state, activeTab)) {
-      setResumePrompt(activeTab);
+      acknowledgedTabs.current.add(activeTab);
+      setResumedNotice(activeTab);
     }
   }, [isReady, activeTab, morningStateRaw, eveningStateRaw]);
+
+  // إخفاء الإشعار تلقائيًا بعد لحظات
+  useEffect(() => {
+    if (!resumedNotice) return;
+    const t = setTimeout(() => setResumedNotice(null), 5000);
+    return () => clearTimeout(t);
+  }, [resumedNotice]);
 
   // Persist session state on changes
   useEffect(() => {
