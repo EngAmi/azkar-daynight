@@ -247,14 +247,54 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
   }, [resumedNotice]);
 
   // Persist session state on changes
+  const lastWritten = useRef<string>("");
   useEffect(() => {
     try {
       const data: PersistedState = { activeTab, focusMode, morningState, eveningState };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      const json = JSON.stringify(data);
+      lastWritten.current = json;
+      localStorage.setItem(STORAGE_KEY, json);
     } catch {
       // ignore quota / private mode errors
     }
   }, [activeTab, focusMode, morningState, eveningState]);
+
+  // مزامنة التقدّم بين التبويبات المفتوحة: أي تبويب آخر يحدّث مكان الذكر
+  // ضمن نفس وضع الصباح/المساء ينعكس هنا فورًا، مع الاحتفاظ بالأحدث فقط.
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== STORAGE_KEY || !e.newValue) return;
+      if (e.newValue === lastWritten.current) return;
+      let incoming: Partial<PersistedState>;
+      try {
+        incoming = JSON.parse(e.newValue);
+      } catch {
+        return;
+      }
+      lastWritten.current = e.newValue;
+      const adopt = (
+        next: SessionState | undefined,
+        current: SessionState,
+        setter: React.Dispatch<React.SetStateAction<SessionState>>
+      ) => {
+        if (!next || typeof next.index !== "number") return;
+        if ((next.updatedAt ?? 0) <= (current.updatedAt ?? 0)) return;
+        if (
+          next.index === current.index &&
+          next.rep === current.rep &&
+          next.completed === current.completed
+        ) {
+          return;
+        }
+        setter(next);
+      };
+      adopt(incoming.morningState, morningStateRaw, setMorningStateRaw);
+      adopt(incoming.eveningState, eveningStateRaw, setEveningStateRaw);
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [morningStateRaw, eveningStateRaw]);
+
 
 
   return (
