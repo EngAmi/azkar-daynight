@@ -32,6 +32,19 @@ export function FontScaleProvider({ children }: { children: ReactNode }) {
 
   const idx = SCALES.indexOf(scale);
 
+  // مزامنة فورية بين التبويبات المفتوحة — تحديث حجم الخط دون إعادة تحميل
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== STORAGE_KEY) return;
+      const v = parseFloat(e.newValue ?? "");
+      setScale((s) =>
+        (SCALES as readonly number[]).includes(v) && v !== s ? (v as FontScale) : s,
+      );
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   const increase = useCallback(() => {
     setScale((s) => {
       const i = SCALES.indexOf(s);
