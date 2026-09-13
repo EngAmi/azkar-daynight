@@ -19,6 +19,7 @@ import { ArabicFontProvider } from "@/hooks/useArabicFont";
 import { AccessibilityProvider } from "@/hooks/useAccessibility";
 import { useLocation, Navigate } from "@/lib/router-compat";
 import { reportLovableError } from "@/lib/lovable-error-reporting";
+import { registerServiceWorker } from "@/lib/registerServiceWorker";
 import NotFound from "@/pages/NotFound";
 
 import appCss from "../styles.css?url";
@@ -266,6 +267,9 @@ function TrailingSlashRedirect() {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => {
+    registerServiceWorker();
+  }, []);
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
