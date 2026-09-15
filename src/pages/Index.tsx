@@ -248,16 +248,43 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
 
   // Persist session state on changes
   const lastWritten = useRef<string>("");
+  const latestSnapshot = useRef<string>("");
   useEffect(() => {
     try {
       const data: PersistedState = { activeTab, focusMode, morningState, eveningState };
       const json = JSON.stringify(data);
       lastWritten.current = json;
+      latestSnapshot.current = json;
       localStorage.setItem(STORAGE_KEY, json);
     } catch {
       // ignore quota / private mode errors
     }
   }, [activeTab, focusMode, morningState, eveningState]);
+
+  // ضمان الحفظ عند إغلاق المتصفح أو تصغير التطبيق فجأة: نكتب آخر لقطة
+  // بشكل متزامن حتى يعود مكان الذكر بدقة عند إعادة الفتح، حتى دون شبكة.
+  useEffect(() => {
+    const flush = () => {
+      if (!latestSnapshot.current) return;
+      try {
+        localStorage.setItem(STORAGE_KEY, latestSnapshot.current);
+      } catch {
+        // ignore
+      }
+    };
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") flush();
+    };
+    window.addEventListener("pagehide", flush);
+    window.addEventListener("beforeunload", flush);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      window.removeEventListener("beforeunload", flush);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, []);
+
 
   // مزامنة التقدّم بين التبويبات المفتوحة: أي تبويب آخر يحدّث مكان الذكر
   // ضمن نفس وضع الصباح/المساء ينعكس هنا فورًا، مع الاحتفاظ بالأحدث فقط.
@@ -731,15 +758,28 @@ function InlineSession({
     setDirection(1);
   }, [type]);
 
-  // Prefetch all audio files for the active session so they replay offline.
-  // Runs in the background at idle time with limited concurrency; aborts on
-  // tab change / unmount to avoid wasting bandwidth.
+  const currentDhikr: Dhikr | undefined = adhkarList[currentIndex];
+
+  // Prefetch the audio of the dhikr we resumed at (and its neighbours) first,
+  // so the exact resume point is playable offline immediately.
+  useEffect(() => {
+    const near = [
+      adhkarList[currentIndex]?.audio,
+      adhkarList[currentIndex + 1]?.audio,
+      adhkarList[currentIndex - 1]?.audio,
+    ];
+    const controller = prefetchSessionAudio(near, 1);
+    return () => controller.abort();
+  }, [adhkarList, currentIndex]);
+
+  // Then prefetch the rest of the session in the background at idle time with
+  // limited concurrency; aborts on tab change / unmount to save bandwidth.
   useEffect(() => {
     const controller = prefetchSessionAudio(adhkarList.map((d) => d.audio));
     return () => controller.abort();
   }, [adhkarList]);
 
-  const currentDhikr: Dhikr | undefined = adhkarList[currentIndex];
+
 
   // Scroll to top when dhikr changes
   useEffect(() => {
