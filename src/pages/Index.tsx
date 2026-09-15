@@ -248,16 +248,43 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
 
   // Persist session state on changes
   const lastWritten = useRef<string>("");
+  const latestSnapshot = useRef<string>("");
   useEffect(() => {
     try {
       const data: PersistedState = { activeTab, focusMode, morningState, eveningState };
       const json = JSON.stringify(data);
       lastWritten.current = json;
+      latestSnapshot.current = json;
       localStorage.setItem(STORAGE_KEY, json);
     } catch {
       // ignore quota / private mode errors
     }
   }, [activeTab, focusMode, morningState, eveningState]);
+
+  // ضمان الحفظ عند إغلاق المتصفح أو تصغير التطبيق فجأة: نكتب آخر لقطة
+  // بشكل متزامن حتى يعود مكان الذكر بدقة عند إعادة الفتح، حتى دون شبكة.
+  useEffect(() => {
+    const flush = () => {
+      if (!latestSnapshot.current) return;
+      try {
+        localStorage.setItem(STORAGE_KEY, latestSnapshot.current);
+      } catch {
+        // ignore
+      }
+    };
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") flush();
+    };
+    window.addEventListener("pagehide", flush);
+    window.addEventListener("beforeunload", flush);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      window.removeEventListener("beforeunload", flush);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, []);
+
 
   // مزامنة التقدّم بين التبويبات المفتوحة: أي تبويب آخر يحدّث مكان الذكر
   // ضمن نفس وضع الصباح/المساء ينعكس هنا فورًا، مع الاحتفاظ بالأحدث فقط.
