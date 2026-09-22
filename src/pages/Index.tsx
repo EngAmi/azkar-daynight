@@ -761,16 +761,26 @@ function InlineSession({
   const currentDhikr: Dhikr | undefined = adhkarList[currentIndex];
 
   // Prefetch the audio of the dhikr we resumed at (and its neighbours) first,
-  // so the exact resume point is playable offline immediately.
+  // so the exact resume point is playable offline immediately. We also warm an
+  // <audio> element for the current and next dhikr so the first play starts
+  // instantly instead of waiting on decode.
   useEffect(() => {
     const near = [
       adhkarList[currentIndex]?.audio,
       adhkarList[currentIndex + 1]?.audio,
       adhkarList[currentIndex - 1]?.audio,
     ];
-    const controller = prefetchSessionAudio(near, 1);
-    return () => controller.abort();
+    const controller = prefetchSessionAudio(near, 2, { immediate: true });
+    warmAudio(adhkarList[currentIndex]?.audio);
+    const t = window.setTimeout(() => {
+      warmAudio(adhkarList[currentIndex + 1]?.audio);
+    }, 400);
+    return () => {
+      window.clearTimeout(t);
+      controller.abort();
+    };
   }, [adhkarList, currentIndex]);
+
 
   // Then prefetch the rest of the session in the background at idle time with
   // limited concurrency; aborts on tab change / unmount to save bandwidth.
