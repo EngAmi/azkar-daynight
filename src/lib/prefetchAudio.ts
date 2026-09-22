@@ -8,10 +8,62 @@
 
 import { AUDIO_BASE_URL } from "@/data/adhkar";
 
-function resolveAudioUrl(audioFile: string): string {
+export function resolveAudioUrl(audioFile: string): string {
   if (/^(https?:)?\/\//.test(audioFile) || audioFile.startsWith("/")) return audioFile;
   return `${AUDIO_BASE_URL}${audioFile}`;
 }
+
+// --- Warm audio elements -------------------------------------------------
+// Fetching alone only fills the HTTP/SW cache; the browser still has to build
+// and decode an audio element on first play. Keeping a couple of preloaded
+// <audio> elements around makes playback start instantly on resume, even the
+// very first time the media is stored locally.
+const MAX_WARM = 4;
+const warm = new Map<string, HTMLAudioElement>();
+
+export function warmAudio(audioFile?: string): HTMLAudioElement | undefined {
+  if (!audioFile || typeof window === "undefined") return undefined;
+  const url = resolveAudioUrl(audioFile);
+  const existing = warm.get(url);
+  if (existing) {
+    // refresh LRU order
+    warm.delete(url);
+    warm.set(url, existing);
+    return existing;
+  }
+  const audio = new Audio();
+  audio.preload = "auto";
+  audio.crossOrigin = "anonymous";
+  audio.src = url;
+  try {
+    audio.load();
+  } catch {
+    // ignore
+  }
+  warm.set(url, audio);
+  while (warm.size > MAX_WARM) {
+    const oldestKey = warm.keys().next().value as string | undefined;
+    if (!oldestKey) break;
+    const old = warm.get(oldestKey);
+    warm.delete(oldestKey);
+    if (old) {
+      old.pause();
+      old.removeAttribute("src");
+      try {
+        old.load();
+      } catch {
+        // ignore
+      }
+    }
+  }
+  return audio;
+}
+
+export function getWarmAudio(audioFile?: string): HTMLAudioElement | undefined {
+  if (!audioFile) return undefined;
+  return warm.get(resolveAudioUrl(audioFile));
+}
+
 
 const inflight = new Set<string>();
 const done = new Set<string>();
