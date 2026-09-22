@@ -13,7 +13,7 @@ import { useAccessibility } from "@/hooks/useAccessibility";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useFocusLock } from "@/hooks/useFocusLock";
 import { getCurrentSessionType } from "@/lib/timeOfDay";
-import { prefetchSessionAudio } from "@/lib/prefetchAudio";
+import { prefetchSessionAudio, warmAudio, getWarmAudio, resolveAudioUrl } from "@/lib/prefetchAudio";
 import { installReminderScheduler } from "@/lib/notifications";
 import { ReminderSettings } from "@/components/ReminderSettings";
 import {
@@ -761,16 +761,26 @@ function InlineSession({
   const currentDhikr: Dhikr | undefined = adhkarList[currentIndex];
 
   // Prefetch the audio of the dhikr we resumed at (and its neighbours) first,
-  // so the exact resume point is playable offline immediately.
+  // so the exact resume point is playable offline immediately. We also warm an
+  // <audio> element for the current and next dhikr so the first play starts
+  // instantly instead of waiting on decode.
   useEffect(() => {
     const near = [
       adhkarList[currentIndex]?.audio,
       adhkarList[currentIndex + 1]?.audio,
       adhkarList[currentIndex - 1]?.audio,
     ];
-    const controller = prefetchSessionAudio(near, 1);
-    return () => controller.abort();
+    const controller = prefetchSessionAudio(near, 2, { immediate: true });
+    warmAudio(adhkarList[currentIndex]?.audio);
+    const t = window.setTimeout(() => {
+      warmAudio(adhkarList[currentIndex + 1]?.audio);
+    }, 400);
+    return () => {
+      window.clearTimeout(t);
+      controller.abort();
+    };
   }, [adhkarList, currentIndex]);
+
 
   // Then prefetch the rest of the session in the background at idle time with
   // limited concurrency; aborts on tab change / unmount to save bandwidth.
@@ -1245,10 +1255,14 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Warm the element as soon as the dhikr is on screen so the first tap plays
+  // without any loading delay.
   useEffect(() => {
+    warmAudio(audioFile);
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
+        audioRef.current.currentTime = 0;
         audioRef.current = null;
       }
     };
@@ -1264,14 +1278,20 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
       return;
     }
 
-    const src = /^(https?:)?\/\/|^\//.test(audioFile) ? audioFile : `${AUDIO_BASE_URL}${audioFile}`;
-    const audio = new Audio(src);
+    const audio =
+      getWarmAudio(audioFile) ?? warmAudio(audioFile) ?? new Audio(resolveAudioUrl(audioFile));
     audioRef.current = audio;
+    try {
+      audio.currentTime = 0;
+    } catch {
+      // ignore — metadata may not be ready yet
+    }
     audio.onended = () => setIsPlaying(false);
     audio.onerror = () => setIsPlaying(false);
-    audio.play();
+    void audio.play().catch(() => setIsPlaying(false));
     setIsPlaying(true);
   };
+
 
   return (
     <motion.button
