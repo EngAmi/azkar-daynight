@@ -13,7 +13,7 @@ import { useAccessibility } from "@/hooks/useAccessibility";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useFocusLock } from "@/hooks/useFocusLock";
 import { getCurrentSessionType } from "@/lib/timeOfDay";
-import { prefetchSessionAudio } from "@/lib/prefetchAudio";
+import { prefetchSessionAudio, warmAudio, getWarmAudio, resolveAudioUrl } from "@/lib/prefetchAudio";
 import { installReminderScheduler } from "@/lib/notifications";
 import { ReminderSettings } from "@/components/ReminderSettings";
 import {
@@ -1255,10 +1255,14 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Warm the element as soon as the dhikr is on screen so the first tap plays
+  // without any loading delay.
   useEffect(() => {
+    warmAudio(audioFile);
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
+        audioRef.current.currentTime = 0;
         audioRef.current = null;
       }
     };
@@ -1274,14 +1278,20 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
       return;
     }
 
-    const src = /^(https?:)?\/\/|^\//.test(audioFile) ? audioFile : `${AUDIO_BASE_URL}${audioFile}`;
-    const audio = new Audio(src);
+    const audio =
+      getWarmAudio(audioFile) ?? warmAudio(audioFile) ?? new Audio(resolveAudioUrl(audioFile));
     audioRef.current = audio;
+    try {
+      audio.currentTime = 0;
+    } catch {
+      // ignore — metadata may not be ready yet
+    }
     audio.onended = () => setIsPlaying(false);
     audio.onerror = () => setIsPlaying(false);
-    audio.play();
+    void audio.play().catch(() => setIsPlaying(false));
     setIsPlaying(true);
   };
+
 
   return (
     <motion.button
