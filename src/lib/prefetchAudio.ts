@@ -98,6 +98,7 @@ async function prefetchOne(url: string, signal?: AbortSignal): Promise<void> {
 export function prefetchSessionAudio(
   audioFiles: Array<string | undefined>,
   concurrency = 2,
+  options: { immediate?: boolean } = {},
 ): AbortController {
   const controller = new AbortController();
   const urls = Array.from(
@@ -121,6 +122,11 @@ export function prefetchSessionAudio(
     void Promise.all(workers);
   };
 
+  if (options.immediate) {
+    start();
+    return controller;
+  }
+
   const idle = (window as unknown as {
     requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
   }).requestIdleCallback;
@@ -129,6 +135,7 @@ export function prefetchSessionAudio(
   } else {
     setTimeout(start, 600);
   }
+
 
   return controller;
 }
