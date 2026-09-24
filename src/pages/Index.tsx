@@ -1375,7 +1375,7 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
           ? "text-primary/80 bg-primary/10"
           : "text-muted-foreground/35 hover:text-primary/60"
       }`}
-      aria-label={isPlaying ? "إيقاف" : "استماع"}
+      aria-label={label}
     >
       {isPlaying ? (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1388,7 +1388,7 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
           <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
         </svg>
       )}
-      <span className="font-naskh text-[11px]">{isPlaying ? "إيقاف" : "استماع"}</span>
+      <span className="font-naskh text-[11px]">{label}</span>
     </motion.button>
   );
 }
