@@ -1251,46 +1251,119 @@ function InlineCompletion({
   );
 }
 
+const AUDIO_POS_KEY = "azkar-audio-position";
+type AudioPos = { file: string; time: number; updatedAt: number };
+
+function readAudioPos(file: string): number {
+  try {
+    const raw = localStorage.getItem(AUDIO_POS_KEY);
+    if (!raw) return 0;
+    const p = JSON.parse(raw) as AudioPos;
+    // Only resume the same recording, within 12 hours.
+    if (p.file !== file || Date.now() - p.updatedAt > 12 * 3600 * 1000) return 0;
+    return typeof p.time === "number" && p.time > 0 ? p.time : 0;
+  } catch {
+    return 0;
+  }
+}
+function writeAudioPos(file: string, time: number) {
+  try {
+    localStorage.setItem(AUDIO_POS_KEY, JSON.stringify({ file, time, updatedAt: Date.now() }));
+  } catch {
+    /* storage full / private mode */
+  }
+}
+function clearAudioPos() {
+  try {
+    localStorage.removeItem(AUDIO_POS_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
 function SpeakButton({ audioFile }: { audioFile?: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [resumeAt, setResumeAt] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Warm the element as soon as the dhikr is on screen so the first tap plays
-  // without any loading delay.
+  // Warm the element and load any saved position for this recording.
   useEffect(() => {
     warmAudio(audioFile);
+    setResumeAt(audioFile ? readAudioPos(audioFile) : 0);
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
+      const a = audioRef.current;
+      if (a) {
+        if (audioFile && !a.ended && a.currentTime > 1) writeAudioPos(audioFile, a.currentTime);
+        a.pause();
         audioRef.current = null;
       }
+    };
+  }, [audioFile]);
+
+  // Persist the exact position on tab hide / browser close.
+  useEffect(() => {
+    const save = () => {
+      const a = audioRef.current;
+      if (a && audioFile && !a.ended && a.currentTime > 1) writeAudioPos(audioFile, a.currentTime);
+    };
+    window.addEventListener("pagehide", save);
+    document.addEventListener("visibilitychange", save);
+    return () => {
+      window.removeEventListener("pagehide", save);
+      document.removeEventListener("visibilitychange", save);
     };
   }, [audioFile]);
 
   if (!audioFile) return null;
 
   const handlePlay = () => {
-    if (isPlaying && audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
+    const current = audioRef.current;
+    if (isPlaying && current) {
+      current.pause();
+      writeAudioPos(audioFile, current.currentTime);
+      setResumeAt(current.currentTime);
       setIsPlaying(false);
       return;
     }
 
     const audio =
-      getWarmAudio(audioFile) ?? warmAudio(audioFile) ?? new Audio(resolveAudioUrl(audioFile));
+      current ?? getWarmAudio(audioFile) ?? warmAudio(audioFile) ?? new Audio(resolveAudioUrl(audioFile));
     audioRef.current = audio;
-    try {
-      audio.currentTime = 0;
-    } catch {
-      // ignore — metadata may not be ready yet
-    }
-    audio.onended = () => setIsPlaying(false);
+    const start = readAudioPos(audioFile);
+    const seek = () => {
+      try {
+        const d = audio.duration;
+        audio.currentTime = start > 0 && (!isFinite(d) || start < d - 0.5) ? Math.max(0, start - 1) : 0;
+      } catch {
+        /* ignore */
+      }
+    };
+    if (audio.readyState >= 1) seek();
+    else audio.addEventListener("loadedmetadata", seek, { once: true });
+
+    let lastSave = 0;
+    audio.ontimeupdate = () => {
+      const now = Date.now();
+      if (now - lastSave > 1000) {
+        lastSave = now;
+        writeAudioPos(audioFile, audio.currentTime);
+      }
+    };
+    audio.onpause = () => {
+      if (!audio.ended) writeAudioPos(audioFile, audio.currentTime);
+    };
+    audio.onended = () => {
+      clearAudioPos();
+      setResumeAt(0);
+      setIsPlaying(false);
+    };
     audio.onerror = () => setIsPlaying(false);
     void audio.play().catch(() => setIsPlaying(false));
     setIsPlaying(true);
   };
+
+  const label = isPlaying ? "إيقاف مؤقت" : resumeAt > 1 ? "متابعة الاستماع" : "استماع";
+
 
 
   return (
@@ -1302,7 +1375,7 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
           ? "text-primary/80 bg-primary/10"
           : "text-muted-foreground/35 hover:text-primary/60"
       }`}
-      aria-label={isPlaying ? "إيقاف" : "استماع"}
+      aria-label={label}
     >
       {isPlaying ? (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1315,7 +1388,7 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
           <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
         </svg>
       )}
-      <span className="font-naskh text-[11px]">{isPlaying ? "إيقاف" : "استماع"}</span>
+      <span className="font-naskh text-[11px]">{label}</span>
     </motion.button>
   );
 }
