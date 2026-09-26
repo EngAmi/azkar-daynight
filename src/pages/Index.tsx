@@ -945,12 +945,29 @@ function InlineSession({
       dragElastic={0.15}
       onDragEnd={handleSwipe}
     >
-      {/* Screen-reader live announcement of current dhikr position */}
+      {/* Screen-reader live announcement: position, dhikr text, remaining repetitions */}
       <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
-        {`الذكر ${currentIndex + 1} من ${adhkarList.length} — ${sessionLabel}`}
+        {showFadl
+          ? `فضل الذكر: ${currentDhikr.fadl ?? ""}`
+          : `${sessionLabel}. الذكر ${currentIndex + 1} من ${adhkarList.length}. ${currentDhikr.content}. ${
+              currentDhikr.count > 1
+                ? `التكرار ${currentRep + 1} من ${currentDhikr.count}، تبقّى ${currentDhikr.count - currentRep}.`
+                : "مرة واحدة."
+            }`}
       </div>
+      {/* Screen-reader guide for the ordered controls inside focus mode */}
+      <p id="focus-sr-guide" className="sr-only">
+        {locked
+          ? "وضع التركيز المُقفل. ترتيب العناصر: نص الذكر، ثم زر الاستماع، ثم الذكر السابق، ثم عدّاد التسبيح، ثم الذكر التالي. للخروج اضغط Escape مرتين."
+          : "ترتيب العناصر: أدوات القراءة، ثم نص الذكر، ثم زر الاستماع، ثم الذكر السابق، ثم عدّاد التسبيح، ثم الذكر التالي."}
+      </p>
       {/* Top bar — utilities row (font + a11y + focus controls + counter) */}
-      <div className="flex items-center justify-between px-4 sm:px-6 pb-1.5 gap-2">
+      <div
+        role="group"
+        aria-label="أدوات القراءة ووضع التركيز"
+        aria-describedby="focus-sr-guide"
+        className="flex items-center justify-between px-4 sm:px-6 pb-1.5 gap-2"
+      >
         <div className={`flex items-center gap-1.5 min-w-0 ${locked || mobileFocus ? "hidden" : ""}`}>
           {focusMode && <FocusFontControl />}
           <AccessibilityToggle compact />
@@ -1041,8 +1058,9 @@ function InlineSession({
               className="w-full max-w-lg sm:max-w-2xl lg:max-w-3xl flex flex-col items-center gap-5 sm:gap-6"
             >
               {/* Dhikr text — fluid, responsive sizing that adapts to screen + content length */}
-              <div className="w-full text-center relative">
+              <div className="w-full text-center relative" role="group" aria-label={`نص الذكر ${currentIndex + 1} والاستماع إليه`}>
                 <p
+                  id="current-dhikr-text"
                   className="dhikr-text text-balance transition-[font-size] duration-300 mx-auto"
                   style={{
                     ["--dhikr-size" as string]:
@@ -1076,7 +1094,11 @@ function InlineSession({
               )}
 
               {/* Central interaction row — Prev · Breathing Circle · Skip (luxury balanced layout) */}
-              <div className="flex items-center justify-center gap-4 sm:gap-8 w-full pt-1">
+              <div
+                role="group"
+                aria-label="التنقل بين الأذكار وعدّاد التسبيح: الذكر السابق، ثم العدّاد، ثم الذكر التالي"
+                className="flex items-center justify-center gap-4 sm:gap-8 w-full pt-1"
+              >
                 <button
                   onClick={handlePrev}
                   disabled={!canGoPrev}
@@ -1085,7 +1107,7 @@ function InlineSession({
                   aria-keyshortcuts="ArrowRight"
                   className="group flex-shrink-0 min-h-[52px] min-w-[52px] w-13 h-13 sm:w-14 sm:h-14 rounded-2xl border border-border/40 bg-background/50 backdrop-blur-md text-muted-foreground/60 hover:text-primary hover:border-primary/40 hover:bg-primary/5 active:scale-90 disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center touch-manipulation shadow-xs"
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-active:translate-x-0.5">
+                  <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-active:translate-x-0.5">
                     <path d="M9 6l6 6-6 6" />
                   </svg>
                 </button>
@@ -1106,7 +1128,7 @@ function InlineSession({
                   aria-keyshortcuts="ArrowLeft"
                   className="group flex-shrink-0 min-h-[52px] min-w-[52px] w-13 h-13 sm:w-14 sm:h-14 rounded-2xl border border-primary/30 bg-primary/10 backdrop-blur-md text-primary hover:bg-primary hover:text-primary-foreground hover:border-primary active:scale-90 transition-all duration-300 flex items-center justify-center touch-manipulation shadow-[0_2px_12px_hsl(var(--primary)/0.15)]"
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-active:-translate-x-0.5">
+                  <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-active:-translate-x-0.5">
                     <path d="M15 6l-6 6 6 6" />
                   </svg>
                 </button>
@@ -1284,6 +1306,7 @@ function clearAudioPos() {
 function SpeakButton({ audioFile }: { audioFile?: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [resumeAt, setResumeAt] = useState(0);
+  const [srAnnounce, setSrAnnounce] = useState("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Warm the element and load any saved position for this recording.
@@ -1323,8 +1346,13 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
       writeAudioPos(audioFile, current.currentTime);
       setResumeAt(current.currentTime);
       setIsPlaying(false);
+      setSrAnnounce(`تم إيقاف الصوت مؤقتًا عند ${fmt(current.currentTime)}.`);
       return;
     }
+
+    const resuming = readAudioPos(audioFile) > 1;
+    if (resuming) setSrAnnounce(`متابعة التشغيل من الموضع المحفوظ ${fmt(readAudioPos(audioFile))}.`);
+    else setSrAnnounce("بدأ تشغيل صوت الذكر.");
 
     const audio =
       current ?? getWarmAudio(audioFile) ?? warmAudio(audioFile) ?? new Audio(resolveAudioUrl(audioFile));
@@ -1356,8 +1384,12 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
       clearAudioPos();
       setResumeAt(0);
       setIsPlaying(false);
+      setSrAnnounce("انتهى تشغيل صوت الذكر.");
     };
-    audio.onerror = () => setIsPlaying(false);
+    audio.onerror = () => {
+      setIsPlaying(false);
+      setSrAnnounce("تعذّر تشغيل الصوت.");
+    };
     void audio.play().catch(() => setIsPlaying(false));
     setIsPlaying(true);
   };
@@ -1375,6 +1407,7 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
     clearAudioPos();
     setResumeAt(0);
     setIsPlaying(false);
+    setSrAnnounce("أُعيد التسجيل من البداية ومُسح الموضع المحفوظ.");
   };
 
   const label = isPlaying ? "إيقاف مؤقت" : resumeAt > 1 ? "متابعة الاستماع" : "استماع";
@@ -1386,7 +1419,7 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
 
   return (
     <div className="mt-3 mx-auto flex flex-col items-center gap-1">
-      <div className="flex items-center gap-2">
+      <div role="group" aria-label="التحكم في تشغيل صوت الذكر" className="flex items-center gap-2">
         <motion.button
           onClick={handlePlay}
           whileTap={{ scale: 0.9 }}
@@ -1395,7 +1428,8 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
               ? "text-primary/80 bg-primary/10"
               : "text-muted-foreground/35 hover:text-primary/60"
           }`}
-          aria-label={label}
+          aria-label={`${label} — صوت الذكر`}
+          aria-pressed={isPlaying}
         >
       {isPlaying ? (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1435,6 +1469,10 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
           توقفت عند {fmt(resumeAt)}
         </p>
       )}
+      {/* إعلانات حالة التشغيل لقارئ الشاشة */}
+      <div role="status" aria-live="assertive" aria-atomic="true" className="sr-only">
+        {srAnnounce}
+      </div>
     </div>
   );
 }
