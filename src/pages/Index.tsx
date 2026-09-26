@@ -962,7 +962,12 @@ function InlineSession({
           : "ترتيب الأزرار: أدوات القراءة، ثم الاستماع للذكر، ثم عدّاد التسبيح، ثم الذكر السابق والذكر التالي."}
       </p>
       {/* Top bar — utilities row (font + a11y + focus controls + counter) */}
-      <div className="flex items-center justify-between px-4 sm:px-6 pb-1.5 gap-2">
+      <div
+        role="group"
+        aria-label="أدوات القراءة ووضع التركيز"
+        aria-describedby="focus-sr-guide"
+        className="flex items-center justify-between px-4 sm:px-6 pb-1.5 gap-2"
+      >
         <div className={`flex items-center gap-1.5 min-w-0 ${locked || mobileFocus ? "hidden" : ""}`}>
           {focusMode && <FocusFontControl />}
           <AccessibilityToggle compact />
