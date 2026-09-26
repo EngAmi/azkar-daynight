@@ -1384,8 +1384,12 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
       clearAudioPos();
       setResumeAt(0);
       setIsPlaying(false);
+      setSrAnnounce("انتهى تشغيل صوت الذكر.");
     };
-    audio.onerror = () => setIsPlaying(false);
+    audio.onerror = () => {
+      setIsPlaying(false);
+      setSrAnnounce("تعذّر تشغيل الصوت.");
+    };
     void audio.play().catch(() => setIsPlaying(false));
     setIsPlaying(true);
   };
