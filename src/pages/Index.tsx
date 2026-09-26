@@ -1469,6 +1469,10 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
           توقفت عند {fmt(resumeAt)}
         </p>
       )}
+      {/* إعلانات حالة التشغيل لقارئ الشاشة */}
+      <div role="status" aria-live="assertive" aria-atomic="true" className="sr-only">
+        {srAnnounce}
+      </div>
     </div>
   );
 }
