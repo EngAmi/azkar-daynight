@@ -1362,21 +1362,41 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
     setIsPlaying(true);
   };
 
+  const handleReset = () => {
+    const a = audioRef.current;
+    if (a) {
+      a.pause();
+      try {
+        a.currentTime = 0;
+      } catch {
+        /* ignore */
+      }
+    }
+    clearAudioPos();
+    setResumeAt(0);
+    setIsPlaying(false);
+  };
+
   const label = isPlaying ? "إيقاف مؤقت" : resumeAt > 1 ? "متابعة الاستماع" : "استماع";
-
-
+  const fmt = (s: number) => {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, "0")}`;
+  };
 
   return (
-    <motion.button
-      onClick={handlePlay}
-      whileTap={{ scale: 0.9 }}
-      className={`mt-3 mx-auto flex items-center gap-1.5 transition-colors duration-300 p-2 rounded-full ${
-        isPlaying
-          ? "text-primary/80 bg-primary/10"
-          : "text-muted-foreground/35 hover:text-primary/60"
-      }`}
-      aria-label={label}
-    >
+    <div className="mt-3 mx-auto flex flex-col items-center gap-1">
+      <div className="flex items-center gap-2">
+        <motion.button
+          onClick={handlePlay}
+          whileTap={{ scale: 0.9 }}
+          className={`flex items-center gap-1.5 transition-colors duration-300 p-2 rounded-full ${
+            isPlaying
+              ? "text-primary/80 bg-primary/10"
+              : "text-muted-foreground/35 hover:text-primary/60"
+          }`}
+          aria-label={label}
+        >
       {isPlaying ? (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="6" y="4" width="4" height="16" />
