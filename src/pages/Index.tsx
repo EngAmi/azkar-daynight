@@ -1419,7 +1419,7 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
 
   return (
     <div className="mt-3 mx-auto flex flex-col items-center gap-1">
-      <div className="flex items-center gap-2">
+      <div role="group" aria-label="التحكم في تشغيل صوت الذكر" className="flex items-center gap-2">
         <motion.button
           onClick={handlePlay}
           whileTap={{ scale: 0.9 }}
@@ -1428,7 +1428,8 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
               ? "text-primary/80 bg-primary/10"
               : "text-muted-foreground/35 hover:text-primary/60"
           }`}
-          aria-label={label}
+          aria-label={`${label} — صوت الذكر`}
+          aria-pressed={isPlaying}
         >
       {isPlaying ? (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
