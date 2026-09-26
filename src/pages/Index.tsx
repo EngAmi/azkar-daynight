@@ -1346,8 +1346,13 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
       writeAudioPos(audioFile, current.currentTime);
       setResumeAt(current.currentTime);
       setIsPlaying(false);
+      setSrAnnounce(`تم إيقاف الصوت مؤقتًا عند ${fmtTime(current.currentTime)}.`);
       return;
     }
+
+    const resuming = readAudioPos(audioFile) > 1;
+    if (resuming) setSrAnnounce(`متابعة التشغيل من الموضع المحفوظ ${fmtTime(readAudioPos(audioFile))}.`);
+    else setSrAnnounce("بدأ تشغيل صوت الذكر.");
 
     const audio =
       current ?? getWarmAudio(audioFile) ?? warmAudio(audioFile) ?? new Audio(resolveAudioUrl(audioFile));
