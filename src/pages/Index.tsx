@@ -1408,8 +1408,34 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
           <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
         </svg>
       )}
-      <span className="font-naskh text-[11px]">{label}</span>
-    </motion.button>
+          <span className="font-naskh text-[11px]">{label}</span>
+        </motion.button>
+
+        {resumeAt > 1 && !isPlaying && (
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            onClick={handleReset}
+            whileTap={{ scale: 0.9 }}
+            className="flex items-center gap-1 transition-colors duration-300 p-2 rounded-full text-muted-foreground/35 hover:text-destructive/70"
+            aria-label="إعادة التسجيل من البداية"
+            title="مسح الموضع المحفوظ والبدء من أول التسجيل"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+              <path d="M3 3v5h5" />
+            </svg>
+            <span className="font-naskh text-[11px]">من البداية</span>
+          </motion.button>
+        )}
+      </div>
+
+      {resumeAt > 1 && !isPlaying && (
+        <p className="font-naskh text-[10px] text-muted-foreground/30" role="status">
+          توقفت عند {fmt(resumeAt)}
+        </p>
+      )}
+    </div>
   );
 }
 
