@@ -1306,6 +1306,7 @@ function clearAudioPos() {
 function SpeakButton({ audioFile }: { audioFile?: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [resumeAt, setResumeAt] = useState(0);
+  const [srAnnounce, setSrAnnounce] = useState("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Warm the element and load any saved position for this recording.
