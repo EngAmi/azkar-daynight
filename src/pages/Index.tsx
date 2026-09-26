@@ -1407,6 +1407,7 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
     clearAudioPos();
     setResumeAt(0);
     setIsPlaying(false);
+    setSrAnnounce("أُعيد التسجيل من البداية ومُسح الموضع المحفوظ.");
   };
 
   const label = isPlaying ? "إيقاف مؤقت" : resumeAt > 1 ? "متابعة الاستماع" : "استماع";
