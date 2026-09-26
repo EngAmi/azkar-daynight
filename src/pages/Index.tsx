@@ -945,10 +945,22 @@ function InlineSession({
       dragElastic={0.15}
       onDragEnd={handleSwipe}
     >
-      {/* Screen-reader live announcement of current dhikr position */}
+      {/* Screen-reader live announcement: position, dhikr text, remaining repetitions */}
       <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
-        {`الذكر ${currentIndex + 1} من ${adhkarList.length} — ${sessionLabel}`}
+        {showFadl
+          ? `فضل الذكر: ${currentDhikr.fadl ?? ""}`
+          : `${sessionLabel}. الذكر ${currentIndex + 1} من ${adhkarList.length}. ${currentDhikr.content}. ${
+              currentDhikr.count > 1
+                ? `التكرار ${currentRep + 1} من ${currentDhikr.count}، تبقّى ${currentDhikr.count - currentRep}.`
+                : "مرة واحدة."
+            }`}
       </div>
+      {/* Screen-reader guide for the ordered controls inside focus mode */}
+      <p id="focus-sr-guide" className="sr-only">
+        {locked
+          ? "وضع التركيز المُقفل. ترتيب الأزرار: الاستماع للذكر، ثم عدّاد التسبيح، ثم الذكر السابق والذكر التالي. للخروج اضغط Escape مرتين."
+          : "ترتيب الأزرار: أدوات القراءة، ثم الاستماع للذكر، ثم عدّاد التسبيح، ثم الذكر السابق والذكر التالي."}
+      </p>
       {/* Top bar — utilities row (font + a11y + focus controls + counter) */}
       <div className="flex items-center justify-between px-4 sm:px-6 pb-1.5 gap-2">
         <div className={`flex items-center gap-1.5 min-w-0 ${locked || mobileFocus ? "hidden" : ""}`}>
