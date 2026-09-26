@@ -1107,7 +1107,7 @@ function InlineSession({
                   aria-keyshortcuts="ArrowRight"
                   className="group flex-shrink-0 min-h-[52px] min-w-[52px] w-13 h-13 sm:w-14 sm:h-14 rounded-2xl border border-border/40 bg-background/50 backdrop-blur-md text-muted-foreground/60 hover:text-primary hover:border-primary/40 hover:bg-primary/5 active:scale-90 disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center touch-manipulation shadow-xs"
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-active:translate-x-0.5">
+                  <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-active:translate-x-0.5">
                     <path d="M9 6l6 6-6 6" />
                   </svg>
                 </button>
