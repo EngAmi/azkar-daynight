@@ -1094,7 +1094,11 @@ function InlineSession({
               )}
 
               {/* Central interaction row — Prev · Breathing Circle · Skip (luxury balanced layout) */}
-              <div className="flex items-center justify-center gap-4 sm:gap-8 w-full pt-1">
+              <div
+                role="group"
+                aria-label="التنقل بين الأذكار وعدّاد التسبيح: الذكر السابق، ثم العدّاد، ثم الذكر التالي"
+                className="flex items-center justify-center gap-4 sm:gap-8 w-full pt-1"
+              >
                 <button
                   onClick={handlePrev}
                   disabled={!canGoPrev}
