@@ -1058,8 +1058,9 @@ function InlineSession({
               className="w-full max-w-lg sm:max-w-2xl lg:max-w-3xl flex flex-col items-center gap-5 sm:gap-6"
             >
               {/* Dhikr text — fluid, responsive sizing that adapts to screen + content length */}
-              <div className="w-full text-center relative">
+              <div className="w-full text-center relative" role="group" aria-label={`نص الذكر ${currentIndex + 1} والاستماع إليه`}>
                 <p
+                  id="current-dhikr-text"
                   className="dhikr-text text-balance transition-[font-size] duration-300 mx-auto"
                   style={{
                     ["--dhikr-size" as string]:
