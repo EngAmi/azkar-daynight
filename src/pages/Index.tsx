@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 import { getMorningAdhkar, getEveningAdhkar, AUDIO_BASE_URL, type SessionType, type Dhikr } from "@/data/adhkar";
 import { BreathingCircle } from "@/components/BreathingCircle";
 import { DhikrFadl } from "@/components/DhikrFadl";
@@ -782,6 +783,29 @@ function InlineSession({
   const [showFadl, setShowFadl] = useState(false);
   const [direction, setDirection] = useState(1);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLParagraphElement>(null);
+
+  // ملاءمة الذكر لأي شاشة: يُصغَّر النص تدريجيًا حتى يتسع دون تمرير.
+  useEffect(() => {
+    const box = scrollRef.current;
+    if (!box) return;
+    let raf = 0;
+    const fit = () => {
+      const el = textRef.current;
+      if (!el) return;
+      let f = 1;
+      el.style.setProperty("--dhikr-fit", "1");
+      while (box.scrollHeight > box.clientHeight + 1 && f > 0.6) {
+        f = Math.round((f - 0.05) * 100) / 100;
+        el.style.setProperty("--dhikr-fit", String(f));
+      }
+    };
+    const schedule = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(fit); };
+    const t = window.setTimeout(schedule, 60);
+    const ro = new ResizeObserver(schedule);
+    ro.observe(box);
+    return () => { clearTimeout(t); cancelAnimationFrame(raf); ro.disconnect(); };
+  });
   const lastTabSwitchAt = useRef<number>(0);
   const [confirmRestart, setConfirmRestart] = useState(false);
 
