@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 import { getMorningAdhkar, getEveningAdhkar, AUDIO_BASE_URL, type SessionType, type Dhikr } from "@/data/adhkar";
 import { BreathingCircle } from "@/components/BreathingCircle";
 import { DhikrFadl } from "@/components/DhikrFadl";
@@ -150,6 +151,11 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
   const isLight = theme === "light";
   const isMobile = useIsMobile();
   const mobileFocus = isMobile && focusMode;
+  // على الموبايل: الإعدادات ظاهرة حتى يبدأ القارئ، ثم تُطوى ويبقى سهم لإظهارها.
+  const [settingsOpen, setSettingsOpen] = useState(true);
+  const collapseOnRead = () => {
+    if (isMobile && settingsOpen) setSettingsOpen(false);
+  };
 
   // وضع التركيز المُقفل: بلا قوائم ولا مخارج ظاهرة، ولا تمرير للصفحة.
   const [locked, setLocked] = useState(false);
@@ -496,13 +502,40 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                   className="w-full overflow-hidden"
                 >
                   {/* Top controls: font size + accessibility + reminders + theme */}
-                  <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2 px-4 pt-1 w-full">
-                    <FontSizeControl />
-                    <ArabicFontControl />
-                    <AccessibilityToggle />
-                    <ReminderSettings />
-                    <ThemeToggle />
-                  </div>
+                  <AnimatePresence initial={false}>
+                    {(!isMobile || settingsOpen) && (
+                      <motion.div
+                        key="settings"
+                        id="reading-settings"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.35, ease: "easeInOut" }}
+                        className="flex flex-wrap items-center justify-center sm:justify-end gap-2 px-4 pt-1 w-full"
+                      >
+                        <FontSizeControl />
+                        <ArabicFontControl />
+                        <AccessibilityToggle />
+                        <ReminderSettings />
+                        <ThemeToggle />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  {isMobile && (
+                    <div className="flex justify-center w-full">
+                      <button
+                        type="button"
+                        onClick={() => setSettingsOpen((o) => !o)}
+                        aria-expanded={settingsOpen}
+                        aria-controls="reading-settings"
+                        aria-label={settingsOpen ? "إخفاء إعدادات القراءة" : "إظهار إعدادات القراءة"}
+                        className="flex items-center gap-1 h-8 px-4 rounded-full text-gold/70 hover:text-gold font-naskh text-[11px] transition-colors"
+                      >
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${settingsOpen ? "rotate-180" : ""}`} />
+                        {settingsOpen ? "إخفاء الإعدادات" : "الإعدادات"}
+                      </button>
+                    </div>
+                  )}
 
                   {/* Tab switcher */}
                   <nav
@@ -551,6 +584,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                   : undefined
               }
               className="flex-1 min-h-0 w-full flex flex-col overflow-hidden outline-none"
+              onPointerDownCapture={collapseOnRead}
             >
               <SwipeableContent
                 activeTab={activeTab}
@@ -749,6 +783,32 @@ function InlineSession({
   const [showFadl, setShowFadl] = useState(false);
   const [direction, setDirection] = useState(1);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLParagraphElement>(null);
+
+  // ملاءمة الذكر لأي شاشة: يُصغَّر النص تدريجيًا حتى يتسع دون تمرير.
+  useEffect(() => {
+    const box = scrollRef.current;
+    if (!box) return;
+    let raf = 0;
+    const fit = () => {
+      const el = textRef.current;
+      if (!el) return;
+      let f = 1;
+      el.style.transition = "none";
+      el.style.setProperty("--dhikr-fit", "1");
+      while (box.scrollHeight > box.clientHeight + 1 && f > 0.6) {
+        f = Math.round((f - 0.05) * 100) / 100;
+        el.style.setProperty("--dhikr-fit", String(f));
+      }
+      void box.offsetHeight; // flush before restoring the transition
+      el.style.transition = "";
+    };
+    const schedule = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(fit); };
+    const t = window.setTimeout(schedule, 60);
+    const ro = new ResizeObserver(schedule);
+    ro.observe(box);
+    return () => { clearTimeout(t); cancelAnimationFrame(raf); ro.disconnect(); };
+  });
   const lastTabSwitchAt = useRef<number>(0);
   const [confirmRestart, setConfirmRestart] = useState(false);
 
@@ -1060,17 +1120,18 @@ function InlineSession({
               {/* Dhikr text — fluid, responsive sizing that adapts to screen + content length */}
               <div className="w-full text-center relative" role="group" aria-label={`نص الذكر ${currentIndex + 1} والاستماع إليه`}>
                 <p
+                  ref={textRef}
                   id="current-dhikr-text"
                   className="dhikr-text text-balance transition-[font-size] duration-300 mx-auto"
                   style={{
                     ["--dhikr-size" as string]:
-                      currentDhikr.content.length > 280
+                      `calc(${currentDhikr.content.length > 280
                         ? "clamp(0.95rem, 2.2vw + 0.55rem, 1.45rem)"
                         : currentDhikr.content.length > 180
                           ? "clamp(1.05rem, 2.5vw + 0.6rem, 1.7rem)"
                           : currentDhikr.content.length > 90
                             ? "clamp(1.15rem, 2.8vw + 0.65rem, 1.95rem)"
-                            : "clamp(1.3rem, 3.2vw + 0.7rem, 2.3rem)",
+                            : "clamp(1.3rem, 3.2vw + 0.7rem, 2.3rem)"} * var(--dhikr-fit, 1))`,
                     ["--dhikr-leading" as string]:
                       currentDhikr.content.length > 180 ? "2.1" : "2.3",
                     maxWidth: "min(100%, 62ch)",
