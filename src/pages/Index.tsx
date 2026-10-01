@@ -583,6 +583,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                   : undefined
               }
               className="flex-1 min-h-0 w-full flex flex-col overflow-hidden outline-none"
+              onPointerDownCapture={collapseOnRead}
             >
               <SwipeableContent
                 activeTab={activeTab}
@@ -1092,17 +1093,18 @@ function InlineSession({
               {/* Dhikr text — fluid, responsive sizing that adapts to screen + content length */}
               <div className="w-full text-center relative" role="group" aria-label={`نص الذكر ${currentIndex + 1} والاستماع إليه`}>
                 <p
+                  ref={textRef}
                   id="current-dhikr-text"
                   className="dhikr-text text-balance transition-[font-size] duration-300 mx-auto"
                   style={{
                     ["--dhikr-size" as string]:
-                      currentDhikr.content.length > 280
+                      `calc(${currentDhikr.content.length > 280
                         ? "clamp(0.95rem, 2.2vw + 0.55rem, 1.45rem)"
                         : currentDhikr.content.length > 180
                           ? "clamp(1.05rem, 2.5vw + 0.6rem, 1.7rem)"
                           : currentDhikr.content.length > 90
                             ? "clamp(1.15rem, 2.8vw + 0.65rem, 1.95rem)"
-                            : "clamp(1.3rem, 3.2vw + 0.7rem, 2.3rem)",
+                            : "clamp(1.3rem, 3.2vw + 0.7rem, 2.3rem)"} * var(--dhikr-fit, 1))`,
                     ["--dhikr-leading" as string]:
                       currentDhikr.content.length > 180 ? "2.1" : "2.3",
                     maxWidth: "min(100%, 62ch)",
