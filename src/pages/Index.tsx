@@ -794,11 +794,14 @@ function InlineSession({
       const el = textRef.current;
       if (!el) return;
       let f = 1;
+      el.style.transition = "none";
       el.style.setProperty("--dhikr-fit", "1");
       while (box.scrollHeight > box.clientHeight + 1 && f > 0.6) {
         f = Math.round((f - 0.05) * 100) / 100;
         el.style.setProperty("--dhikr-fit", String(f));
       }
+      void box.offsetHeight; // flush before restoring the transition
+      el.style.transition = "";
     };
     const schedule = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(fit); };
     const t = window.setTimeout(schedule, 60);
