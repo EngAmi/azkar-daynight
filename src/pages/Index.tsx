@@ -150,6 +150,11 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
   const isLight = theme === "light";
   const isMobile = useIsMobile();
   const mobileFocus = isMobile && focusMode;
+  // على الموبايل: الإعدادات ظاهرة حتى يبدأ القارئ، ثم تُطوى ويبقى سهم لإظهارها.
+  const [settingsOpen, setSettingsOpen] = useState(true);
+  const collapseOnRead = () => {
+    if (isMobile && settingsOpen) setSettingsOpen(false);
+  };
 
   // وضع التركيز المُقفل: بلا قوائم ولا مخارج ظاهرة، ولا تمرير للصفحة.
   const [locked, setLocked] = useState(false);
@@ -496,13 +501,40 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                   className="w-full overflow-hidden"
                 >
                   {/* Top controls: font size + accessibility + reminders + theme */}
-                  <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2 px-4 pt-1 w-full">
-                    <FontSizeControl />
-                    <ArabicFontControl />
-                    <AccessibilityToggle />
-                    <ReminderSettings />
-                    <ThemeToggle />
-                  </div>
+                  <AnimatePresence initial={false}>
+                    {(!isMobile || settingsOpen) && (
+                      <motion.div
+                        key="settings"
+                        id="reading-settings"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.35, ease: "easeInOut" }}
+                        className="flex flex-wrap items-center justify-center sm:justify-end gap-2 px-4 pt-1 w-full"
+                      >
+                        <FontSizeControl />
+                        <ArabicFontControl />
+                        <AccessibilityToggle />
+                        <ReminderSettings />
+                        <ThemeToggle />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  {isMobile && (
+                    <div className="flex justify-center w-full">
+                      <button
+                        type="button"
+                        onClick={() => setSettingsOpen((o) => !o)}
+                        aria-expanded={settingsOpen}
+                        aria-controls="reading-settings"
+                        aria-label={settingsOpen ? "إخفاء إعدادات القراءة" : "إظهار إعدادات القراءة"}
+                        className="flex items-center gap-1 h-8 px-4 rounded-full text-gold/70 hover:text-gold font-naskh text-[11px] transition-colors"
+                      >
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${settingsOpen ? "rotate-180" : ""}`} />
+                        {settingsOpen ? "إخفاء الإعدادات" : "الإعدادات"}
+                      </button>
+                    </div>
+                  )}
 
                   {/* Tab switcher */}
                   <nav
