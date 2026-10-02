@@ -63,19 +63,16 @@ function readResumePref(): boolean {
 function sanitizeState(raw: unknown, list: Dhikr[]): SessionState | undefined {
   if (!raw || typeof raw !== "object") return undefined;
   const s = raw as Record<string, unknown>;
-  const index = Number(s.index);
-  const rep = Number(s.rep);
+  const index = Number(s["index"]);
+  const rep = Number(s["rep"]);
   if (!Number.isInteger(index) || index < 0 || index >= list.length) return undefined;
   const max = list[index]?.count ?? 1;
   if (!Number.isInteger(rep) || rep < 0 || rep >= max) return undefined;
-  const updatedAt = Number(s.updatedAt);
+  const updatedAt = Number(s["updatedAt"]);
   const validTime = Number.isFinite(updatedAt) && updatedAt > 0 && updatedAt <= Date.now() + 60_000;
-  return {
-    index,
-    rep,
-    completed: s.completed === true,
-    updatedAt: validTime ? updatedAt : undefined,
-  };
+  const out: SessionState = { index, rep, completed: s["completed"] === true };
+  if (validTime) out.updatedAt = updatedAt;
+  return out;
 }
 
 // ملاحظة: لا يلمس هذا المفتاح مواضع تشغيل التسجيلات (azkar-audio-position) إطلاقًا.
