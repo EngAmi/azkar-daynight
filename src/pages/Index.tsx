@@ -47,13 +47,51 @@ interface PersistedState {
   eveningState: SessionState;
 }
 
+/** تفضيل اختياري: استعادة موضع الذكر بعد الإغلاق/إعادة التحميل (افتراضيًا مفعّل). */
+const RESUME_PREF_KEY = "azkar-resume-enabled";
+
+function readResumePref(): boolean {
+  if (typeof window === "undefined") return true;
+  try {
+    return localStorage.getItem(RESUME_PREF_KEY) !== "0";
+  } catch {
+    return true;
+  }
+}
+
+/** تحقق آمن من الحالة المحفوظة: أي قيمة تالفة أو خارج النطاق تُهمَل بدل أن تكسر الجلسة. */
+function sanitizeState(raw: unknown, list: Dhikr[]): SessionState | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const s = raw as Record<string, unknown>;
+  const index = Number(s["index"]);
+  const rep = Number(s["rep"]);
+  if (!Number.isInteger(index) || index < 0 || index >= list.length) return undefined;
+  const max = list[index]?.count ?? 1;
+  if (!Number.isInteger(rep) || rep < 0 || rep >= max) return undefined;
+  const updatedAt = Number(s["updatedAt"]);
+  const validTime = Number.isFinite(updatedAt) && updatedAt > 0 && updatedAt <= Date.now() + 60_000;
+  const out: SessionState = { index, rep, completed: s["completed"] === true };
+  if (validTime) out.updatedAt = updatedAt;
+  return out;
+}
+
+// ملاحظة: لا يلمس هذا المفتاح مواضع تشغيل التسجيلات (azkar-audio-position) إطلاقًا.
 function loadPersisted(): Partial<PersistedState> {
   if (typeof window === "undefined") return {};
+  if (!readResumePref()) return {};
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return {};
     const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? parsed : {};
+    if (!parsed || typeof parsed !== "object") return {};
+    const out: Partial<PersistedState> = {};
+    if (parsed.activeTab === "morning" || parsed.activeTab === "evening") out.activeTab = parsed.activeTab;
+    if (typeof parsed.focusMode === "boolean") out.focusMode = parsed.focusMode;
+    const m = sanitizeState(parsed.morningState, getMorningAdhkar());
+    const e = sanitizeState(parsed.eveningState, getEveningAdhkar());
+    if (m) out.morningState = m;
+    if (e) out.eveningState = e;
+    return out;
   } catch {
     return {};
   }
@@ -180,6 +218,21 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
 
   // وضع التركيز المُقفل: بلا قوائم ولا مخارج ظاهرة، ولا تمرير للصفحة.
   const [locked, setLocked] = useState(false);
+
+  // تفضيل الاستئناف — يُقرأ بعد التحميل لتجنّب اختلاف الهيدريشن.
+  const [resumeEnabled, setResumeEnabled] = useState(true);
+  useEffect(() => {
+    setResumeEnabled(readResumePref());
+  }, []);
+  const toggleResume = () => {
+    const next = !resumeEnabled;
+    setResumeEnabled(next);
+    try {
+      localStorage.setItem(RESUME_PREF_KEY, next ? "1" : "0");
+    } catch {
+      // ignore
+    }
+  };
   const lockRef = useRef<HTMLDivElement>(null);
   const requestUnlock = useMemo(() => () => setLocked(false), []);
   const { exitHintVisible } = useFocusLock(locked, lockRef, requestUnlock);
@@ -584,18 +637,27 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                     />
                   </nav>
 
-                  {/* Quiet reset link */}
-                  {(morningState.index > 0 || morningState.rep > 0 || morningState.completed ||
-                    eveningState.index > 0 || eveningState.rep > 0 || eveningState.completed) && (
-                    <div className="flex justify-center pb-1">
+                  <div className="flex justify-center items-center gap-2 pb-1">
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={resumeEnabled}
+                      onClick={toggleResume}
+                      title="عند التفعيل يعود التطبيق لآخر ذكر توقفت عنده بعد إغلاق الصفحة أو إعادة تحميلها"
+                      className="text-muted-foreground/40 hover:text-muted-foreground/70 transition-colors text-[11px] font-naskh px-2 py-1"
+                    >
+                      {resumeEnabled ? "✓ الاستئناف من آخر ذكر: مفعّل" : "الاستئناف من آخر ذكر: متوقف"}
+                    </button>
+                    {(morningState.index > 0 || morningState.rep > 0 || morningState.completed ||
+                      eveningState.index > 0 || eveningState.rep > 0 || eveningState.completed) && (
                       <button
                         onClick={resetProgress}
                         className="text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors text-[11px] font-naskh px-2 py-1"
                       >
                         نَسخ التقدم
                       </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
