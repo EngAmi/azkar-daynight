@@ -7,6 +7,7 @@ import { DhikrFadl } from "@/components/DhikrFadl";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { FontSizeControl } from "@/components/FontSizeControl";
 import { ArabicFontControl } from "@/components/ArabicFontControl";
+import { LargeReadToggle } from "@/components/LargeReadToggle";
 import { SeoHead } from "@/components/SeoHead";
 import { useTheme } from "@/hooks/useTheme";
 import { useFontScale } from "@/hooks/useFontScale";
@@ -592,6 +593,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                       >
                         <FontSizeControl />
                         <ArabicFontControl />
+                        <LargeReadToggle />
                         <AccessibilityToggle />
                         <ReminderSettings />
                         <ThemeToggle />
@@ -886,7 +888,7 @@ function InlineSession({
       let f = 1;
       el.style.transition = "none";
       el.style.setProperty("--dhikr-fit", "1");
-      while (box.scrollHeight > box.clientHeight + 1 && f > 0.6) {
+      while (box.scrollHeight > box.clientHeight + 1 && f > 0.45) {
         f = Math.round((f - 0.05) * 100) / 100;
         el.style.setProperty("--dhikr-fit", String(f));
       }
