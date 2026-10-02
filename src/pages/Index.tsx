@@ -153,8 +153,29 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
   const mobileFocus = isMobile && focusMode;
   // على الموبايل: الإعدادات ظاهرة حتى يبدأ القارئ، ثم تُطوى ويبقى سهم لإظهارها.
   const [settingsOpen, setSettingsOpen] = useState(true);
+  const [settingsAnnounce, setSettingsAnnounce] = useState("");
+  const settingsToggleRef = useRef<HTMLButtonElement>(null);
+  const settingsPanelRef = useRef<HTMLDivElement>(null);
+  const changeSettings = (next: boolean, reason: "user" | "auto") => {
+    setSettingsOpen(next);
+    setSettingsAnnounce(
+      next
+        ? "تم إظهار إعدادات القراءة: حجم الخط، نوع الخط، وضع الوصول، التذكيرات، والمظهر."
+        : reason === "auto"
+          ? "أُخفيت إعدادات القراءة لتتفرغ للذكر. يمكنك إظهارها من زر الإعدادات أعلى الصفحة."
+          : "تم إخفاء إعدادات القراءة."
+    );
+    const panelHadFocus = !!settingsPanelRef.current?.contains(document.activeElement);
+    requestAnimationFrame(() => {
+      if (next && reason === "user") {
+        settingsPanelRef.current?.querySelector<HTMLElement>("button, input, [tabindex]:not([tabindex='-1'])")?.focus();
+      } else if (!next && (reason === "user" || panelHadFocus)) {
+        settingsToggleRef.current?.focus();
+      }
+    });
+  };
   const collapseOnRead = () => {
-    if (isMobile && settingsOpen) setSettingsOpen(false);
+    if (isMobile && settingsOpen) changeSettings(false, "auto");
   };
 
   // وضع التركيز المُقفل: بلا قوائم ولا مخارج ظاهرة، ولا تمرير للصفحة.
@@ -507,6 +528,9 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                       <motion.div
                         key="settings"
                         id="reading-settings"
+                        ref={settingsPanelRef}
+                        role="region"
+                        aria-label="إعدادات القراءة"
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
@@ -525,15 +549,19 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                     <div className="flex justify-center w-full">
                       <button
                         type="button"
-                        onClick={() => setSettingsOpen((o) => !o)}
+                        ref={settingsToggleRef}
+                        onClick={() => changeSettings(!settingsOpen, "user")}
                         aria-expanded={settingsOpen}
                         aria-controls="reading-settings"
                         aria-label={settingsOpen ? "إخفاء إعدادات القراءة" : "إظهار إعدادات القراءة"}
-                        className="flex items-center gap-1 h-8 px-4 rounded-full text-gold/70 hover:text-gold font-naskh text-[11px] transition-colors"
+                        className="flex items-center gap-1 min-h-11 px-4 rounded-full text-gold/70 focus-visible:outline-2 focus-visible:outline-gold hover:text-gold font-naskh text-[11px] transition-colors"
                       >
                         <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${settingsOpen ? "rotate-180" : ""}`} />
-                        {settingsOpen ? "إخفاء الإعدادات" : "الإعدادات"}
+                        <span aria-hidden="true">{settingsOpen ? "إخفاء الإعدادات" : "الإعدادات"}</span>
                       </button>
+                      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+                        {settingsAnnounce}
+                      </div>
                     </div>
                   )}
 
