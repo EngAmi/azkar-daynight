@@ -68,44 +68,7 @@ const webSiteJsonLd = JSON.stringify({
   },
 });
 
-const faqJsonLd = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "ما هو وقت أذكار الصباح والمساء؟",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "وقت أذكار الصباح من بعد صلاة الفجر إلى طلوع الشمس، ويمتد إلى الزوال. ووقت أذكار المساء من بعد صلاة العصر إلى غروب الشمس، ويمتد إلى ثلث الليل.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "هل تطبيق الذاكرين مجاني؟",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "نعم، تطبيق الذاكرين مجاني بالكامل، بدون إعلانات، ويعمل من المتصفح مباشرة دون الحاجة إلى تثبيت.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "هل الأذكار صحيحة من القرآن والسنة؟",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "نعم، جميع الأذكار في التطبيق مأخوذة من القرآن الكريم والسنة النبوية الصحيحة، مع ذكر المصدر لكل ذكر.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "هل يحفظ التطبيق تقدّمي في القراءة؟",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "نعم، يحفظ التطبيق تقدّمك تلقائيًا، ويستأنف من حيث توقفت عند فتحه مرة أخرى.",
-      },
-    },
-  ],
-});
+
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -114,12 +77,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1.0, viewport-fit=cover" },
       { name: "theme-color", content: "#06241c", media: "(prefers-color-scheme: dark)" },
       { name: "theme-color", content: "#f5f0e0", media: "(prefers-color-scheme: light)" },
-      { title: "أذكار الصباح والمساء — الذاكرين | بصوت القارئ" },
-      {
-        name: "description",
-        content:
-          "أذكار الصباح والمساء من القرآن والسنة الصحيحة، مع عدّاد التسبيح والاستماع بصوت القارئ. تجربة هادئة بدون تشتيت ولا إعلانات.",
-      },
       {
         name: "keywords",
         content:
@@ -134,41 +91,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "rating", content: "general" },
       { name: "referrer", content: "strict-origin-when-cross-origin" },
       { name: "google-site-verification", content: "767GdIUjhNQvK1noTEJlJpLCFmrG1Isx6oPEVTxw8o8" },
-      {
-        property: "og:title",
-        content: "أذكار الصباح والمساء — الذاكرين | تجربة هادئة للذكر والخشوع",
-      },
-      {
-        property: "og:description",
-        content:
-          "ابدأ يومك وأختمه بذكر الله بهدوء وخشوع. أذكار الصباح والمساء الصحيحة من القرآن والسنة، مع عدّاد التسبيح الناعم واستماع بصوت القارئ — بدون تشتيت ولا إعلانات.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: SITE_URL },
       { property: "og:locale", content: "ar_SA" },
       { property: "og:site_name", content: "الذاكرين" },
-      { property: "og:image", content: `${SITE_URL}og-image.webp` },
-      { property: "og:image:secure_url", content: `${SITE_URL}og-image.webp` },
-      { property: "og:image:type", content: "image/webp" },
-      { property: "og:image:width", content: "1536" },
-      { property: "og:image:height", content: "1024" },
-      { property: "og:image:alt", content: "الذاكرين — أذكار الصباح والمساء بهدوء وخشوع" },
-      { property: "og:image", content: `${SITE_URL}og-image.jpg` },
-      { property: "og:image:type", content: "image/jpeg" },
-      { property: "og:image:width", content: "1536" },
-      { property: "og:image:height", content: "1024" },
-      { name: "twitter:card", content: "summary_large_image" },
-      {
-        name: "twitter:title",
-        content: "أذكار الصباح والمساء — الذاكرين | تجربة هادئة للذكر والخشوع",
-      },
-      {
-        name: "twitter:description",
-        content:
-          "ابدأ يومك وأختمه بذكر الله بهدوء وخشوع. أذكار الصباح والمساء الصحيحة بصوت القارئ وعدّاد تسبيح ناعم — بدون تشتيت.",
-      },
-      { name: "twitter:image", content: `${SITE_URL}og-image.webp` },
-      { name: "twitter:image:alt", content: "الذاكرين — أذكار الصباح والمساء بهدوء وخشوع" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "apple-mobile-web-app-title", content: "الذاكرين" },
@@ -176,9 +100,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "format-detection", content: "telephone=no" },
     ],
     links: [
-      { rel: "canonical", href: SITE_URL },
-      { rel: "alternate", hrefLang: "ar", href: SITE_URL },
-      { rel: "alternate", hrefLang: "x-default", href: SITE_URL },
       { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "dns-prefetch", href: "https://alazkar.today" },
       { rel: "preconnect", href: "https://alazkar.today", crossOrigin: "anonymous" },
@@ -229,7 +150,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { type: "application/ld+json", children: webApplicationJsonLd },
       { type: "application/ld+json", children: webSiteJsonLd },
-      { type: "application/ld+json", children: faqJsonLd },
     ],
   }),
   shellComponent: RootShell,

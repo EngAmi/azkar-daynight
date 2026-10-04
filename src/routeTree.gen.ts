@@ -10,7 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AzkarBaadAlfajrWalmaghribRouteImport } from './routes/azkar-baad-alfajr-walmaghrib'
+import { Route as AzkarBaadSalahRouteImport } from './routes/azkar-baad-salah'
 import { Route as AzkarMassaRouteImport } from './routes/azkar-massa'
+import { Route as AzkarNawmRouteImport } from './routes/azkar-nawm'
 import { Route as AzkarSabahRouteImport } from './routes/azkar-sabah'
 
 const IndexRoute = IndexRouteImport.update({
@@ -18,9 +21,25 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AzkarBaadAlfajrWalmaghribRoute =
+  AzkarBaadAlfajrWalmaghribRouteImport.update({
+    id: '/azkar-baad-alfajr-walmaghrib',
+    path: '/azkar-baad-alfajr-walmaghrib',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AzkarBaadSalahRoute = AzkarBaadSalahRouteImport.update({
+  id: '/azkar-baad-salah',
+  path: '/azkar-baad-salah',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AzkarMassaRoute = AzkarMassaRouteImport.update({
   id: '/azkar-massa',
   path: '/azkar-massa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AzkarNawmRoute = AzkarNawmRouteImport.update({
+  id: '/azkar-nawm',
+  path: '/azkar-nawm',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AzkarSabahRoute = AzkarSabahRouteImport.update({
@@ -31,31 +50,62 @@ const AzkarSabahRoute = AzkarSabahRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/azkar-baad-alfajr-walmaghrib': typeof AzkarBaadAlfajrWalmaghribRoute
+  '/azkar-baad-salah': typeof AzkarBaadSalahRoute
   '/azkar-massa': typeof AzkarMassaRoute
+  '/azkar-nawm': typeof AzkarNawmRoute
   '/azkar-sabah': typeof AzkarSabahRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/azkar-baad-alfajr-walmaghrib': typeof AzkarBaadAlfajrWalmaghribRoute
+  '/azkar-baad-salah': typeof AzkarBaadSalahRoute
   '/azkar-massa': typeof AzkarMassaRoute
+  '/azkar-nawm': typeof AzkarNawmRoute
   '/azkar-sabah': typeof AzkarSabahRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/azkar-baad-alfajr-walmaghrib': typeof AzkarBaadAlfajrWalmaghribRoute
+  '/azkar-baad-salah': typeof AzkarBaadSalahRoute
   '/azkar-massa': typeof AzkarMassaRoute
+  '/azkar-nawm': typeof AzkarNawmRoute
   '/azkar-sabah': typeof AzkarSabahRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/azkar-massa' | '/azkar-sabah'
+  fullPaths:
+    | '/'
+    | '/azkar-baad-alfajr-walmaghrib'
+    | '/azkar-baad-salah'
+    | '/azkar-massa'
+    | '/azkar-nawm'
+    | '/azkar-sabah'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/azkar-massa' | '/azkar-sabah'
-  id: '__root__' | '/' | '/azkar-massa' | '/azkar-sabah'
+  to:
+    | '/'
+    | '/azkar-baad-alfajr-walmaghrib'
+    | '/azkar-baad-salah'
+    | '/azkar-massa'
+    | '/azkar-nawm'
+    | '/azkar-sabah'
+  id:
+    | '__root__'
+    | '/'
+    | '/azkar-baad-alfajr-walmaghrib'
+    | '/azkar-baad-salah'
+    | '/azkar-massa'
+    | '/azkar-nawm'
+    | '/azkar-sabah'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AzkarBaadAlfajrWalmaghribRoute: typeof AzkarBaadAlfajrWalmaghribRoute
+  AzkarBaadSalahRoute: typeof AzkarBaadSalahRoute
   AzkarMassaRoute: typeof AzkarMassaRoute
+  AzkarNawmRoute: typeof AzkarNawmRoute
   AzkarSabahRoute: typeof AzkarSabahRoute
 }
 
@@ -68,11 +118,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/azkar-baad-alfajr-walmaghrib': {
+      id: '/azkar-baad-alfajr-walmaghrib'
+      path: '/azkar-baad-alfajr-walmaghrib'
+      fullPath: '/azkar-baad-alfajr-walmaghrib'
+      preLoaderRoute: typeof AzkarBaadAlfajrWalmaghribRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/azkar-baad-salah': {
+      id: '/azkar-baad-salah'
+      path: '/azkar-baad-salah'
+      fullPath: '/azkar-baad-salah'
+      preLoaderRoute: typeof AzkarBaadSalahRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/azkar-massa': {
       id: '/azkar-massa'
       path: '/azkar-massa'
       fullPath: '/azkar-massa'
       preLoaderRoute: typeof AzkarMassaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/azkar-nawm': {
+      id: '/azkar-nawm'
+      path: '/azkar-nawm'
+      fullPath: '/azkar-nawm'
+      preLoaderRoute: typeof AzkarNawmRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/azkar-sabah': {
@@ -87,7 +158,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AzkarBaadAlfajrWalmaghribRoute: AzkarBaadAlfajrWalmaghribRoute,
+  AzkarBaadSalahRoute: AzkarBaadSalahRoute,
   AzkarMassaRoute: AzkarMassaRoute,
+  AzkarNawmRoute: AzkarNawmRoute,
   AzkarSabahRoute: AzkarSabahRoute,
 }
 export const routeTree = rootRouteImport
