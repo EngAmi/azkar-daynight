@@ -68,44 +68,7 @@ const webSiteJsonLd = JSON.stringify({
   },
 });
 
-const faqJsonLd = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "ما هو وقت أذكار الصباح والمساء؟",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "وقت أذكار الصباح من بعد صلاة الفجر إلى طلوع الشمس، ويمتد إلى الزوال. ووقت أذكار المساء من بعد صلاة العصر إلى غروب الشمس، ويمتد إلى ثلث الليل.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "هل تطبيق الذاكرين مجاني؟",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "نعم، تطبيق الذاكرين مجاني بالكامل، بدون إعلانات، ويعمل من المتصفح مباشرة دون الحاجة إلى تثبيت.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "هل الأذكار صحيحة من القرآن والسنة؟",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "نعم، جميع الأذكار في التطبيق مأخوذة من القرآن الكريم والسنة النبوية الصحيحة، مع ذكر المصدر لكل ذكر.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "هل يحفظ التطبيق تقدّمي في القراءة؟",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "نعم، يحفظ التطبيق تقدّمك تلقائيًا، ويستأنف من حيث توقفت عند فتحه مرة أخرى.",
-      },
-    },
-  ],
-});
+
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
