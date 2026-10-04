@@ -16,7 +16,7 @@ interface Props {
 export function FocusDhikrPage({ heading, subheading, intro, listTitle, items }: Props) {
   const [index, setIndex] = useState(0);
   const [reps, setReps] = useState(0);
-  const d = items[index];
+  const d = (items[index] ?? items[0]) as SimpleDhikr;
   const done = index === items.length - 1 && reps >= d.count;
 
   const go = useCallback(
