@@ -1,11 +1,10 @@
 import Index from "./Index";
-import { SeoHead } from "@/components/SeoHead";
+import { MoreAdhkarLinks } from "@/components/MoreAdhkarLinks";
 import { AdhkarTextList, adhkarItemListJsonLd } from "@/components/AdhkarTextList";
 
 const SITE = "https://azkar-daynight.lovable.app";
 
-const AzkarSabah = () => {
-  const jsonLd = [
+export const sabahJsonLd = [
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
@@ -56,20 +55,16 @@ const AzkarSabah = () => {
     },
   ];
 
+const AzkarSabah = () => {
   return (
     <>
-      <SeoHead
-        title="أذكار الصباح مكتوبة كاملة بالتشكيل وبصوت القارئ — الذاكرين"
-        description="أذكار الصباح كاملة مكتوبة بالتشكيل من السنة الصحيحة، مع عدد التكرار والفضل والمصدر، واستماع بصوت قارئ هادئ وعدّاد تسبيح — بدون تشتيت ولا إعلانات."
-        canonical={`${SITE}/azkar-sabah`}
-        jsonLd={jsonLd}
-      />
       <Index
         initialTab="morning"
         pageHeading="أذكار الصباح"
         pageSubheading="ابدأ صباحك بذكر الله — مكتوبة ومسموعة بصوت القارئ"
       />
       <AdhkarTextList type="morning" />
+      <MoreAdhkarLinks />
     </>
   );
 };
