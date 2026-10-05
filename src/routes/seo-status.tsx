@@ -29,13 +29,29 @@ const PAGES = [
 type Check = { name: string; ok: boolean; detail: string };
 type Result = { path: string; label: string; checks: Check[] };
 
+const linkCache = new Map<string, Promise<boolean>>();
+function checkLink(p: string): Promise<boolean> {
+  if (!linkCache.has(p)) {
+    linkCache.set(p, fetch(p, { cache: "no-store" }).then((r) => r.ok).catch(() => false));
+  }
+  return linkCache.get(p)!;
+}
+
 async function inspect(path: string, sitemapLocs: Set<string>, robotsTxt: string): Promise<Check[]> {
   const checks: Check[] = [];
+  // checkLink is defined below with a shared cache
   const expected = path === "/" ? `${SITE}/` : `${SITE}${path}`;
   let html = "";
   try {
+    const t0 = performance.now();
     const res = await fetch(path, { cache: "no-store" });
-    checks.push({ name: "حالة الصفحة", ok: res.ok, detail: `HTTP ${res.status}` });
+    const ms = Math.round(performance.now() - t0);
+    const type = res.headers.get("content-type") || "";
+    checks.push({
+      name: "استجابة HTTP",
+      ok: res.ok && !res.redirected && type.includes("text/html"),
+      detail: `${res.status}${res.redirected ? " (تحويل)" : ""} · ${ms}ms · ${type.split(";")[0] || "؟"}`,
+    });
     html = await res.text();
   } catch {
     checks.push({ name: "حالة الصفحة", ok: false, detail: "تعذّر التحميل" });
@@ -60,12 +76,48 @@ async function inspect(path: string, sitemapLocs: Set<string>, robotsTxt: string
   checks.push({ name: "مسموح للفهرسة", ok: !robots.includes("noindex"), detail: robots || "لا يوجد منع" });
   checks.push({ name: "robots.txt", ok: !blocked, detail: blocked ? "محظورة" : "مسموحة" });
   checks.push({ name: "في خريطة الموقع", ok: sitemapLocs.has(expected), detail: sitemapLocs.has(expected) ? "موجودة" : "غير موجودة" });
-  checks.push({ name: "الرابط الأساسي", ok: canonical === expected, detail: canonical || "مفقود" });
+  const canonicalCount = doc.querySelectorAll('link[rel="canonical"]').length;
+  const ogUrl = meta('meta[property="og:url"]');
+  checks.push({
+    name: "الرابط الأساسي",
+    ok: canonical === expected && canonicalCount === 1 && (!ogUrl || ogUrl === expected),
+    detail: !canonical
+      ? "مفقود"
+      : canonicalCount > 1
+        ? `مكرر (${canonicalCount})`
+        : canonical !== expected
+          ? `يشير إلى ${canonical}`
+          : ogUrl && ogUrl !== expected
+            ? "og:url لا يطابق"
+            : canonical,
+  });
   checks.push({ name: "العنوان", ok: title.length >= 15 && title.length <= 70, detail: `${title} (${title.length})` });
   checks.push({ name: "الوصف", ok: desc.length >= 70 && desc.length <= 170, detail: `${desc.length} حرفًا` });
   checks.push({ name: "عنوان رئيسي H1", ok: !!h1, detail: h1 || "مفقود" });
   checks.push({ name: "Open Graph", ok: !!ogTitle && !!ogImage, detail: ogTitle && ogImage ? "مكتمل" : "ناقص" });
   checks.push({ name: "بيانات منظمة", ok: jsonLd > 0, detail: `${jsonLd} كتلة` });
+
+  // Internal links found in the page HTML
+  const internal = new Set<string>();
+  doc.querySelectorAll("a[href]").forEach((a) => {
+    const href = a.getAttribute("href") || "";
+    try {
+      const u = new URL(href, SITE + path);
+      if (u.origin === SITE || u.origin === location.origin) internal.add(u.pathname);
+    } catch { /* ignore */ }
+  });
+  const broken: string[] = [];
+  await Promise.all(
+    [...internal].map(async (p) => {
+      const ok = await checkLink(p);
+      if (!ok) broken.push(p);
+    }),
+  );
+  checks.push({
+    name: "الروابط الداخلية",
+    ok: internal.size > 0 && broken.length === 0,
+    detail: broken.length ? `معطلة: ${broken.join("، ")}` : `${internal.size} رابطًا سليمًا`,
+  });
   return checks;
 }
 
@@ -76,6 +128,7 @@ function SeoStatus() {
 
   const run = useCallback(async () => {
     setLoading(true);
+    linkCache.clear();
     const [smText, robotsTxt] = await Promise.all([
       fetch("/sitemap.xml", { cache: "no-store" }).then((r) => r.text()).catch(() => ""),
       fetch("/robots.txt", { cache: "no-store" }).then((r) => r.text()).catch(() => ""),
