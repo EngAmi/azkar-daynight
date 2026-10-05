@@ -53,7 +53,8 @@ async function inspect(path: string, sitemapLocs: Set<string>, robotsTxt: string
   const h1 = doc.querySelector("h1")?.textContent?.trim() || "";
   const blocked = robotsTxt.split("\n").some((l) => {
     const m = l.match(/^\s*Disallow:\s*(\S+)/i);
-    return !!m?.[1] && path.startsWith(m[1]);
+    const rule = m?.[1] ?? "";
+    return rule !== "" && path.startsWith(rule);
   });
 
   checks.push({ name: "مسموح للفهرسة", ok: !robots.includes("noindex"), detail: robots || "لا يوجد منع" });
