@@ -15,6 +15,7 @@ import { Route as AzkarBaadSalahRouteImport } from './routes/azkar-baad-salah'
 import { Route as AzkarMassaRouteImport } from './routes/azkar-massa'
 import { Route as AzkarNawmRouteImport } from './routes/azkar-nawm'
 import { Route as AzkarSabahRouteImport } from './routes/azkar-sabah'
+import { Route as SeoStatusRouteImport } from './routes/seo-status'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -47,6 +48,11 @@ const AzkarSabahRoute = AzkarSabahRouteImport.update({
   path: '/azkar-sabah',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SeoStatusRoute = SeoStatusRouteImport.update({
+  id: '/seo-status',
+  path: '/seo-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -55,6 +61,7 @@ export interface FileRoutesByFullPath {
   '/azkar-massa': typeof AzkarMassaRoute
   '/azkar-nawm': typeof AzkarNawmRoute
   '/azkar-sabah': typeof AzkarSabahRoute
+  '/seo-status': typeof SeoStatusRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -63,6 +70,7 @@ export interface FileRoutesByTo {
   '/azkar-massa': typeof AzkarMassaRoute
   '/azkar-nawm': typeof AzkarNawmRoute
   '/azkar-sabah': typeof AzkarSabahRoute
+  '/seo-status': typeof SeoStatusRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -72,6 +80,7 @@ export interface FileRoutesById {
   '/azkar-massa': typeof AzkarMassaRoute
   '/azkar-nawm': typeof AzkarNawmRoute
   '/azkar-sabah': typeof AzkarSabahRoute
+  '/seo-status': typeof SeoStatusRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -82,6 +91,7 @@ export interface FileRouteTypes {
     | '/azkar-massa'
     | '/azkar-nawm'
     | '/azkar-sabah'
+    | '/seo-status'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -90,6 +100,7 @@ export interface FileRouteTypes {
     | '/azkar-massa'
     | '/azkar-nawm'
     | '/azkar-sabah'
+    | '/seo-status'
   id:
     | '__root__'
     | '/'
@@ -98,6 +109,7 @@ export interface FileRouteTypes {
     | '/azkar-massa'
     | '/azkar-nawm'
     | '/azkar-sabah'
+    | '/seo-status'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -107,6 +119,7 @@ export interface RootRouteChildren {
   AzkarMassaRoute: typeof AzkarMassaRoute
   AzkarNawmRoute: typeof AzkarNawmRoute
   AzkarSabahRoute: typeof AzkarSabahRoute
+  SeoStatusRoute: typeof SeoStatusRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -153,6 +166,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AzkarSabahRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/seo-status': {
+      id: '/seo-status'
+      path: '/seo-status'
+      fullPath: '/seo-status'
+      preLoaderRoute: typeof SeoStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -163,6 +183,7 @@ const rootRouteChildren: RootRouteChildren = {
   AzkarMassaRoute: AzkarMassaRoute,
   AzkarNawmRoute: AzkarNawmRoute,
   AzkarSabahRoute: AzkarSabahRoute,
+  SeoStatusRoute: SeoStatusRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
