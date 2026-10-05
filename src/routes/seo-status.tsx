@@ -29,6 +29,14 @@ const PAGES = [
 type Check = { name: string; ok: boolean; detail: string };
 type Result = { path: string; label: string; checks: Check[] };
 
+const linkCache = new Map<string, Promise<boolean>>();
+function checkLink(p: string): Promise<boolean> {
+  if (!linkCache.has(p)) {
+    linkCache.set(p, fetch(p, { cache: "no-store" }).then((r) => r.ok).catch(() => false));
+  }
+  return linkCache.get(p)!;
+}
+
 async function inspect(path: string, sitemapLocs: Set<string>, robotsTxt: string): Promise<Check[]> {
   const checks: Check[] = [];
   // checkLink is defined below with a shared cache
@@ -120,6 +128,7 @@ function SeoStatus() {
 
   const run = useCallback(async () => {
     setLoading(true);
+    linkCache.clear();
     const [smText, robotsTxt] = await Promise.all([
       fetch("/sitemap.xml", { cache: "no-store" }).then((r) => r.text()).catch(() => ""),
       fetch("/robots.txt", { cache: "no-store" }).then((r) => r.text()).catch(() => ""),
