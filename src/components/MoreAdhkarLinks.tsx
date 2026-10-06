@@ -1,25 +1,24 @@
 import { Link } from "@tanstack/react-router";
 
 const LINKS = [
-  { to: "/azkar-sabah", label: "أذكار الصباح" },
-  { to: "/azkar-massa", label: "أذكار المساء" },
-  { to: "/azkar-baad-salah", label: "أذكار بعد الصلاة" },
-  { to: "/azkar-baad-alfajr-walmaghrib", label: "أذكار بعد الفجر والمغرب" },
-  { to: "/azkar-nawm", label: "أذكار النوم" },
+  { to: "/", label: "الصباح والمساء" },
+  { to: "/azkar-baad-salah", label: "بعد الصلاة" },
+  { to: "/azkar-baad-alfajr-walmaghrib", label: "بعد الفجر والمغرب" },
+  { to: "/azkar-nawm", label: "النوم" },
 ] as const;
 
-/** روابط داخلية بين صفحات الأذكار — تساعد الزائر ومحركات البحث على اكتشاف كل الصفحات. */
+/** تبويبات صفحات الأذكار الأخرى — تظهر فقط في صفحاتها المستقلة، لا في الصباح والمساء. */
 export function MoreAdhkarLinks() {
   return (
-    <nav aria-label="صفحات الأذكار" className="relative z-10 bg-background border-t border-border/40 px-5 py-10">
-      <h2 className="font-amiri text-xl text-primary text-center mb-5">أذكار أخرى</h2>
-      <ul className="mx-auto flex max-w-3xl flex-wrap justify-center gap-3 list-none p-0">
+    <nav aria-label="أقسام الأذكار" className="sticky top-0 z-20 bg-background/90 backdrop-blur border-b border-border/40">
+      <ul className="mx-auto flex max-w-2xl gap-1 overflow-x-auto list-none px-3 py-2 m-0">
         {LINKS.map((l) => (
-          <li key={l.to}>
+          <li key={l.to} className="shrink-0">
             <Link
               to={l.to}
-              className="inline-block rounded-full border border-primary/30 bg-secondary/30 px-4 py-2 font-naskh text-sm text-foreground hover:border-primary/60 transition-colors"
-              activeProps={{ className: "!border-primary text-primary" }}
+              activeOptions={{ exact: true }}
+              className="inline-block rounded-full px-4 py-2 font-naskh text-sm text-muted-foreground hover:text-foreground transition-colors"
+              activeProps={{ className: "bg-secondary/50 !text-primary", "aria-current": "page" }}
             >
               {l.label}
             </Link>

@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { ChevronDown } from "lucide-react";
@@ -597,6 +598,7 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                         <AccessibilityToggle />
                         <ReminderSettings />
                         <ThemeToggle />
+                        <Link to="/azkar-baad-salah" className="rounded-full border border-border/50 px-3 py-2 font-naskh text-xs text-muted-foreground hover:text-primary">أذكار أخرى</Link>
                       </motion.div>
                     )}
                   </AnimatePresence>

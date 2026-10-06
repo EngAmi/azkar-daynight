@@ -1,6 +1,5 @@
 import Index from "./Index";
-import { MoreAdhkarLinks } from "@/components/MoreAdhkarLinks";
-import { AdhkarTextList, adhkarItemListJsonLd } from "@/components/AdhkarTextList";
+import { adhkarItemListJsonLd } from "@/components/AdhkarTextList";
 
 const SITE = "https://azkar-daynight.lovable.app";
 
@@ -63,8 +62,6 @@ const AzkarMassa = () => {
         pageHeading="أذكار المساء"
         pageSubheading="اختم يومك بذكر الله — مكتوبة ومسموعة بصوت القارئ"
       />
-      <AdhkarTextList type="evening" />
-      <MoreAdhkarLinks />
     </>
   );
 };

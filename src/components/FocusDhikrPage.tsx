@@ -50,6 +50,7 @@ export function FocusDhikrPage({ heading, subheading, intro, listTitle, items }:
 
   return (
     <div dir="rtl" className="min-h-screen bg-background text-foreground">
+      <MoreAdhkarLinks />
       <main className="mx-auto flex min-h-[100svh] w-full max-w-2xl flex-col px-5 pt-6 pb-8">
         <header className="mb-6 flex items-center justify-between">
           <Link to="/" className="font-naskh text-sm text-muted-foreground hover:text-primary">
@@ -148,7 +149,6 @@ export function FocusDhikrPage({ heading, subheading, intro, listTitle, items }:
           </ol>
         </div>
       </section>
-      <MoreAdhkarLinks />
     </div>
   );
 }
