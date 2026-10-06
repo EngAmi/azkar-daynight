@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
-import { MoreAdhkarLinks } from "@/components/MoreAdhkarLinks";
 import { pageHead } from "@/lib/seo";
 import { homeFaqJsonLd } from "@/lib/homeFaq";
 
@@ -20,7 +19,6 @@ function Home() {
   return (
     <>
       <Index />
-      <MoreAdhkarLinks />
     </>
   );
 }
