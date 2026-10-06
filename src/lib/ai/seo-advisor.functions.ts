@@ -19,7 +19,7 @@ export type SeoAdvice = { ok: true; text: string } | { ok: false; status: number
 export const getSeoAdvice = createServerFn({ method: "POST" })
   .validator((d: unknown) => Input.parse(d))
   .handler(async ({ data }): Promise<SeoAdvice> => {
-    const apiKey = process.env.LOVABLE_API_KEY;
+    const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) return { ok: false, status: 401, message: "مفتاح الذكاء الاصطناعي غير مُعدّ." };
     const { createOpenAI } = await import("@ai-sdk/openai");
     const { streamText } = await import("ai");
