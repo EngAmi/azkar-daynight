@@ -198,6 +198,7 @@ function SeoStatus() {
         {extra.length > 0 && (
           <p className="mt-6 text-sm text-destructive">روابط في خريطة الموقع لا تطابق صفحات معروفة: {extra.join("، ")}</p>
         )}
+        <AiAdvisor results={results} loading={loading} />
       </div>
     </main>
   );
