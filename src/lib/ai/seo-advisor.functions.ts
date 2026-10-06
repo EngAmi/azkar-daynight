@@ -17,7 +17,7 @@ const Input = z.object({
 export type SeoAdvice = { ok: true; text: string } | { ok: false; status: number; message: string };
 
 export const getSeoAdvice = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => Input.parse(d))
+  .validator((d: unknown) => Input.parse(d))
   .handler(async ({ data }): Promise<SeoAdvice> => {
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) return { ok: false, status: 401, message: "مفتاح الذكاء الاصطناعي غير مُعدّ." };
