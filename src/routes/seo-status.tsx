@@ -198,7 +198,57 @@ function SeoStatus() {
         {extra.length > 0 && (
           <p className="mt-6 text-sm text-destructive">روابط في خريطة الموقع لا تطابق صفحات معروفة: {extra.join("، ")}</p>
         )}
+        <AiAdvisor results={results} loading={loading} />
       </div>
     </main>
+  );
+}
+
+function AiAdvisor({ results, loading }: { results: Result[]; loading: boolean }) {
+  const [notes, setNotes] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [text, setText] = useState("");
+  const [error, setError] = useState("");
+  const ask = async () => {
+    setBusy(true);
+    setError("");
+    setText("");
+    try {
+      const { getSeoAdvice } = await import("@/lib/ai/seo-advisor.functions");
+      const r = await getSeoAdvice({ data: { pages: results, notes: notes.trim() || undefined } });
+      if (r.ok) setText(r.text);
+      else setError(r.message);
+    } catch {
+      setError("تعذّر الاتصال بالخادم.");
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <section className="mt-8 rounded-2xl border border-primary/30 bg-card p-5">
+      <h2 className="font-amiri text-2xl text-primary mb-1">مستشار الإصلاحات الذكي</h2>
+      <p className="text-sm text-muted-foreground mb-3">
+        يحلّل نتائج آخر فحص ويرتّب الإصلاحات لكل صفحة حسب الأولوية مع شرح طريقة الحل. أضف ملاحظات (مثل رسائل Search Console) إن شئت.
+      </p>
+      <textarea
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
+        maxLength={4000}
+        rows={3}
+        placeholder="ملاحظات اختيارية…"
+        className="w-full rounded-xl border border-border bg-background p-3 text-sm mb-3"
+      />
+      <button
+        onClick={ask}
+        disabled={busy || loading || results.length === 0}
+        className="rounded-full bg-primary px-5 py-2 text-sm text-primary-foreground disabled:opacity-50"
+      >
+        {busy ? "جارٍ التحليل…" : "حلّل النتائج ورتّب الإصلاحات"}
+      </button>
+      <div aria-live="polite">
+        {error && <p className="mt-3 text-sm text-destructive">{error}</p>}
+        {text && <div className="mt-4 whitespace-pre-wrap text-sm leading-7">{text}</div>}
+      </div>
+    </section>
   );
 }
