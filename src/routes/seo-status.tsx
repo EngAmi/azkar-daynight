@@ -124,6 +124,8 @@ async function inspect(path: string, sitemapLocs: Set<string>, robotsTxt: string
 function SeoStatus() {
   const [results, setResults] = useState<Result[]>([]);
   const [extra, setExtra] = useState<string[]>([]);
+  const [missing, setMissing] = useState<typeof PAGES>([]);
+  const [sitemapOk, setSitemapOk] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(false);
 
   const run = useCallback(async () => {
@@ -138,6 +140,8 @@ function SeoStatus() {
     );
     const known = new Set(PAGES.map((p) => (p.path === "/" ? `${SITE}/` : `${SITE}${p.path}`)));
     setExtra([...locs].filter((l) => !known.has(l)));
+    setSitemapOk(smText.includes("<urlset"));
+    setMissing(PAGES.filter((p) => !locs.has(p.path === "/" ? `${SITE}/` : `${SITE}${p.path}`)));
     const out = await Promise.all(PAGES.map(async (p) => ({ ...p, checks: await inspect(p.path, locs, robotsTxt) })));
     setResults(out);
     setLoading(false);
@@ -157,6 +161,25 @@ function SeoStatus() {
         <p className="text-sm text-muted-foreground mb-6">
           تفحص هذه اللوحة جاهزية كل صفحة للظهور في البحث. ظهورها الفعلي في جوجل يُتحقق منه عبر Search Console بالرابط أدناه.
         </p>
+        {sitemapOk !== null && (
+          <section className={`mb-6 rounded-2xl border p-4 text-sm ${!sitemapOk || missing.length ? "border-destructive/50 bg-destructive/10" : "border-primary/40 bg-primary/10"}`}>
+            <h2 className="font-amiri text-xl mb-1">خريطة الموقع</h2>
+            {!sitemapOk ? (
+              <p className="text-destructive">تعذّر قراءة sitemap.xml أو صيغته غير صحيحة.</p>
+            ) : missing.length === 0 ? (
+              <p className="text-primary">كل الصفحات ({PAGES.length}) موجودة بروابطها الأساسية الصحيحة.</p>
+            ) : (
+              <>
+                <p className="text-destructive mb-2">صفحات مفقودة من خريطة الموقع ({missing.length}):</p>
+                <ul className="list-disc pr-5">
+                  {missing.map((p) => (
+                    <li key={p.path}>{p.label} <span dir="ltr" className="text-muted-foreground">{p.path === "/" ? `${SITE}/` : `${SITE}${p.path}`}</span></li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </section>
+        )}
         <div className="grid gap-4">
           {results.map((r) => {
             const fails = r.checks.filter((c) => !c.ok).length;
