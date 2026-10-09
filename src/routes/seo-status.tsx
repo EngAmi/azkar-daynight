@@ -121,12 +121,86 @@ async function inspect(path: string, sitemapLocs: Set<string>, robotsTxt: string
   return checks;
 }
 
+type SitemapIssue = { title: string; detail: string; fix: string };
+
+async function auditSitemap(text: string, xml: Document, locs: string[]): Promise<SitemapIssue[]> {
+  const out: SitemapIssue[] = [];
+  if (!text.trim()) {
+    return [{ title: "الملف غير موجود أو فارغ", detail: "تعذّر تحميل /sitemap.xml.", fix: "أنشئ الملف public/sitemap.xml وتأكد أنه يُنشر مع الموقع." }];
+  }
+  const err = xml.getElementsByTagName("parsererror")[0];
+  if (err) {
+    out.push({
+      title: "خطأ في صيغة XML",
+      detail: (err.textContent || "").trim().slice(0, 300),
+      fix: "تأكد من إغلاق كل وسم (<url>…</url>)، واستبدال & بـ &amp; داخل الروابط، وأن السطر الأول هو تعريف XML بلا مسافات قبله.",
+    });
+    return out;
+  }
+  const root = xml.documentElement;
+  if (root.localName !== "urlset" && root.localName !== "sitemapindex") {
+    out.push({ title: "عنصر جذر غير صحيح", detail: `الجذر هو <${root.localName}>`, fix: "يجب أن يكون الجذر <urlset> مع xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"." });
+  } else if (root.namespaceURI !== "http://www.sitemaps.org/schemas/sitemap/0.9") {
+    out.push({ title: "مساحة الأسماء مفقودة أو خاطئة", detail: root.namespaceURI || "لا يوجد xmlns", fix: "أضف xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" إلى وسم <urlset>." });
+  }
+  const urls = Array.from(xml.getElementsByTagName("url"));
+  const noLoc = urls.filter((u) => !u.getElementsByTagName("loc")[0]?.textContent?.trim()).length;
+  if (noLoc) out.push({ title: "عناصر <url> بلا <loc>", detail: `${noLoc} عنصر`, fix: "أضف <loc> برابط كامل لكل <url> أو احذف العنصر." });
+
+  const seen = new Map<string, number>();
+  locs.forEach((l) => seen.set(l, (seen.get(l) || 0) + 1));
+  const dups = [...seen].filter(([, n]) => n > 1);
+  if (dups.length) out.push({ title: "روابط مكررة", detail: dups.map(([l, n]) => `${l} (×${n})`).join("، "), fix: "احذف التكرار واترك عنصر <url> واحدًا لكل رابط." });
+
+  const norm = new Map<string, string[]>();
+  locs.forEach((l) => {
+    const k = l.toLowerCase().replace(/\/+$/, "").replace(/^https?:\/\/(www\.)?/, "");
+    norm.set(k, [...(norm.get(k) || []), l]);
+  });
+  const near = [...norm.values()].filter((v) => new Set(v).size > 1);
+  if (near.length) out.push({ title: "روابط متشابهة لنفس الصفحة", detail: near.map((v) => [...new Set(v)].join(" / ")).join("، "), fix: "وحّد الصيغة (https، بدون www، نفس الشرطة الأخيرة) لتطابق الرابط الأساسي canonical." });
+
+  const bad: string[] = [];
+  const foreign: string[] = [];
+  const valid: string[] = [];
+  [...new Set(locs)].forEach((l) => {
+    try {
+      const u = new URL(l);
+      if (u.protocol !== "https:") bad.push(l);
+      else if (u.origin !== SITE) foreign.push(l);
+      else valid.push(u.pathname + u.search);
+    } catch {
+      bad.push(l);
+    }
+  });
+  if (bad.length) out.push({ title: "روابط غير صالحة", detail: bad.join("، "), fix: "استخدم روابط مطلقة كاملة تبدأ بـ https:// وبدون مسافات." });
+  if (foreign.length) out.push({ title: "روابط لنطاق آخر", detail: foreign.join("، "), fix: `كل الروابط يجب أن تبدأ بـ ${SITE}؛ عدّلها أو احذفها.` });
+
+  const unreachable: string[] = [];
+  await Promise.all(
+    valid.map(async (p) => {
+      try {
+        const r = await fetch(p, { cache: "no-store" });
+        if (!r.ok) unreachable.push(`${p} (${r.status})`);
+        else if (r.redirected) unreachable.push(`${p} (تحويل)`);
+      } catch {
+        unreachable.push(`${p} (تعذّر الوصول)`);
+      }
+    }),
+  );
+  if (unreachable.length) out.push({ title: "روابط غير قابلة للوصول", detail: unreachable.join("، "), fix: "أنشئ الصفحة المفقودة، أو ضع الرابط النهائي بدل الرابط المُحوَّل، أو احذفه من الخريطة." });
+
+  if (locs.length > 50000) out.push({ title: "عدد روابط كبير", detail: `${locs.length}`, fix: "قسّم الخريطة إلى عدة ملفات مع sitemapindex." });
+  return out;
+}
+
 function SeoStatus() {
   const [results, setResults] = useState<Result[]>([]);
   const [extra, setExtra] = useState<string[]>([]);
   const [missing, setMissing] = useState<typeof PAGES>([]);
   const [sitemapOk, setSitemapOk] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(false);
+  const [issues, setIssues] = useState<SitemapIssue[] | null>(null);
 
   const run = useCallback(async () => {
     setLoading(true);
@@ -135,13 +209,14 @@ function SeoStatus() {
       fetch("/sitemap.xml", { cache: "no-store" }).then((r) => r.text()).catch(() => ""),
       fetch("/robots.txt", { cache: "no-store" }).then((r) => r.text()).catch(() => ""),
     ]);
-    const locs = new Set(
-      Array.from(new DOMParser().parseFromString(smText, "application/xml").getElementsByTagName("loc")).map((n) => n.textContent?.trim() || ""),
-    );
+    const xml = new DOMParser().parseFromString(smText, "application/xml");
+    const allLocs = Array.from(xml.getElementsByTagName("loc")).map((n) => n.textContent?.trim() || "");
+    const locs = new Set(allLocs);
     const known = new Set(PAGES.map((p) => (p.path === "/" ? `${SITE}/` : `${SITE}${p.path}`)));
     setExtra([...locs].filter((l) => !known.has(l)));
     setSitemapOk(smText.includes("<urlset"));
     setMissing(PAGES.filter((p) => !locs.has(p.path === "/" ? `${SITE}/` : `${SITE}${p.path}`)));
+    setIssues(await auditSitemap(smText, xml, allLocs));
     const out = await Promise.all(PAGES.map(async (p) => ({ ...p, checks: await inspect(p.path, locs, robotsTxt) })));
     setResults(out);
     setLoading(false);
@@ -177,6 +252,24 @@ function SeoStatus() {
                   ))}
                 </ul>
               </>
+            )}
+          </section>
+        )}
+        {issues && (
+          <section className={`mb-6 rounded-2xl border p-4 text-sm ${issues.length ? "border-destructive/50 bg-destructive/10" : "border-primary/40 bg-primary/10"}`}>
+            <h2 className="font-amiri text-xl mb-1">سلامة sitemap.xml</h2>
+            {issues.length === 0 ? (
+              <p className="text-primary">لا أخطاء XML، ولا روابط مكررة، وكل الروابط تعمل.</p>
+            ) : (
+              <ul className="grid gap-3">
+                {issues.map((i) => (
+                  <li key={i.title}>
+                    <p className="font-medium text-destructive">✗ {i.title}</p>
+                    <p className="text-muted-foreground break-all" dir="auto">{i.detail}</p>
+                    <p><span className="font-medium">الحل: </span>{i.fix}</p>
+                  </li>
+                ))}
+              </ul>
             )}
           </section>
         )}
