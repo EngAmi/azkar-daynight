@@ -48,7 +48,7 @@ export function ArabicFontControl() {
         className={`flex items-center gap-1.5 h-11 sm:h-9 px-3 rounded-full bg-secondary/60 border backdrop-blur-md transition-all duration-200 active:scale-95 ${
           open
             ? "border-gold/50 text-gold bg-gold/10"
-            : "border-gold/25 text-gold/90 hover:text-gold hover:border-gold/40 hover:bg-gold/10"
+            : "border-gold/40 text-gold hover:text-gold hover:border-gold/40 hover:bg-gold/10"
         }`}
       >
         <Type className="w-4 h-4" />
@@ -88,7 +88,7 @@ export function ArabicFontControl() {
             );
           })}
 
-          <div className="mt-1.5 pt-1.5 border-t border-gold/15">
+          <div className="mt-1.5 pt-1.5 border-t border-gold/30">
             <div className="flex items-center justify-between px-3 pb-1.5">
               <span className="font-naskh text-[11px] text-muted-foreground">تباعد النص</span>
               {!isAutoSpacing && (

@@ -1763,7 +1763,7 @@ function FocusFontControl() {
         onClick={withFeedback(decrease)}
         disabled={!canDecrease}
         aria-label="تصغير الخط"
-        className="w-9 h-9 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-muted-foreground/40 hover:text-primary active:bg-primary/20 active:scale-90 active:text-primary disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-150 text-sm sm:text-xs font-naskh touch-manipulation"
+        className="w-9 h-9 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-muted-foreground/70 hover:text-primary active:bg-primary/20 active:scale-90 active:text-primary disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-150 text-sm sm:text-xs font-naskh touch-manipulation"
       >
         ﺍ
       </button>
@@ -1771,7 +1771,7 @@ function FocusFontControl() {
         type="button"
         onClick={withFeedback(reset)}
         aria-label={`الحجم الحالي ${percent}٪ — اضغط للإرجاع`}
-        className="font-naskh text-[11px] sm:text-[10px] tabular-nums text-muted-foreground/40 hover:text-primary active:scale-90 active:text-primary transition-all duration-150 min-w-[32px] sm:min-w-[26px] text-center px-1 py-2 sm:py-0 touch-manipulation"
+        className="font-naskh text-[11px] sm:text-[10px] tabular-nums text-muted-foreground/70 hover:text-primary active:scale-90 active:text-primary transition-all duration-150 min-w-[32px] sm:min-w-[26px] text-center px-1 py-2 sm:py-0 touch-manipulation"
       >
         {percent}٪
       </button>
@@ -1780,7 +1780,7 @@ function FocusFontControl() {
         onClick={withFeedback(increase)}
         disabled={!canIncrease}
         aria-label="تكبير الخط"
-        className="w-9 h-9 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-muted-foreground/40 hover:text-primary active:bg-primary/20 active:scale-90 active:text-primary disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-150 text-lg sm:text-base font-naskh touch-manipulation"
+        className="w-9 h-9 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-muted-foreground/70 hover:text-primary active:bg-primary/20 active:scale-90 active:text-primary disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-150 text-lg sm:text-base font-naskh touch-manipulation"
       >
         ﺍ
       </button>

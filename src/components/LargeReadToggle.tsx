@@ -30,7 +30,7 @@ export function LargeReadToggle() {
         setOn((v) => !v);
       }}
       className={`sm:hidden flex items-center gap-1.5 h-11 px-3 rounded-full border backdrop-blur-md transition-all active:scale-95 font-naskh text-sm touch-manipulation ${
-        on ? "border-gold/60 text-gold bg-gold/15" : "border-gold/25 text-gold/90 bg-secondary/60"
+        on ? "border-gold/60 text-gold bg-gold/15" : "border-gold/40 text-gold bg-secondary/60"
       }`}
     >
       <ZoomIn className="w-4 h-4" />
