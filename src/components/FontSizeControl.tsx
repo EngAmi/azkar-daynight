@@ -14,7 +14,7 @@ export function FontSizeControl() {
 
   return (
     <div
-      className="flex items-center gap-1 rounded-full bg-secondary/60 border border-gold/25 backdrop-blur-md px-1.5 py-1.5 shadow-inner shadow-black/5 touch-manipulation relative z-20"
+      className="flex items-center gap-1 rounded-full bg-secondary/60 border border-gold/40 backdrop-blur-md px-1.5 py-1.5 shadow-inner shadow-black/5 touch-manipulation relative z-20"
       role="group"
       aria-label="حجم الخط"
       onPointerDown={(e) => e.stopPropagation()}
@@ -27,7 +27,7 @@ export function FontSizeControl() {
         disabled={!canDecrease}
         aria-label="تصغير الخط"
         title="تصغير الخط"
-        className="w-11 h-11 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-surface/80 text-gold/90 border border-gold/15 shadow-sm hover:bg-gold/10 hover:text-gold hover:border-gold/40 hover:shadow-gold/20 hover:shadow-lg active:scale-90 active:bg-gold/20 active:text-gold disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-gold/15 disabled:hover:shadow-none transition-all duration-200 touch-manipulation"
+        className="w-11 h-11 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-surface/80 text-gold border border-gold/30 shadow-sm hover:bg-gold/10 hover:text-gold hover:border-gold/40 hover:shadow-gold/20 hover:shadow-lg active:scale-90 active:bg-gold/20 active:text-gold disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-gold/15 disabled:hover:shadow-none transition-all duration-200 touch-manipulation"
       >
         <Minus className="w-5 h-5 sm:w-4 sm:h-4 stroke-[2.5]" />
       </button>
@@ -49,7 +49,7 @@ export function FontSizeControl() {
         disabled={!canIncrease}
         aria-label="تكبير الخط"
         title="تكبير الخط"
-        className="w-11 h-11 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-surface/80 text-gold/90 border border-gold/15 shadow-sm hover:bg-gold/10 hover:text-gold hover:border-gold/40 hover:shadow-gold/20 hover:shadow-lg active:scale-90 active:bg-gold/20 active:text-gold disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-gold/15 disabled:hover:shadow-none transition-all duration-200 touch-manipulation"
+        className="w-11 h-11 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-surface/80 text-gold border border-gold/30 shadow-sm hover:bg-gold/10 hover:text-gold hover:border-gold/40 hover:shadow-gold/20 hover:shadow-lg active:scale-90 active:bg-gold/20 active:text-gold disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-gold/15 disabled:hover:shadow-none transition-all duration-200 touch-manipulation"
       >
         <Plus className="w-5 h-5 sm:w-4 sm:h-4 stroke-[2.5]" />
       </button>

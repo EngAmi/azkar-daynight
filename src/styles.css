@@ -158,51 +158,51 @@
        cream text and muted champagne gold. Tuned for night-time eye comfort:
        no saturated greens, no harsh whites, quiet borders. */
     --background: 165 32% 5%;
-    --foreground: 42 22% 84%;
+    --foreground: 42 24% 88%;
 
     --card: 164 26% 8%;
-    --card-foreground: 42 22% 84%;
+    --card-foreground: 42 24% 88%;
 
     --popover: 164 30% 7%;
-    --popover-foreground: 42 22% 84%;
+    --popover-foreground: 42 24% 88%;
 
-    /* Muted champagne gold — luxurious without glare at night */
-    --primary: 41 40% 62%;
+    /* Muted champagne gold — lifted lightness so buttons read clearly on the dark base */
+    --primary: 41 46% 66%;
     --primary-foreground: 165 36% 8%;
 
     --secondary: 163 18% 11%;
-    --secondary-foreground: 42 20% 78%;
+    --secondary-foreground: 42 22% 82%;
 
     --muted: 163 15% 12%;
-    --muted-foreground: 160 8% 62%;
+    --muted-foreground: 160 10% 68%;
 
     --accent: 162 26% 16%;
-    --accent-foreground: 42 28% 80%;
+    --accent-foreground: 42 30% 84%;
 
     --destructive: 0 38% 38%;
-    --destructive-foreground: 42 22% 88%;
+    --destructive-foreground: 42 24% 90%;
 
-    --border: 162 14% 14%;
-    --input: 162 14% 14%;
-    --ring: 41 40% 62%;
+    --border: 162 16% 17%;
+    --input: 162 16% 17%;
+    --ring: 41 46% 66%;
 
     --radius: 1rem;
 
     /* Custom luxury tokens — calm gold glow, soft emerald veil */
-    --glow-gold: 40 40% 58%;
+    --glow-gold: 40 42% 62%;
     --glow-soft: 162 24% 15%;
     --surface-glass: 163 26% 9%;
     /* Themed overlay (replaces bg-black/80) — deep emerald veil for dark mode */
     --overlay: 165 34% 3%;
     --overlay-opacity: 0.78;
     /* Stronger border specifically for overlay panels — stays readable even when veil is light */
-    --overlay-border: 41 32% 48%;
-    --overlay-border-opacity: 0.4;
-    --overlay-ring: 41 40% 62%;
+    --overlay-border: 41 34% 54%;
+    --overlay-border-opacity: 0.45;
+    --overlay-ring: 41 46% 66%;
 
     --sidebar-background: 165 32% 5%;
-    --sidebar-foreground: 42 22% 84%;
-    --sidebar-primary: 41 40% 62%;
+    --sidebar-foreground: 42 24% 88%;
+    --sidebar-primary: 41 46% 66%;
     --sidebar-primary-foreground: 165 36% 8%;
     --sidebar-accent: 163 18% 11%;
     --sidebar-accent-foreground: 42 20% 78%;
