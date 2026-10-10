@@ -189,20 +189,20 @@
     --radius: 1rem;
 
     /* Custom luxury tokens — calm gold glow, soft emerald veil */
-    --glow-gold: 40 40% 58%;
+    --glow-gold: 40 42% 62%;
     --glow-soft: 162 24% 15%;
     --surface-glass: 163 26% 9%;
     /* Themed overlay (replaces bg-black/80) — deep emerald veil for dark mode */
     --overlay: 165 34% 3%;
     --overlay-opacity: 0.78;
     /* Stronger border specifically for overlay panels — stays readable even when veil is light */
-    --overlay-border: 41 32% 48%;
-    --overlay-border-opacity: 0.4;
-    --overlay-ring: 41 40% 62%;
+    --overlay-border: 41 34% 54%;
+    --overlay-border-opacity: 0.45;
+    --overlay-ring: 41 46% 66%;
 
     --sidebar-background: 165 32% 5%;
-    --sidebar-foreground: 42 22% 84%;
-    --sidebar-primary: 41 40% 62%;
+    --sidebar-foreground: 42 24% 88%;
+    --sidebar-primary: 41 46% 66%;
     --sidebar-primary-foreground: 165 36% 8%;
     --sidebar-accent: 163 18% 11%;
     --sidebar-accent-foreground: 42 20% 78%;
