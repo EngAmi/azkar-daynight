@@ -62,7 +62,7 @@ export function ArabicFontControl() {
           role="listbox"
           aria-label="نوع الخط العربي"
           dir="rtl"
-          className="absolute top-full mt-2 start-0 w-60 rounded-2xl border border-gold/25 bg-popover/95 backdrop-blur-xl shadow-xl shadow-black/20 p-1.5 z-50"
+          className="absolute top-full mt-2 start-0 w-60 rounded-2xl border border-gold/40 bg-popover/95 backdrop-blur-xl shadow-xl shadow-black/20 p-1.5 z-50"
         >
           {fonts.map((f) => {
             const selected = f.id === font;
