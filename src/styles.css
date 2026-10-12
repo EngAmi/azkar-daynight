@@ -185,6 +185,8 @@
     --border: 162 16% 17%;
     --input: 162 16% 17%;
     --ring: 41 46% 66%;
+    /* Functional control edges: at least 3:1 against night surfaces. */
+    --control-border: 160 12% 48%;
 
     --radius: 1rem;
 
@@ -465,6 +467,51 @@
 }
 
 @layer utilities {
+  /* AA night contrast: preserve decorative alpha, but never fade readable
+     labels. Low specificity lets hover/selected foreground pairs keep working. */
+  .dark :where(
+    [class~="text-muted-foreground/20"], [class~="text-muted-foreground/30"],
+    [class~="text-muted-foreground/35"], [class~="text-muted-foreground/40"],
+    [class~="text-muted-foreground/50"], [class~="text-muted-foreground/60"],
+    [class~="text-muted-foreground/70"], [class~="text-muted-foreground/80"]
+  ) {
+    color: hsl(var(--muted-foreground));
+  }
+  .dark :where(
+    [class~="text-primary/25"], [class~="text-primary/30"],
+    [class~="text-primary/40"], [class~="text-primary/50"],
+    [class~="text-primary/60"], [class~="text-primary/70"],
+    [class~="text-primary/80"], [class~="text-gold/60"],
+    [class~="text-gold/70"], [class~="text-gold/80"]
+  ) {
+    color: hsl(var(--primary));
+  }
+  .dark :where(.fadl-text) {
+    color: hsl(var(--accent-foreground));
+  }
+  .dark :where(button[class*="border"], a[class*="border"], input, [role="switch"]):not(:disabled) {
+    border-color: hsl(var(--control-border));
+  }
+  .dark :where(button, a, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 3px;
+  }
+  @media (hover: hover) {
+    .dark :where(
+      [class~="hover:text-muted-foreground/40"],
+      [class~="hover:text-muted-foreground/60"],
+      [class~="hover:text-muted-foreground/70"]
+    ):hover {
+      color: hsl(var(--muted-foreground));
+    }
+    .dark :where(
+      [class~="hover:text-primary/60"], [class~="hover:text-primary/70"],
+      [class~="hover:text-primary/80"], [class~="hover:text-destructive/70"]
+    ):hover {
+      color: hsl(var(--primary));
+    }
+  }
+
   .text-balance {
     text-wrap: balance;
   }
