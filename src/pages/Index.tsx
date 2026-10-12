@@ -1296,7 +1296,7 @@ function InlineSession({
       {/* Source — refined, centered, delicate divider */}
       {!mobileFocus && (
         <div className="px-6 pb-3 safe-area-bottom">
-          <div className="mx-auto w-full max-w-lg sm:max-w-2xl flex items-center gap-3 opacity-60">
+          <div className="mx-auto w-full max-w-lg sm:max-w-2xl flex items-center gap-3">
             <div className="flex-1 h-px bg-gradient-to-l from-transparent via-primary/20 to-transparent" />
             <p className="text-center text-[10px] text-muted-foreground/50 font-naskh leading-relaxed truncate">
               {currentDhikr.source}
