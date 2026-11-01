@@ -33,7 +33,8 @@ export function warmAudio(audioFile?: string): HTMLAudioElement | undefined {
   }
   const audio = new Audio();
   audio.preload = "auto";
-  audio.crossOrigin = "anonymous";
+  // No crossOrigin: alazkar.today does not send CORS headers, and setting
+  // crossOrigin="anonymous" makes the browser refuse the audio entirely.
   audio.src = url;
   try {
     audio.load();
