@@ -108,6 +108,8 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (isMedia(url)) {
+    // Preserve byte-range media requests so Safari can stream audio correctly.
+    if (request.headers.has("range")) return;
     event.respondWith(cacheFirst(request, MEDIA_CACHE));
     return;
   }

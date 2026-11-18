@@ -7,10 +7,11 @@
 // still succeed but simply aren't cached, which is fine.
 
 import { AUDIO_BASE_URL } from "@/data/adhkar";
+import { getAdhkarAudioUrl } from "@/lib/adhkarAudioAssets";
 
 export function resolveAudioUrl(audioFile: string): string {
   if (/^(https?:)?\/\//.test(audioFile) || audioFile.startsWith("/")) return audioFile;
-  return `${AUDIO_BASE_URL}${audioFile}`;
+  return getAdhkarAudioUrl(audioFile) ?? `${AUDIO_BASE_URL}${audioFile}`;
 }
 
 // --- Warm audio elements -------------------------------------------------

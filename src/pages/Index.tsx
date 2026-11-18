@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import { getMorningAdhkar, getEveningAdhkar, AUDIO_BASE_URL, type SessionType, type Dhikr } from "@/data/adhkar";
+import { getMorningAdhkar, getEveningAdhkar, type SessionType, type Dhikr } from "@/data/adhkar";
 import { BreathingCircle } from "@/components/BreathingCircle";
 import { DhikrFadl } from "@/components/DhikrFadl";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -16,7 +16,7 @@ import { useAccessibility } from "@/hooks/useAccessibility";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useFocusLock } from "@/hooks/useFocusLock";
 import { getCurrentSessionType } from "@/lib/timeOfDay";
-import { prefetchSessionAudio, warmAudio, getWarmAudio, resolveAudioUrl } from "@/lib/prefetchAudio";
+import { prefetchSessionAudio, resolveAudioUrl } from "@/lib/prefetchAudio";
 import { installReminderScheduler } from "@/lib/notifications";
 import { ReminderSettings } from "@/components/ReminderSettings";
 import {
@@ -590,15 +590,19 @@ const Index = ({ initialTab, pageHeading, pageSubheading }: IndexProps = {}) => 
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.35, ease: "easeInOut" }}
-                        className="flex flex-wrap items-center justify-center sm:justify-end gap-2 px-4 pt-1 w-full"
+                        className="flex w-full flex-col items-center gap-2 px-4 pt-2"
                       >
-                        <FontSizeControl />
-                        <ArabicFontControl />
-                        <LargeReadToggle />
-                        <AccessibilityToggle />
-                        <ReminderSettings />
-                        <ThemeToggle />
-                        <Link to="/azkar-baad-salah" className="rounded-full border border-border/50 px-3 py-2 font-naskh text-xs text-muted-foreground hover:text-primary">أذكار أخرى</Link>
+                        <div role="group" aria-label="تنسيق القراءة" className="flex w-full flex-wrap items-center justify-center gap-2 border-b border-border/30 pb-2">
+                          <FontSizeControl />
+                          <ArabicFontControl />
+                          <LargeReadToggle />
+                        </div>
+                        <div role="group" aria-label="خيارات إضافية" className="flex w-full flex-wrap items-center justify-center gap-2">
+                          <AccessibilityToggle />
+                          <ReminderSettings />
+                          <ThemeToggle />
+                          <Link to="/azkar-baad-salah" className="min-h-11 rounded-full border border-border/50 px-3 py-2 font-naskh text-xs text-muted-foreground hover:text-primary inline-flex items-center">أذكار أخرى</Link>
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -925,12 +929,7 @@ function InlineSession({
       adhkarList[currentIndex - 1]?.audio,
     ];
     const controller = prefetchSessionAudio(near, 2, { immediate: true });
-    warmAudio(adhkarList[currentIndex]?.audio);
-    const t = window.setTimeout(() => {
-      warmAudio(adhkarList[currentIndex + 1]?.audio);
-    }, 400);
     return () => {
-      window.clearTimeout(t);
       controller.abort();
     };
   }, [adhkarList, currentIndex]);
@@ -1462,11 +1461,12 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [resumeAt, setResumeAt] = useState(0);
   const [srAnnounce, setSrAnnounce] = useState("");
+  const [playbackMessage, setPlaybackMessage] = useState("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Warm the element and load any saved position for this recording.
+  // Create the audio element without loading it ahead of the user's tap; iOS
+  // Safari can block media requests that begin outside a direct interaction.
   useEffect(() => {
-    warmAudio(audioFile);
     setResumeAt(audioFile ? readAudioPos(audioFile) : 0);
     return () => {
       const a = audioRef.current;
@@ -1501,6 +1501,7 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
       writeAudioPos(audioFile, current.currentTime);
       setResumeAt(current.currentTime);
       setIsPlaying(false);
+      setPlaybackMessage("");
       setSrAnnounce(`تم إيقاف الصوت مؤقتًا عند ${fmt(current.currentTime)}.`);
       return;
     }
@@ -1509,20 +1510,21 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
     if (resuming) setSrAnnounce(`متابعة التشغيل من الموضع المحفوظ ${fmt(readAudioPos(audioFile))}.`);
     else setSrAnnounce("بدأ تشغيل صوت الذكر.");
 
-    const audio =
-      current ?? getWarmAudio(audioFile) ?? warmAudio(audioFile) ?? new Audio(resolveAudioUrl(audioFile));
+    const audio = current ?? new Audio(resolveAudioUrl(audioFile));
     audioRef.current = audio;
+    audio.preload = "none";
+    setPlaybackMessage("");
     const start = readAudioPos(audioFile);
     const seek = () => {
       try {
-        const d = audio.duration;
-        audio.currentTime = start > 0 && (!isFinite(d) || start < d - 0.5) ? Math.max(0, start - 1) : 0;
+        const duration = audio.duration;
+        const canResume = start > 0 && (!Number.isFinite(duration) || start < duration - 0.5);
+        audio.currentTime = canResume ? Math.max(0, start - 1) : 0;
       } catch {
-        /* ignore */
+        // Seeking is unavailable until metadata loads; playback still proceeds from the start.
       }
     };
-    if (audio.readyState >= 1) seek();
-    else audio.addEventListener("loadedmetadata", seek, { once: true });
+    audio.addEventListener("loadedmetadata", seek, { once: true });
 
     let lastSave = 0;
     audio.ontimeupdate = () => {
@@ -1534,19 +1536,33 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
     };
     audio.onpause = () => {
       if (!audio.ended) writeAudioPos(audioFile, audio.currentTime);
+      setIsPlaying(false);
     };
+    audio.onplaying = () => setIsPlaying(true);
     audio.onended = () => {
       clearAudioPos();
       setResumeAt(0);
       setIsPlaying(false);
+      setPlaybackMessage("");
       setSrAnnounce("انتهى تشغيل صوت الذكر.");
     };
     audio.onerror = () => {
       setIsPlaying(false);
+      setPlaybackMessage("تعذّر تحميل التسجيل. تحقّق من اتصال الإنترنت ثم أعد المحاولة.");
       setSrAnnounce("تعذّر تشغيل الصوت.");
     };
-    void audio.play().catch(() => setIsPlaying(false));
-    setIsPlaying(true);
+    if (audio.readyState >= 1) seek();
+    void audio.play().then(() => {
+      setIsPlaying(true);
+    }).catch((error: unknown) => {
+      setIsPlaying(false);
+      if (error instanceof DOMException && error.name === "NotAllowedError") {
+        setPlaybackMessage("اضغط «استماع» مرة أخرى للسماح بالتشغيل في Safari.");
+      } else {
+        setPlaybackMessage("تعذّر تشغيل التسجيل. تحقّق من اتصال الإنترنت ثم أعد المحاولة.");
+      }
+      setSrAnnounce("تعذّر تشغيل الصوت. اضغط للاستماع مرة أخرى.");
+    });
   };
 
   const handleReset = () => {
@@ -1622,6 +1638,11 @@ function SpeakButton({ audioFile }: { audioFile?: string }) {
       {resumeAt > 1 && !isPlaying && (
         <p className="font-naskh text-[10px] text-muted-foreground/30" role="status">
           توقفت عند {fmt(resumeAt)}
+        </p>
+      )}
+      {playbackMessage && (
+        <p className="font-naskh text-xs text-muted-foreground" role="status" aria-live="polite">
+          {playbackMessage}
         </p>
       )}
       {/* إعلانات حالة التشغيل لقارئ الشاشة */}
